@@ -1,7 +1,13 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:lib_ads_flutter/call_back/ad_callback.dart';
 import 'package:lib_ads_flutter/banner/banner_ad_manager.dart';
+import 'package:lib_ads_flutter/interstitial/interstitial_ad_manager.dart';
 
 import 'app_open/app_lifecycle_reactor.dart';
 import 'app_open/app_open_ad_manager.dart';
@@ -42,6 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
   late AppLifecycleReactor _appLifecycleReactor;
   late BannerAdManager bannerAdManager = BannerAdManager();
+  late InterstitialAdManager interstitialAdManager = InterstitialAdManager();
 
   void _incrementCounter() {
     setState(() {
@@ -56,6 +63,8 @@ class _MyHomePageState extends State<MyHomePage> {
     _appLifecycleReactor =
         AppLifecycleReactor(appOpenAdManager: appOpenAdManager);
     _appLifecycleReactor.listenToAppStateChanges(context);
+
+    interstitialAdManager.loadAd();
   }
 
   @override
@@ -76,6 +85,31 @@ class _MyHomePageState extends State<MyHomePage> {
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
+                ElevatedButton(
+                    onPressed: () {
+                      interstitialAdManager.show(context,2,AdCallback()
+                        ..onAdLoaded = () {
+                          Fluttertoast.showToast(msg: 'Ad successfully loaded!');
+                        }
+                        ..onAdFailedToLoad = (LoadAdError error) {
+                          Fluttertoast.showToast(msg: 'Failed to load ad: ${error.message}');
+
+                        }
+                        ..onAdImpression = () {
+                          Fluttertoast.showToast(msg: 'Ad impression recorded.');
+                        }
+                        ..onAdFailedToShow = (AdError error) {
+                          Fluttertoast.showToast(msg: 'Failed to show ad: ${error.message}');
+                        }
+                        ..onAdClosed = () {
+                          Fluttertoast.showToast(msg: 'Ad closed by the user.');
+                        }
+                        ..onAdClicked = () {
+                          Fluttertoast.showToast(msg: 'Ad clicked by the user.');
+                        });
+                    },
+                    child: Text('show inter'),
+                ),
                 const Text(
                   'You have pushed the button this many times:',
                 ),

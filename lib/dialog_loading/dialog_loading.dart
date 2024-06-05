@@ -12,12 +12,12 @@ class DialogLoading{
       descriptionBody = CircleAvatar(
         radius: 100.0,
         maxRadius: 100.0,
-        child: new Icon(Icons.warning),
         backgroundColor: Colors.redAccent,
+        child: const Icon(Icons.warning),
       );
     } else {
-      descriptionBody = new Center(
-        child: new CircularProgressIndicator(),
+      descriptionBody = const Center(
+        child: CircularProgressIndicator(),
       );
     }
 
