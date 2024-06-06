@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:lib_ads_flutter/call_back/ad_callback.dart';
+import 'package:lib_ads_flutter/call_back/inter_ad_callback.dart';
 import 'package:lib_ads_flutter/app_open/app_open_ad_manager.dart';
 import 'package:lib_ads_flutter/dialog_loading/dialog_loading_inter.dart';
 
@@ -32,7 +32,7 @@ class InterstitialAdManager{
         ));
   }
 
-  void show(BuildContext context, int duration ,AdCallback adCallback){
+  void show(BuildContext context, int duration ,InterAdCallback adCallback){
 
     final ad = _interstitialAd;
     if(ad == null){

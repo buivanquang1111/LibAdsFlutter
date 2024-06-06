@@ -1,6 +1,6 @@
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
-class AdCallback{
+class InterAdCallback{
   void Function()? onAdLoaded;
 
   void Function(LoadAdError)? onAdFailedToLoad;
