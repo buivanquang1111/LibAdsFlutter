@@ -10,6 +10,7 @@ import 'package:lib_ads_flutter/banner/banner_ad_manager.dart';
 import 'package:lib_ads_flutter/enums/ads_banner_type.dart';
 import 'package:lib_ads_flutter/interstitial/interstitial_ad_manager.dart';
 import 'package:lib_ads_flutter/native/native_ad_manager.dart';
+import 'package:lib_ads_flutter/view_ads/banner_ad_view.dart';
 
 import 'app_open/app_lifecycle_reactor.dart';
 import 'app_open/app_open_ad_manager.dart';
@@ -49,7 +50,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
   late AppLifecycleReactor _appLifecycleReactor;
-  late BannerAdManager bannerAdManager = BannerAdManager();
+  // late BannerAdManager bannerAdManager = BannerAdManager();
   late InterstitialAdManager interstitialAdManager = InterstitialAdManager();
   late NativeAdManager nativeAdManager = NativeAdManager();
   final double _adAspectRatioMedium = (370 / 355);
@@ -72,35 +73,35 @@ class _MyHomePageState extends State<MyHomePage> {
     nativeAdManager.loadAd();
   }
 
-  void removeCollapse() async{
-    await bannerAdManager.bannerAd!.dispose();
-    bannerAdManager.isloaded = false;
-    // bannerAdManager.loadCollapseBanner(context, AdsBannerType.collapsible_bottom, () {
-    //   Fluttertoast.showToast(msg: "ok re load");
-    //   setState(() {
-    //
-    //   });
-    // });
-    setState(() {
-      bannerAdManager.loadCollapseBanner(context, AdsBannerType.collapsible_bottom, (){
+  // void removeCollapse() async{
+  //   await bannerAdManager.bannerAd!.dispose();
+  //   bannerAdManager.isloaded = false;
+  //   // bannerAdManager.loadCollapseBanner(context, AdsBannerType.collapsible_bottom, () {
+  //   //   Fluttertoast.showToast(msg: "ok re load");
+  //   //   setState(() {
+  //   //
+  //   //   });
+  //   // });
+  //   setState(() {
+  //     bannerAdManager.loadCollapseBanner(context, AdsBannerType.collapsible_bottom, (){
+  //
+  //     });
+  //   });
+  // }
 
-      });
-    });
-  }
-
-  void init(){
-    if(bannerAdManager.bannerAd != null){
-      bannerAdManager.bannerAd!.dispose();
-      bannerAdManager.bannerAd = null;
-    }
-    setState(() {
-      bannerAdManager.loadAd(context, () {
-        setState(() {
-
-        });
-      },);
-    });
-  }
+  // void init(){
+  //   if(bannerAdManager.bannerAd != null){
+  //     bannerAdManager.bannerAd!.dispose();
+  //     bannerAdManager.bannerAd = null;
+  //   }
+  //   setState(() {
+  //     bannerAdManager.loadAd(context, () {
+  //       setState(() {
+  //
+  //       });
+  //     },);
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -112,14 +113,14 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         child: OrientationBuilder(
           builder: (BuildContext context, Orientation orientation) {
-            bannerAdManager.loadCollapseBanner(context, AdsBannerType.collapsible_bottom, () {});
+            // bannerAdManager.loadCollapseBanner(context, AdsBannerType.collapsible_bottom, () {});
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 ElevatedButton(
                   onPressed: () {
                     // removeCollapse();
-                    init();
+
                     // interstitialAdManager.show(
                     //     context,
                     //     2,
@@ -169,18 +170,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     ),
                   ),
-                bannerAdManager.isloaded ?
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.bottomCenter,
-                      child: SizedBox(
-                        width: bannerAdManager.bannerAd!.size.width.toDouble(),
-                        height: bannerAdManager.bannerAd!.size.height.toDouble(),
-                        child: AdWidget(ad: bannerAdManager.bannerAd!),
-                      ),
-                    ),
-                  )
-                    :Expanded(child: SizedBox(height: 10,)),
+                BannerAdView(idAds: 'ca-app-pub-3940256099942544/6300978111'),
               ],
             );
           },
