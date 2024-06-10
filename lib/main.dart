@@ -4,10 +4,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:lib_ads_flutter/call_back/inter_ad_callback.dart';
 import 'package:lib_ads_flutter/banner/banner_ad_manager.dart';
 import 'package:lib_ads_flutter/enums/ads_banner_type.dart';
+import 'package:lib_ads_flutter/flutter_ads.dart';
 import 'package:lib_ads_flutter/interstitial/interstitial_ad_manager.dart';
 import 'package:lib_ads_flutter/native/native_ad_manager.dart';
 import 'package:lib_ads_flutter/view_ads/banner_ad_view.dart';
@@ -64,10 +66,16 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    AppOpenAdManager appOpenAdManager = AppOpenAdManager()..loadAppOpenAd();
-    _appLifecycleReactor =
-        AppLifecycleReactor(appOpenAdManager: appOpenAdManager);
-    _appLifecycleReactor.listenToAppStateChanges(context);
+    // AppOpenAdManager appOpenAdManager = AppOpenAdManager()..loadAppOpenAd();
+    // _appLifecycleReactor =
+    //     AppLifecycleReactor(appOpenAdManager: appOpenAdManager);
+    // _appLifecycleReactor.listenToAppStateChanges(context);
+
+    FlutterAds.instance.initalize(
+      adRequest: AdRequest(httpTimeoutMillis: 30000),
+      idAdsResume: null,
+      navigatorKey: Get.key
+    );
 
     interstitialAdManager.loadAd();
     nativeAdManager.loadAd();
