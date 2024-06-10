@@ -1,7 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-Future showLoadingDialog(BuildContext context, int duration){
+Future showLoaderDialog(BuildContext context, int duration) {
   const alert = AlertDialog(
     content: Column(
       mainAxisSize: MainAxisSize.min,

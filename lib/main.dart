@@ -1,25 +1,34 @@
-import 'dart:developer';
+import 'dart:async';
+import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:lib_ads_flutter/call_back/inter_ad_callback.dart';
-import 'package:lib_ads_flutter/banner/banner_ad_manager.dart';
-import 'package:lib_ads_flutter/enums/ads_banner_type.dart';
-import 'package:lib_ads_flutter/flutter_ads.dart';
-import 'package:lib_ads_flutter/interstitial/interstitial_ad_manager.dart';
-import 'package:lib_ads_flutter/native/native_ad_manager.dart';
-import 'package:lib_ads_flutter/view_ads/banner_ad_view.dart';
+import 'package:lib_ads_flutter/ads_splash.dart';
+import 'package:lib_ads_flutter/easy_ads.dart';
+import 'package:lib_ads_flutter/screen2.dart';
+import 'package:lib_ads_flutter/utils/easy_banner_ad.dart';
+import 'package:lib_ads_flutter/utils/i_ad_id_manager.dart';
+import 'package:lib_ads_flutter/utils/test_ad_id_manager.dart';
 
-import 'app_open/app_lifecycle_reactor.dart';
-import 'app_open/app_open_ad_manager.dart';
+import 'enums/ad_network.dart';
+import 'enums/ad_unit_type.dart';
 
-void main() {
+const IAdIdManager adIdManager = TestAdIdManager();
+
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  MobileAds.instance.initialize();
+
+  await EasyAds.instance.initialize(
+    isShowAppOpenOnAppStateChange: true,
+    adIdManager,
+    unityTestMode: true,
+    adMobAdRequest: const AdRequest(),
+    admobConfiguration: RequestConfiguration(testDeviceIds: []),
+    fbTestingId: '73f92d66-f8f6-4978-999f-b5e0dd62275a',
+    fbTestMode: true,
+    showAdBadge: Platform.isIOS,
+    fbiOSAdvertiserTrackingEnabled: true,
+  );
   runApp(const MyApp());
 }
 
@@ -50,12 +59,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  StreamSubscription? _streamSubscription;
+
   int _counter = 0;
-  late AppLifecycleReactor _appLifecycleReactor;
-  // late BannerAdManager bannerAdManager = BannerAdManager();
-  late InterstitialAdManager interstitialAdManager = InterstitialAdManager();
-  late NativeAdManager nativeAdManager = NativeAdManager();
-  final double _adAspectRatioMedium = (370 / 355);
 
   void _incrementCounter() {
     setState(() {
@@ -66,129 +72,84 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    // AppOpenAdManager appOpenAdManager = AppOpenAdManager()..loadAppOpenAd();
-    // _appLifecycleReactor =
-    //     AppLifecycleReactor(appOpenAdManager: appOpenAdManager);
-    // _appLifecycleReactor.listenToAppStateChanges(context);
-
-    FlutterAds.instance.initalize(
-      adRequest: AdRequest(httpTimeoutMillis: 30000),
-      idAdsResume: null,
-      navigatorKey: Get.key
-    );
-
-    interstitialAdManager.loadAd();
-    nativeAdManager.loadAd();
   }
-
-  // void removeCollapse() async{
-  //   await bannerAdManager.bannerAd!.dispose();
-  //   bannerAdManager.isloaded = false;
-  //   // bannerAdManager.loadCollapseBanner(context, AdsBannerType.collapsible_bottom, () {
-  //   //   Fluttertoast.showToast(msg: "ok re load");
-  //   //   setState(() {
-  //   //
-  //   //   });
-  //   // });
-  //   setState(() {
-  //     bannerAdManager.loadCollapseBanner(context, AdsBannerType.collapsible_bottom, (){
-  //
-  //     });
-  //   });
-  // }
-
-  // void init(){
-  //   if(bannerAdManager.bannerAd != null){
-  //     bannerAdManager.bannerAd!.dispose();
-  //     bannerAdManager.bannerAd = null;
-  //   }
-  //   setState(() {
-  //     bannerAdManager.loadAd(context, () {
-  //       setState(() {
-  //
-  //       });
-  //     },);
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {
+    AdsSplash.instance.init(true, true, "50_50");
+    AdsSplash.instance.showAdsSplash(context);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: Center(
-        child: OrientationBuilder(
-          builder: (BuildContext context, Orientation orientation) {
-            // bannerAdManager.loadCollapseBanner(context, AdsBannerType.collapsible_bottom, () {});
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                ElevatedButton(
-                  onPressed: () {
-                    // removeCollapse();
-
-                    // interstitialAdManager.show(
-                    //     context,
-                    //     2,
-                    //     AdCallback()
-                    //       ..onAdLoaded = () {
-                    //         Fluttertoast.showToast(
-                    //             msg: 'Ad successfully loaded!');
-                    //       }
-                    //       ..onAdFailedToLoad = (LoadAdError error) {
-                    //         Fluttertoast.showToast(
-                    //             msg: 'Failed to load ad: ${error.message}');
-                    //       }
-                    //       ..onAdImpression = () {
-                    //         Fluttertoast.showToast(
-                    //             msg: 'Ad impression recorded.');
-                    //       }
-                    //       ..onAdFailedToShow = (AdError error) {
-                    //         Fluttertoast.showToast(
-                    //             msg: 'Failed to show ad: ${error.message}');
-                    //       }
-                    //       ..onAdClosed = () {
-                    //         Fluttertoast.showToast(
-                    //             msg: 'Ad closed by the user.');
-                    //       }
-                    //       ..onAdClicked = () {
-                    //         Fluttertoast.showToast(
-                    //             msg: 'Ad clicked by the user.');
-                    //       });
-                  },
-                  child: Text('show inter'),
-                ),
-                const Text(
-                  'You have pushed the button this many times:',
-                ),
-                Text(
-                  '$_counter',
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
-                if (nativeAdManager.nativeAdIsLoaded)
-                  Expanded(
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.width *
-                          _adAspectRatioMedium,
-                      child: AdWidget(
-                        ad: nativeAdManager.nativeAd!,
+      body: Column(
+        children: [
+          Expanded(
+            child: Center(
+              child: OrientationBuilder(
+                builder: (BuildContext context, Orientation orientation) {
+                  // bannerAdManager.loadCollapseBanner(context, AdsBannerType.collapsible_bottom, () {});
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      ElevatedButton(
+                        onPressed: () {
+                          _showAd(AdNetwork.admob, AdUnitType.appOpen);
+                        },
+                        child: Text('show inter'),
                       ),
-                    ),
-                  ),
-                BannerAdView(idAds: 'ca-app-pub-3940256099942544/6300978111'),
-              ],
-            );
-          },
-        ),
+                      const Text(
+                        'You have pushed the button this many times:',
+                      ),
+                      Text(
+                        '$_counter',
+                        style: Theme.of(context).textTheme.headlineMedium,
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ),
+          const EasyBannerAd(),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+
+  void _showAd(AdNetwork adNetwork, AdUnitType adUnitType) {
+    if (EasyAds.instance.showAd(
+      adUnitType,
+      adNetwork: adNetwork,
+      context: context,
+      loaderDuration: 1,
+    )) {
+      // Canceling the last callback subscribed
+      _streamSubscription?.cancel();
+      // Listening to the callback from showRewardedAd()
+      _streamSubscription = EasyAds.instance.onEvent.listen((event) {
+        if (event.adUnitType == adUnitType) {
+          _streamSubscription?.cancel();
+          goToNextScreen();
+        }
+      });
+    } else {
+      goToNextScreen();
+    }
+  }
+
+  void goToNextScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => Screen2(),
+      ),
     );
   }
 }
