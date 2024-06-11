@@ -2,33 +2,18 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:lib_ads_flutter/ads_splash.dart';
-import 'package:lib_ads_flutter/easy_ads.dart';
-import 'package:lib_ads_flutter/screen2.dart';
-import 'package:lib_ads_flutter/utils/easy_banner_ad.dart';
-import 'package:lib_ads_flutter/utils/i_ad_id_manager.dart';
-import 'package:lib_ads_flutter/utils/test_ad_id_manager.dart';
+import 'call_data/ads_model.dart';
+import 'call_data/network_request.dart';
 
-import 'enums/ad_network.dart';
-import 'enums/ad_unit_type.dart';
-
-const IAdIdManager adIdManager = TestAdIdManager();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await EasyAds.instance.initialize(
-    isShowAppOpenOnAppStateChange: true,
-    adIdManager,
-    unityTestMode: true,
-    adMobAdRequest: const AdRequest(),
-    admobConfiguration: RequestConfiguration(testDeviceIds: []),
-    fbTestingId: '73f92d66-f8f6-4978-999f-b5e0dd62275a',
-    fbTestMode: true,
-    showAdBadge: Platform.isIOS,
-    fbiOSAdvertiserTrackingEnabled: true,
-  );
+  List<AdsModel> list = await NetworkRequest.fetchAdsModel();
+  print('size: ${list.length}');
+  for( final ads in list){
+    print('name: ${ads.name}, id: ${ads.adsId}');
+  }
   runApp(const MyApp());
 }
 
@@ -76,8 +61,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    AdsSplash.instance.init(true, true, "50_50");
-    AdsSplash.instance.showAdsSplash(context);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -89,13 +72,12 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Center(
               child: OrientationBuilder(
                 builder: (BuildContext context, Orientation orientation) {
-                  // bannerAdManager.loadCollapseBanner(context, AdsBannerType.collapsible_bottom, () {});
                   return Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       ElevatedButton(
                         onPressed: () {
-                          _showAd(AdNetwork.admob, AdUnitType.appOpen);
+
                         },
                         child: Text('show inter'),
                       ),
@@ -112,7 +94,6 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
           ),
-          const EasyBannerAd(),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -120,36 +101,6 @@ class _MyHomePageState extends State<MyHomePage> {
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
-  }
-
-  void _showAd(AdNetwork adNetwork, AdUnitType adUnitType) {
-    if (EasyAds.instance.showAd(
-      adUnitType,
-      adNetwork: adNetwork,
-      context: context,
-      loaderDuration: 1,
-    )) {
-      // Canceling the last callback subscribed
-      _streamSubscription?.cancel();
-      // Listening to the callback from showRewardedAd()
-      _streamSubscription = EasyAds.instance.onEvent.listen((event) {
-        if (event.adUnitType == adUnitType) {
-          _streamSubscription?.cancel();
-          goToNextScreen();
-        }
-      });
-    } else {
-      goToNextScreen();
-    }
-  }
-
-  void goToNextScreen() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => Screen2(),
-      ),
     );
   }
 }
