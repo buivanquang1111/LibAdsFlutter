@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import '../../easy_ads_flutter.dart';
@@ -53,10 +54,10 @@ class EasyBannerPlugin extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<EasyBannerPlugin> createState() => _EasyBannerPluginState();
+  State<EasyBannerPlugin> createState() => EasyBannerPluginState();
 }
 
-class _EasyBannerPluginState extends State<EasyBannerPlugin> with WidgetsBindingObserver {
+class EasyBannerPluginState extends State<EasyBannerPlugin> with WidgetsBindingObserver {
   EasyAdBase? _bannerAd;
 
   Timer? _timer;
@@ -275,12 +276,16 @@ class _EasyBannerPluginState extends State<EasyBannerPlugin> with WidgetsBinding
   }
 
   @override
-  void dispose() {
+  void dispose(){
     WidgetsBinding.instance.removeObserver(this);
-    _bannerAd?.dispose();
+    closeCollapse();
     onDestroyed();
 
     super.dispose();
+  }
+
+  Future<void> closeCollapse() async{
+    return _bannerAd?.dispose();
   }
 
   @override

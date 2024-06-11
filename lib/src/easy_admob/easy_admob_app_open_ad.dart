@@ -40,7 +40,7 @@ class EasyAdmobAppOpenAd extends EasyAdBase {
   bool get isAdLoadedFailed => _isAdLoadedFailed;
 
   @override
-  void dispose() {
+  Future<void> dispose() async {
     _appOpenAd?.dispose();
     _appOpenAd = null;
     _isAdLoaded = false;

@@ -6,6 +6,7 @@ import 'package:easy_ads_flutter/easy_ads_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:example/ads/ad_helper.dart';
 import 'package:example/ads/ads.dart';
@@ -73,7 +74,8 @@ class SplashState extends State<SplashScreen> {
                 introAdCtrl!.load();
               }
             }
-            initAndLoadAd();
+            // initAndLoadAd();
+            showAdsSplash();
           } else {
             handleNavigate();
           }
@@ -135,6 +137,37 @@ class SplashState extends State<SplashScreen> {
       EasyAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
       handleNavigate();
     }
+  }
+
+  void showAdsSplash(){
+    final String rateAoa = RemoteConfig.configs[RemoteConfigKey.rate_aoa_inter_splash.name];
+    final bool isShowOpen = RemoteConfig.configs[RemoteConfigKey.open_splash.name];
+    final bool isShownInter = RemoteConfig.configs[RemoteConfigKey.inter_splash.name];
+
+    AdsSplash.instance.init(isShownInter, isShowOpen, rateAoa);
+    AdsSplash.instance.showAdSplash(
+        idOpen: adIdManager.openSplash,
+        idInter: adIdManager.interSplash,
+      onAdShowed: (adNetwork, adUnitType, data) {
+        handleNavigate();
+      },
+      onAdDismissed: (adNetwork, adUnitType, data) {
+        EasyAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
+      },
+      onDisabled: () {
+        EasyAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
+        handleNavigate();
+      },
+      onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
+        EasyAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
+        handleNavigate();
+      },
+      onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
+        EasyAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
+        handleNavigate();
+      },
+    );
+
   }
 
   @override

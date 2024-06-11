@@ -57,7 +57,7 @@ abstract class EasyAdBase {
   bool get isAdLoading;
   bool get isAdLoadedFailed;
 
-  void dispose();
+  Future<void> dispose();
 
   /// This will load ad, It will only load the ad if isAdLoaded is false
   Future<void> load();

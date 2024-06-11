@@ -44,6 +44,7 @@ dependencies:
   adjust_sdk: ^4.37.1
   device_info_plus: ^10.0.1
   smooth_page_indicator: ^1.1.0
+  fluttertoast: ^8.2.6
 
 dev_dependencies:
   flutter_test:

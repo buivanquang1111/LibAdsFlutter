@@ -26,3 +26,4 @@ export 'package:easy_ads_flutter/src/utils/i_ad_id_manager.dart';
 export 'package:easy_ads_flutter/src/utils/test_ads_id.dart';
 export 'package:easy_ads_flutter/src/consent_manager/consent_manager.dart';
 export 'package:google_mobile_ads/google_mobile_ads.dart';
+export 'package:easy_ads_flutter/src/ads_splash.dart';

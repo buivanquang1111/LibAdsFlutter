@@ -37,7 +37,7 @@ class EasyAdmobBannerAd extends EasyAdBase {
   AdNetwork get adNetwork => AdNetwork.admob;
 
   @override
-  void dispose() {
+  Future<void> dispose() async {
     _isAdLoaded = false;
     _isAdLoading = false;
     _isAdLoadedFailed = false;

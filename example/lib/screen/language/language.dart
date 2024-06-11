@@ -1,5 +1,7 @@
 library language;
 
+import 'dart:async';
+
 import 'package:easy_ads_flutter/easy_ads_flutter.dart';
 import 'package:example/common/app_app_bar.dart';
 import 'package:example/common/app_scafold.dart';
@@ -10,8 +12,10 @@ import 'package:example/utils/event_log.dart';
 import 'package:example/utils/language_ultis.dart';
 import 'package:example/utils/preferences_util.dart';
 import 'package:example/utils/remote_config.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:example/config/global_colors.dart';
 import 'package:example/config/global_txt_style.dart';
@@ -19,6 +23,7 @@ import 'package:example/language/l.dart';
 import 'package:example/main.dart';
 
 part 'controller/language_controller.dart';
+
 part 'widgets/language_item.dart';
 
 class LanguageScreen extends StatefulWidget {
@@ -35,6 +40,7 @@ class LanguageScreen extends StatefulWidget {
 
 class LanguageScreenState extends State<LanguageScreen> {
   final controller = Get.find<LanguageController>();
+  final key = GlobalKey<EasyBannerPluginState>();
 
   @override
   void initState() {
@@ -62,7 +68,11 @@ class LanguageScreenState extends State<LanguageScreen> {
               actions: [
                 IconButton(
                   onPressed: () {
-                    controller.foSave();
+                    key.currentState?.closeCollapse().then((value) {
+                      Timer(const Duration(milliseconds: 800),() {
+                        controller.foSave();
+                      },);
+                    },);
                   },
                   icon: const Icon(
                     Icons.done,
@@ -121,7 +131,15 @@ class LanguageScreenState extends State<LanguageScreen> {
             ),
           ),
           !widget.isFromSetting
-              ? EasyNativeAd(
+              ? EasyBannerPlugin(
+                  key: key,
+                  type: EasyAdsBannerType.collapsible_bottom,
+                  adId: adIdManager.collapseHome,
+                  refreshRateSec: 10,
+                  cbFetchIntervalSec: 5,
+                  config: RemoteConfig.configs[RemoteConfigKey.banner_all.name],
+                  visibilityDetectorKey: 'banner-lang')
+              : EasyNativeAd(
                   factoryId: adIdManager.nativeLanguageFactory,
                   adId: adIdManager.nativeLanguage,
                   height: adIdManager.largeNativeAdHeight,
@@ -132,11 +150,6 @@ class LanguageScreenState extends State<LanguageScreen> {
                       .configs[RemoteConfigKey.native_language.name],
                   visibilityDetectorKey: 'native-lang',
                 )
-              : EasyBannerAd(
-                  type: EasyAdsBannerType.adaptive,
-                  adId: adIdManager.bannerAll,
-                  config: RemoteConfig.configs[RemoteConfigKey.banner_all.name],
-                  visibilityDetectorKey: 'banner-lang'),
         ],
       ),
     );

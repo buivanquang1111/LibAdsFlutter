@@ -43,7 +43,7 @@ class EasyAdmobRewardedAd extends EasyAdBase {
   bool get isAdLoadedFailed => _isAdLoadedFailed;
 
   @override
-  void dispose() {
+  Future<void> dispose() async {
     _isAdLoaded = false;
     _isAdLoading = false;
     _isAdLoadedFailed = false;
