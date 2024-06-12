@@ -1,21 +1,20 @@
-import 'package:easy_ads_flutter/src/easy_ad_base.dart';
-import 'package:easy_ads_flutter/src/enums/ad_network.dart';
-import 'package:easy_ads_flutter/src/enums/ad_placement_type.dart';
-import 'package:easy_ads_flutter/src/enums/ad_unit_type.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
-import '../easy_ads.dart';
-import '../easy_ads/easy_loading_ad.dart';
+import '../../admob_ads_flutter.dart';
+import '../amazic_ads/loading_ads.dart';
+import '../admob_ads.dart';
+import '../enums/ad_network.dart';
+import '../enums/ad_unit_type.dart';
 
-class EasyAdmobPreloadNativeAd extends EasyAdBase {
+class AdmobBannerAd extends AdsBase {
   final AdRequest adRequest;
-  final EasyAdsPlacementType type;
+  final AdSize adSize;
 
-  EasyAdmobPreloadNativeAd({
+  AdmobBannerAd({
     required super.adUnitId,
     required this.adRequest,
-    required this.type,
+    this.adSize = AdSize.banner,
     super.onAdLoaded,
     super.onAdShowed,
     super.onAdClicked,
@@ -26,18 +25,14 @@ class EasyAdmobPreloadNativeAd extends EasyAdBase {
     super.onPaidEvent,
   });
 
-  PreloadNativeAd? _nativeAd;
-
+  BannerAd? _bannerAd;
   bool _isAdLoaded = false;
   bool _isAdLoading = false;
   bool _isAdLoadedFailed = false;
 
-  bool _isAdShowed = false;
-
-  bool get isAdShowed => _isAdShowed;
-
   @override
-  AdUnitType get adUnitType => AdUnitType.preloadNative;
+  AdUnitType get adUnitType => AdUnitType.banner;
+
   @override
   AdNetwork get adNetwork => AdNetwork.admob;
 
@@ -46,13 +41,15 @@ class EasyAdmobPreloadNativeAd extends EasyAdBase {
     _isAdLoaded = false;
     _isAdLoading = false;
     _isAdLoadedFailed = false;
-    _isAdShowed = false;
-    _nativeAd?.dispose();
-    _nativeAd = null;
+    _bannerAd?.dispose();
+    _bannerAd = null;
   }
 
   @override
   bool get isAdLoaded => _isAdLoaded;
+
+  @override
+  bool get isAdLoading => _isAdLoading;
 
   @override
   bool get isAdLoadedFailed => _isAdLoadedFailed;
@@ -60,44 +57,49 @@ class EasyAdmobPreloadNativeAd extends EasyAdBase {
   @override
   Future<void> load() async {
     if (_isAdLoaded) return;
-    _nativeAd = PreloadNativeAd(
+
+    _bannerAd = BannerAd(
+      size: adSize,
       adUnitId: adUnitId,
-      request: adRequest,
-      listener: NativeAdListener(
+      listener: BannerAdListener(
         onAdLoaded: (Ad ad) {
-          _nativeAd = ad as PreloadNativeAd?;
+          _bannerAd = ad as BannerAd?;
           _isAdLoaded = true;
-          _isAdLoading = false;
           _isAdLoadedFailed = false;
-          EasyAds.instance.onAdLoadedMethod(adNetwork, adUnitType, ad);
+          AdmobAds.instance.onAdLoadedMethod(adNetwork, adUnitType, ad);
           onAdLoaded?.call(adNetwork, adUnitType, ad);
         },
         onAdFailedToLoad: (Ad ad, LoadAdError error) {
-          _nativeAd = null;
+          _bannerAd = null;
           _isAdLoaded = false;
           _isAdLoading = false;
           _isAdLoadedFailed = true;
-          EasyAds.instance.onAdFailedToLoadMethod(
+          AdmobAds.instance.onAdFailedToLoadMethod(
               adNetwork, adUnitType, ad, error.toString());
           onAdFailedToLoad?.call(adNetwork, adUnitType, ad, error.toString());
           ad.dispose();
         },
         onAdClicked: (ad) {
-          EasyAds.instance.appLifecycleReactor?.setIsExcludeScreen(true);
-          EasyAds.instance.onAdClickedMethod(adNetwork, adUnitType, ad);
+          AdmobAds.instance.appLifecycleReactor?.setIsExcludeScreen(true);
+          AdmobAds.instance.onAdClickedMethod(adNetwork, adUnitType, ad);
           onAdClicked?.call(adNetwork, adUnitType, ad);
         },
         onAdClosed: (Ad ad) {
-          EasyAds.instance.onAdDismissedMethod(adNetwork, adUnitType, ad);
+          AdmobAds.instance.onAdDismissedMethod(adNetwork, adUnitType, ad);
           onAdDismissed?.call(adNetwork, adUnitType, ad);
         },
         onAdImpression: (Ad ad) {
-          _isAdShowed = true;
-          EasyAds.instance.onAdShowedMethod(adNetwork, adUnitType, ad);
-          onAdShowed?.call(adNetwork, adUnitType, ad);
+          Future.delayed(
+            const Duration(milliseconds: 500),
+            () {
+              _isAdLoading = false;
+              AdmobAds.instance.onAdShowedMethod(adNetwork, adUnitType, ad);
+              onAdShowed?.call(adNetwork, adUnitType, ad);
+            },
+          );
         },
         onPaidEvent: (ad, revenue, type, currencyCode) {
-          EasyAds.instance.onPaidEventMethod(
+          AdmobAds.instance.onPaidEventMethod(
             adNetwork: adNetwork,
             adUnitType: adUnitType,
             revenue: revenue / 1000000,
@@ -113,12 +115,10 @@ class EasyAdmobPreloadNativeAd extends EasyAdBase {
           );
         },
       ),
+      request: adRequest,
     );
-    _nativeAd!.load();
     _isAdLoading = true;
-    _isAdLoaded = false;
-    _isAdLoadedFailed = false;
-    _isAdShowed = false;
+    _bannerAd?.load();
   }
 
   @override
@@ -130,51 +130,46 @@ class EasyAdmobPreloadNativeAd extends EasyAdBase {
     EdgeInsetsGeometry? padding,
     EdgeInsetsGeometry? margin,
   }) {
-    if (!EasyAds.instance.isEnabled) {
-      return const SizedBox();
-    }
-    final ad = _nativeAd;
-    if (ad == null && !_isAdLoaded) {
+    if (!AdmobAds.instance.isEnabled) {
       return const SizedBox(
         height: 1,
         width: 1,
       );
     }
-
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: borderRadius ?? BorderRadius.zero,
-        border: border,
-        color: color,
-      ),
-      padding: padding,
-      margin: margin,
-      child: ClipRRect(
-        borderRadius: borderRadius ?? BorderRadius.zero,
-        child: Container(
-          color: color,
-          height: height,
-          child: Stack(
-            children: [
-              if (ad != null && isAdLoaded) AdWidget(ad: ad),
-              if (_isAdLoading) EasyLoadingAd(height: height ?? 0),
-            ],
+    final ad = _bannerAd;
+    if (ad == null && !isAdLoaded) {
+      return const SizedBox(
+        height: 1,
+        width: 1,
+      );
+    }
+    return Center(
+      child: Container(
+        height: adSize.height.toDouble(),
+        width: adSize.width.toDouble(),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          border: Border(
+            top: BorderSide(color: Colors.black, width: 2),
+            bottom: BorderSide(color: Colors.black, width: 2),
           ),
+        ),
+        child: Stack(
+          children: [
+            if (ad != null && isAdLoaded)
+              AdWidget(
+                ad: ad,
+              ),
+            if (_isAdLoading)
+              Container(
+                color: Colors.white,
+                child: LoadingAds(
+                  height: adSize.height.toDouble(),
+                ),
+              ),
+          ],
         ),
       ),
     );
-  }
-
-  @override
-  bool get isAdLoading => _isAdLoading;
-
-  Future<void> setPlatformView({
-    String? factoryId,
-    NativeTemplateStyle? nativeTemplateStyle,
-  }) async {
-    if (_nativeAd == null || !isAdLoaded) {
-      return;
-    }
-    return _nativeAd!.setPlatformView(factoryId, nativeTemplateStyle);
   }
 }

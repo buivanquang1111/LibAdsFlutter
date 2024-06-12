@@ -1,13 +1,13 @@
 import 'dart:async';
 
-import 'package:easy_ads_flutter/easy_ads_flutter.dart';
+import 'package:amazic_ads_flutter/admob_ads_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-class EasyBannerAd extends StatefulWidget {
+class BannerAds extends StatefulWidget {
   final AdNetwork adNetwork;
   final String adId;
-  final EasyAdsBannerType type;
+  final AdsBannerType type;
 
   final EasyAdCallback? onAdLoaded;
   final EasyAdCallback? onAdShowed;
@@ -26,10 +26,10 @@ class EasyBannerAd extends StatefulWidget {
 
   final bool shouldReload;
 
-  const EasyBannerAd({
+  const BannerAds({
     this.adNetwork = AdNetwork.admob,
     required this.adId,
-    this.type = EasyAdsBannerType.standard,
+    this.type = AdsBannerType.standard,
     this.onAdLoaded,
     this.onAdShowed,
     this.onAdClicked,
@@ -48,11 +48,11 @@ class EasyBannerAd extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<EasyBannerAd> createState() => _EasyBannerAdState();
+  State<BannerAds> createState() => _BannerAdsState();
 }
 
-class _EasyBannerAdState extends State<EasyBannerAd> with WidgetsBindingObserver {
-  EasyAdBase? _bannerAd;
+class _BannerAdsState extends State<BannerAds> with WidgetsBindingObserver {
+  AdsBase? _bannerAd;
   int loadFailedCount = 0;
   static const int maxFailedTimes = 3;
 
@@ -108,11 +108,11 @@ class _EasyBannerAdState extends State<EasyBannerAd> with WidgetsBindingObserver
       return;
     }
 
-    if (!EasyAds.instance.isEnabled) {
+    if (!AdmobAds.instance.isEnabled) {
       widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.banner, null);
       return;
     }
-    if (await EasyAds.instance.isDeviceOffline()) {
+    if (await AdmobAds.instance.isDeviceOffline()) {
       widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.banner, null);
       return;
     }
@@ -195,8 +195,8 @@ class _EasyBannerAdState extends State<EasyBannerAd> with WidgetsBindingObserver
 
         break;
       // case AppLifecycleState.paused:
-      //   if ((widget.type == EasyAdsBannerType.collapsible_bottom ||
-      //           widget.type == EasyAdsBannerType.collapsible_top) &&
+      //   if ((widget.type == AdsBannerType.collapsible_bottom ||
+      //           widget.type == AdsBannerType.collapsible_top) &&
       //       _bannerAd != null) {
       //     _bannerAd!.dispose();
       //     _bannerAd = null;
@@ -221,7 +221,7 @@ class _EasyBannerAdState extends State<EasyBannerAd> with WidgetsBindingObserver
       }
     }
 
-    _bannerAd ??= EasyAds.instance.createBanner(
+    _bannerAd ??= AdmobAds.instance.createBanner(
       adNetwork: widget.adNetwork,
       adId: widget.adId,
       type: widget.type,

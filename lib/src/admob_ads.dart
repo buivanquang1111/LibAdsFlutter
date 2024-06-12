@@ -4,27 +4,31 @@ import 'dart:async';
 import 'dart:ui' as ui;
 
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:easy_ads_flutter/channel/easy_ad_platform_interface.dart';
-import 'package:easy_ads_flutter/src/utils/easy_logger.dart';
+import 'package:amazic_ads_flutter/src/utils/amazic_logger.dart';
 
 import 'package:flutter/material.dart';
 
 import 'package:visibility_detector/visibility_detector.dart';
 
+import '../admob_ads_flutter.dart';
+import '../channel/ad_platform_interface.dart';
 import '../channel/loading_channel.dart';
-import '../easy_ads_flutter.dart';
-import 'easy_admob/easy_admob_interstitial_ad.dart';
-import 'easy_admob/easy_admob_rewarded_ad.dart';
-import 'easy_ads/easy_splash_ad_with_2_inter.dart';
-import 'easy_ads/easy_splash_ad_with_3_inter.dart';
-import 'easy_ads/easy_splash_ad_with_interstitial_and_app_open.dart';
+import 'ads_base.dart';
+import 'amazic_admob/admob_app_open_ad.dart';
+import 'amazic_admob/admob_banner_ad.dart';
+import 'amazic_admob/admob_interstitial_ad.dart';
+import 'amazic_admob/admob_native_ad.dart';
+import 'amazic_admob/admob_preload_native_ad.dart';
+import 'amazic_admob/admob_rewarded_ad.dart';
+import 'amazic_ads/splash_ad_with_2_id_inter.dart';
+import 'amazic_ads/splash_ad_with_3_id_inter.dart';
+import 'amazic_ads/splash_ad_with_interstitial_and_app_open.dart';
+part 'utils/ads_extension.dart';
 
-part 'utils/easy_ads_extension.dart';
+class AdmobAds {
+  AdmobAds._AdmobAds();
 
-class EasyAds {
-  EasyAds._easyAds();
-
-  static final EasyAds instance = EasyAds._easyAds();
+  static final AdmobAds instance = AdmobAds._AdmobAds();
   AppLifecycleReactor? appLifecycleReactor;
   GlobalKey<NavigatorState>? navigatorKey;
 
@@ -53,15 +57,15 @@ class EasyAds {
   final _onEventController = StreamController<AdEvent>.broadcast();
 
   /// Preload interstitial normal
-  EasyAdBase? interNormal;
+  AdsBase? interNormal;
   int loadTimesFailedInterNormal = 0;
 
   /// Preload interstitial priority
-  EasyAdBase? interPriority;
+  AdsBase? interPriority;
   int loadTimesFailedInterPriority = 0;
 
   /// [_logger] is used to show Ad logs in the console
-  final EasyLogger _logger = EasyLogger();
+  final AmazicLogger _logger = AmazicLogger();
   AdSize? admobAdSize;
 
   RequestConfiguration? admobConfiguration;
@@ -90,7 +94,7 @@ class EasyAds {
     if (adIdManager.admobAdIds?.appId.isNotEmpty != true) {
       return;
     }
-    if (EasyAds.instance.admobConfiguration != null) {
+    if (AdmobAds.instance.admobConfiguration != null) {
       await MobileAds.instance.updateRequestConfiguration(admobConfiguration!);
     }
 
@@ -177,14 +181,14 @@ class EasyAds {
     }
   }
 
-  /// Returns [EasyAdBase] if ad is created successfully. It assumes that you have already assigned banner id in Ad Id Manager
+  /// Returns [AdsBase] if ad is created successfully. It assumes that you have already assigned banner id in Ad Id Manager
   ///
   /// if [adNetwork] is provided, only that network's ad would be created. For now, only unity and admob banner is supported
   /// [admobAdSize] is used to provide ad banner size
-  EasyAdBase? createBanner({
+  AdsBase? createBanner({
     required AdNetwork adNetwork,
     required String adId,
-    required EasyAdsBannerType type,
+    required AdsBannerType type,
     EasyAdCallback? onAdLoaded,
     EasyAdCallback? onAdShowed,
     EasyAdCallback? onAdClicked,
@@ -194,11 +198,11 @@ class EasyAds {
     EasyAdEarnedReward? onEarnedReward,
     EasyAdOnPaidEvent? onPaidEvent,
   }) {
-    EasyAdBase? ad;
+    AdsBase? ad;
     if (adNetwork == AdNetwork.admob) {
       /// Get ad request
       AdRequest adRequest = _adRequest;
-      if (type == EasyAdsBannerType.collapsible_bottom) {
+      if (type == AdsBannerType.collapsible_bottom) {
         adRequest = AdRequest(
           httpTimeoutMillis: _adRequest.httpTimeoutMillis,
           contentUrl: _adRequest.contentUrl,
@@ -208,7 +212,7 @@ class EasyAds {
           nonPersonalizedAds: _adRequest.nonPersonalizedAds,
           extras: {'collapsible': 'bottom'},
         );
-      } else if (type == EasyAdsBannerType.collapsible_top) {
+      } else if (type == AdsBannerType.collapsible_top) {
         adRequest = AdRequest(
           httpTimeoutMillis: _adRequest.httpTimeoutMillis,
           contentUrl: _adRequest.contentUrl,
@@ -224,14 +228,14 @@ class EasyAds {
         type: type,
       );
 
-      final String id = EasyAds.instance.isDevMode
-          ? (type == EasyAdsBannerType.collapsible_bottom ||
-                  type == EasyAdsBannerType.collapsible_top)
+      final String id = AdmobAds.instance.isDevMode
+          ? (type == AdsBannerType.collapsible_bottom ||
+                  type == AdsBannerType.collapsible_top)
               ? TestAdsId.admobBannerCollapseId
               : TestAdsId.admobBannerId
           : adId;
 
-      ad = EasyAdmobBannerAd(
+      ad = AdmobBannerAd(
         adUnitId: id,
         adSize: adSize,
         adRequest: adRequest,
@@ -248,7 +252,7 @@ class EasyAds {
     return ad;
   }
 
-  EasyAdBase? createNative({
+  AdsBase? createNative({
     required AdNetwork adNetwork,
     required String factoryId,
     required String adId,
@@ -261,12 +265,12 @@ class EasyAds {
     EasyAdEarnedReward? onEarnedReward,
     EasyAdOnPaidEvent? onPaidEvent,
   }) {
-    EasyAdBase? ad;
+    AdsBase? ad;
     switch (adNetwork) {
       default:
         final String id =
-            EasyAds.instance.isDevMode ? TestAdsId.admobNativeId : adId;
-        ad = EasyAdmobNativeAd(
+            AdmobAds.instance.isDevMode ? TestAdsId.admobNativeId : adId;
+        ad = AdmobNativeAd(
           adUnitId: id,
           factoryId: factoryId,
           adRequest: _adRequest,
@@ -285,9 +289,9 @@ class EasyAds {
     return ad;
   }
 
-  EasyAdBase? createPreloadNative({
+  AdsBase? createPreloadNative({
     required AdNetwork adNetwork,
-    required EasyAdsPlacementType type,
+    required AdsPlacementType type,
     required String adId,
     EasyAdCallback? onAdLoaded,
     EasyAdCallback? onAdShowed,
@@ -298,12 +302,12 @@ class EasyAds {
     EasyAdEarnedReward? onEarnedReward,
     EasyAdOnPaidEvent? onPaidEvent,
   }) {
-    EasyAdBase? ad;
+    AdsBase? ad;
     switch (adNetwork) {
       default:
         final String id =
-            EasyAds.instance.isDevMode ? TestAdsId.admobNativeId : adId;
-        ad = EasyAdmobPreloadNativeAd(
+            AdmobAds.instance.isDevMode ? TestAdsId.admobNativeId : adId;
+        ad = AdmobPreloadNativeAd(
           adUnitId: id,
           type: type,
           adRequest: _adRequest,
@@ -322,7 +326,7 @@ class EasyAds {
     return ad;
   }
 
-  EasyAdBase? createInterstitial({
+  AdsBase? createInterstitial({
     required AdNetwork adNetwork,
     required String adId,
     EasyAdCallback? onAdLoaded,
@@ -334,12 +338,12 @@ class EasyAds {
     EasyAdEarnedReward? onEarnedReward,
     EasyAdOnPaidEvent? onPaidEvent,
   }) {
-    EasyAdBase? ad;
+    AdsBase? ad;
     switch (adNetwork) {
       default:
         final String id =
-            EasyAds.instance.isDevMode ? TestAdsId.admobInterstitialId : adId;
-        ad = EasyAdmobInterstitialAd(
+            AdmobAds.instance.isDevMode ? TestAdsId.admobInterstitialId : adId;
+        ad = AdmobInterstitialAd(
           adUnitId: id,
           adRequest: _adRequest,
           onAdLoaded: onAdLoaded,
@@ -356,7 +360,7 @@ class EasyAds {
     return ad;
   }
 
-  EasyAdBase? createReward({
+  AdsBase? createReward({
     required AdNetwork adNetwork,
     required String adId,
     EasyAdCallback? onAdLoaded,
@@ -368,12 +372,12 @@ class EasyAds {
     EasyAdEarnedReward? onEarnedReward,
     EasyAdOnPaidEvent? onPaidEvent,
   }) {
-    EasyAdBase? ad;
+    AdsBase? ad;
     switch (adNetwork) {
       default:
         final String id =
-            EasyAds.instance.isDevMode ? TestAdsId.admobRewardId : adId;
-        ad = EasyAdmobRewardedAd(
+            AdmobAds.instance.isDevMode ? TestAdsId.admobRewardId : adId;
+        ad = AdmobRewardedAd(
           adUnitId: id,
           adRequest: _adRequest,
           onAdLoaded: onAdLoaded,
@@ -391,7 +395,7 @@ class EasyAds {
     return ad;
   }
 
-  EasyAdBase? createAppOpenAd({
+  AdsBase? createAppOpenAd({
     required AdNetwork adNetwork,
     required String adId,
     EasyAdCallback? onAdLoaded,
@@ -403,12 +407,12 @@ class EasyAds {
     EasyAdEarnedReward? onEarnedReward,
     EasyAdOnPaidEvent? onPaidEvent,
   }) {
-    EasyAdBase? ad;
+    AdsBase? ad;
     switch (adNetwork) {
       default:
         String id =
-            EasyAds.instance.isDevMode ? TestAdsId.admobOpenResume : adId;
-        ad = EasyAdmobAppOpenAd(
+            AdmobAds.instance.isDevMode ? TestAdsId.admobOpenResume : adId;
+        ad = AdmobAppOpenAd(
           adUnitId: id,
           adRequest: _adRequest,
           onAdLoaded: onAdLoaded,
@@ -462,17 +466,17 @@ class EasyAds {
       onAdClicked: onAdClicked,
       onAdDismissed: (adNetwork, adUnitType, data) {
         onAdDismissed?.call(adNetwork, adUnitType, data);
-        EasyAds.instance.setFullscreenAdShowing(false);
+        AdmobAds.instance.setFullscreenAdShowing(false);
       },
       onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
         LoadingChannel.closeAd();
         onAdFailedToLoad?.call(adNetwork, adUnitType, data, errorMessage);
-        EasyAds.instance.setFullscreenAdShowing(false);
+        AdmobAds.instance.setFullscreenAdShowing(false);
       },
       onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
         LoadingChannel.closeAd();
         onAdFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);
-        EasyAds.instance.setFullscreenAdShowing(false);
+        AdmobAds.instance.setFullscreenAdShowing(false);
       },
       onAdLoaded: (adNetwork, adUnitType, data) {
         onAdLoaded?.call(adNetwork, adUnitType, data);
@@ -492,9 +496,9 @@ class EasyAds {
     }
 
     LoadingChannel.setMethodCallHandler(appOpen.show);
-    EasyAds.instance.setFullscreenAdShowing(true);
+    AdmobAds.instance.setFullscreenAdShowing(true);
 
-    EasyAdPlatform.instance.showLoadingAd(getPrimaryColor());
+    AdPlatform.instance.showLoadingAd(getPrimaryColor());
     appOpen.load();
   }
 
@@ -550,17 +554,17 @@ class EasyAds {
       onAdDismissed: (adNetwork, adUnitType, data) {
         _lastTimeDismissInter = DateTime.now().millisecondsSinceEpoch;
         onAdDismissed?.call(adNetwork, adUnitType, data);
-        EasyAds.instance.setFullscreenAdShowing(false);
+        AdmobAds.instance.setFullscreenAdShowing(false);
       },
       onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
         LoadingChannel.closeAd();
         onAdFailedToLoad?.call(adNetwork, adUnitType, data, errorMessage);
-        EasyAds.instance.setFullscreenAdShowing(false);
+        AdmobAds.instance.setFullscreenAdShowing(false);
       },
       onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
         LoadingChannel.closeAd();
         onAdFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);
-        EasyAds.instance.setFullscreenAdShowing(false);
+        AdmobAds.instance.setFullscreenAdShowing(false);
       },
       onAdLoaded: (adNetwork, adUnitType, data) {
         onAdLoaded?.call(adNetwork, adUnitType, data);
@@ -579,9 +583,9 @@ class EasyAds {
     }
 
     LoadingChannel.setMethodCallHandler(interstitialAd.show);
-    EasyAds.instance.setFullscreenAdShowing(true);
+    AdmobAds.instance.setFullscreenAdShowing(true);
 
-    EasyAdPlatform.instance.showLoadingAd(getPrimaryColor());
+    AdPlatform.instance.showLoadingAd(getPrimaryColor());
     interstitialAd.load();
   }
 
@@ -629,17 +633,17 @@ class EasyAds {
       onAdClicked: onAdClicked,
       onAdDismissed: (adNetwork, adUnitType, data) {
         onAdDismissed?.call(adNetwork, adUnitType, data);
-        EasyAds.instance.setFullscreenAdShowing(false);
+        AdmobAds.instance.setFullscreenAdShowing(false);
       },
       onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
         LoadingChannel.closeAd();
         onAdFailedToLoad?.call(adNetwork, adUnitType, data, errorMessage);
-        EasyAds.instance.setFullscreenAdShowing(false);
+        AdmobAds.instance.setFullscreenAdShowing(false);
       },
       onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
         LoadingChannel.closeAd();
         onAdFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);
-        EasyAds.instance.setFullscreenAdShowing(false);
+        AdmobAds.instance.setFullscreenAdShowing(false);
       },
       onAdLoaded: (adNetwork, adUnitType, data) {
         onAdLoaded?.call(adNetwork, adUnitType, data);
@@ -659,9 +663,9 @@ class EasyAds {
     }
 
     LoadingChannel.setMethodCallHandler(rewardAd.show);
-    EasyAds.instance.setFullscreenAdShowing(true);
+    AdmobAds.instance.setFullscreenAdShowing(true);
 
-    EasyAdPlatform.instance.showLoadingAd(getPrimaryColor());
+    AdPlatform.instance.showLoadingAd(getPrimaryColor());
     rewardAd.load();
   }
 
@@ -686,11 +690,11 @@ class EasyAds {
     EasyAdCallback? onAdHighDismissed,
     EasyAdOnPaidEvent? onHighPaidEvent,
     required bool configHigh,
-    Function(EasyAdsPlacementType type)? onShowed,
-    Function(EasyAdsPlacementType type)? onDismissed,
+    Function(AdsPlacementType type)? onShowed,
+    Function(AdsPlacementType type)? onDismissed,
     Function()? onFailedToLoad,
-    Function(EasyAdsPlacementType type)? onFailedToShow,
-    Function(EasyAdsPlacementType type)? onClicked,
+    Function(AdsPlacementType type)? onFailedToShow,
+    Function(AdsPlacementType type)? onClicked,
   }) async {
     if (!isEnabled) {
       onDisabled?.call();
@@ -720,7 +724,7 @@ class EasyAds {
     // ignore: use_build_context_synchronously
     navigatorKey?.currentState?.pushAndRemoveUntil(
       MaterialPageRoute(
-        builder: (context) => EasySplashAdWith2Inter(
+        builder: (context) => SplashAdWith2IdInter(
           adNetwork: adNetwork,
           interstitialSplashId: interstitialSplashId,
           interstitialSplashHighId: interstitialSplashHighId,
@@ -782,11 +786,11 @@ class EasyAds {
     EasyAdCallback? onAdHighDismissed,
     EasyAdOnPaidEvent? onHighPaidEvent,
     required bool configHigh,
-    Function(EasyAdsPlacementType type)? onShowed,
-    Function(EasyAdsPlacementType type)? onDismissed,
+    Function(AdsPlacementType type)? onShowed,
+    Function(AdsPlacementType type)? onDismissed,
     Function()? onFailedToLoad,
-    Function(EasyAdsPlacementType type)? onFailedToShow,
-    Function(EasyAdsPlacementType type)? onClicked,
+    Function(AdsPlacementType type)? onFailedToShow,
+    Function(AdsPlacementType type)? onClicked,
   }) async {
     if (!isEnabled) {
       onDisabled?.call();
@@ -814,7 +818,7 @@ class EasyAds {
     // ignore: use_build_context_synchronously
     navigatorKey?.currentState?.pushAndRemoveUntil(
       MaterialPageRoute(
-        builder: (context) => EasySplashAdWith3Inter(
+        builder: (context) => SplashAdWith3IdInter(
           adNetwork: adNetwork,
           interstitialSplashId: interstitialSplashId,
           interstitialSplashMediumId: interstitialSplashMediumId,
@@ -902,7 +906,7 @@ class EasyAds {
     // ignore: use_build_context_synchronously
     navigatorKey?.currentState?.push(
       MaterialPageRoute(
-        builder: (context) => EasySplashAdWithInterstitialAndAppOpen(
+        builder: (context) => SplashAdWithInterstitialAndAppOpen(
           adNetwork: adNetwork,
           interstitialSplashAdId: interstitialSplashAdId,
           appOpenAdId: appOpenAdId,
@@ -934,7 +938,7 @@ class EasyAds {
   }
 
   AdSize getAdmobAdSize({
-    EasyAdsBannerType type = EasyAdsBannerType.standard,
+    AdsBannerType type = AdsBannerType.standard,
   }) {
     if (admobAdSize == null) {
       if (navigatorKey?.currentContext != null) {
@@ -951,11 +955,11 @@ class EasyAds {
       return AdSize.banner;
     }
     switch (type) {
-      case EasyAdsBannerType.standard:
+      case AdsBannerType.standard:
         return AdSize.banner;
-      case EasyAdsBannerType.adaptive:
-      case EasyAdsBannerType.collapsible_bottom:
-      case EasyAdsBannerType.collapsible_top:
+      case AdsBannerType.adaptive:
+      case AdsBannerType.collapsible_bottom:
+      case AdsBannerType.collapsible_top:
         return admobAdSize!;
     }
   }
@@ -970,7 +974,7 @@ class EasyAds {
   }
 
   Future<bool?> getConsentResult() async {
-    return await EasyAdPlatform.instance.getConsentResult();
+    return await AdPlatform.instance.getConsentResult();
   }
 
   void logInfo(String message) => _logger.logInfo(message);

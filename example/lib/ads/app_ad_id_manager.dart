@@ -1,4 +1,4 @@
-import 'package:easy_ads_flutter/easy_ads_flutter.dart';
+import 'package:amazic_ads_flutter/admob_ads_flutter.dart';
 
 abstract class AppAdIdManager extends IAdIdManager {
   AppAdIdManager();

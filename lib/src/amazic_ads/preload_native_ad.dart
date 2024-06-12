@@ -1,22 +1,23 @@
 import 'dart:async';
 
-import 'package:easy_ads_flutter/src/easy_ads/easy_loading_ad.dart';
 import 'package:flutter/material.dart';
 
-import '../../easy_ads_flutter.dart';
+import '../../admob_ads_flutter.dart';
+import '../amazic_admob/admob_preload_native_ad.dart';
+import 'loading_ads.dart';
 
-class EasyPreloadNativeController {
+class PreloadNativeController {
   final AdNetwork adNetwork;
 
-  EasyAdBase? nativeNormal;
+  AdsBase? nativeNormal;
   final String? nativeNormalId;
   int loadTimesFailedNativeNormal = 0;
 
-  EasyAdBase? nativeMedium;
+  AdsBase? nativeMedium;
   final String? nativeMediumId;
   int loadTimesFailedNativeMedium = 0;
 
-  EasyAdBase? nativeHigh;
+  AdsBase? nativeHigh;
   final String? nativeHighId;
   int loadTimesFailedNativeHigh = 0;
 
@@ -25,7 +26,7 @@ class EasyPreloadNativeController {
 
   final ValueNotifier<bool> isPreparing = ValueNotifier(false);
 
-  EasyPreloadNativeController({
+  PreloadNativeController({
     this.adNetwork = AdNetwork.admob,
     required this.nativeNormalId,
     required this.nativeMediumId,
@@ -52,11 +53,11 @@ class EasyPreloadNativeController {
   }
 
   Future<void> load() async {
-    if (!EasyAds.instance.isEnabled) {
+    if (!AdmobAds.instance.isEnabled) {
       return;
     }
 
-    if (await EasyAds.instance.isDeviceOffline()) {
+    if (await AdmobAds.instance.isDeviceOffline()) {
       return;
     }
 
@@ -82,11 +83,11 @@ class EasyPreloadNativeController {
       nativeNormal = null;
     }
 
-    if (!EasyAds.instance.isEnabled) {
+    if (!AdmobAds.instance.isEnabled) {
       return;
     }
 
-    if (await EasyAds.instance.isDeviceOffline()) {
+    if (await AdmobAds.instance.isDeviceOffline()) {
       return;
     }
     if (nativeNormalId?.isNotEmpty != true) {
@@ -96,10 +97,10 @@ class EasyPreloadNativeController {
       return;
     }
 
-    nativeNormal = EasyAds.instance.createPreloadNative(
+    nativeNormal = AdmobAds.instance.createPreloadNative(
       adNetwork: adNetwork,
       adId: nativeNormalId!,
-      type: EasyAdsPlacementType.normal,
+      type: AdsPlacementType.normal,
       onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
         if (loadTimesFailedNativeNormal < limitLoad) {
           loadTimesFailedNativeNormal++;
@@ -123,11 +124,11 @@ class EasyPreloadNativeController {
       nativeMedium = null;
     }
 
-    if (!EasyAds.instance.isEnabled) {
+    if (!AdmobAds.instance.isEnabled) {
       return;
     }
 
-    if (await EasyAds.instance.isDeviceOffline()) {
+    if (await AdmobAds.instance.isDeviceOffline()) {
       return;
     }
     if (nativeMediumId?.isNotEmpty != true) {
@@ -137,10 +138,10 @@ class EasyPreloadNativeController {
       return;
     }
 
-    nativeMedium = EasyAds.instance.createPreloadNative(
+    nativeMedium = AdmobAds.instance.createPreloadNative(
       adNetwork: adNetwork,
       adId: nativeMediumId!,
-      type: EasyAdsPlacementType.med,
+      type: AdsPlacementType.med,
       onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
         if (loadTimesFailedNativeMedium < limitLoad) {
           loadTimesFailedNativeMedium++;
@@ -164,11 +165,11 @@ class EasyPreloadNativeController {
       nativeHigh = null;
     }
 
-    if (!EasyAds.instance.isEnabled) {
+    if (!AdmobAds.instance.isEnabled) {
       return;
     }
 
-    if (await EasyAds.instance.isDeviceOffline()) {
+    if (await AdmobAds.instance.isDeviceOffline()) {
       return;
     }
     if (nativeHighId?.isNotEmpty != true) {
@@ -178,10 +179,10 @@ class EasyPreloadNativeController {
       return;
     }
 
-    nativeHigh = EasyAds.instance.createPreloadNative(
+    nativeHigh = AdmobAds.instance.createPreloadNative(
       adNetwork: adNetwork,
       adId: nativeHighId!,
-      type: EasyAdsPlacementType.high,
+      type: AdsPlacementType.high,
       onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
         if (loadTimesFailedNativeHigh < limitLoad) {
           loadTimesFailedNativeHigh++;
@@ -199,13 +200,13 @@ class EasyPreloadNativeController {
     await nativeHigh!.load();
   }
 
-  Future<void> prepareAds(Function(EasyAdBase? adBase)? onPrepaired) async {
-    if (!EasyAds.instance.isEnabled) {
+  Future<void> prepareAds(Function(AdsBase? adBase)? onPrepaired) async {
+    if (!AdmobAds.instance.isEnabled) {
       onPrepaired?.call(null);
       return;
     }
 
-    if (await EasyAds.instance.isDeviceOffline()) {
+    if (await AdmobAds.instance.isDeviceOffline()) {
       onPrepaired?.call(null);
       return;
     }
@@ -215,21 +216,21 @@ class EasyPreloadNativeController {
     }
 
     // Todo: Must check network later
-    if (nativeHigh?.isAdLoaded == true && !(nativeHigh as EasyAdmobPreloadNativeAd).isAdShowed) {
+    if (nativeHigh?.isAdLoaded == true && !(nativeHigh as AdmobPreloadNativeAd).isAdShowed) {
       onPrepaired?.call(nativeHigh!);
       return;
     }
 
     // Todo: Must check network later
     if (nativeMedium?.isAdLoaded == true &&
-        !(nativeMedium as EasyAdmobPreloadNativeAd).isAdShowed) {
+        !(nativeMedium as AdmobPreloadNativeAd).isAdShowed) {
       onPrepaired?.call(nativeMedium!);
       return;
     }
 
     // Todo: Must check network later
     if (nativeNormal?.isAdLoaded == true &&
-        !(nativeNormal as EasyAdmobPreloadNativeAd).isAdShowed) {
+        !(nativeNormal as AdmobPreloadNativeAd).isAdShowed) {
       onPrepaired?.call(nativeNormal!);
       return;
     }
@@ -237,13 +238,13 @@ class EasyPreloadNativeController {
     // Todo: Must check network later
     if ((nativeHigh == null ||
             nativeHigh!.isAdLoadedFailed ||
-            (nativeHigh as EasyAdmobPreloadNativeAd).isAdShowed) &&
+            (nativeHigh as AdmobPreloadNativeAd).isAdShowed) &&
         (nativeMedium == null ||
             nativeMedium!.isAdLoadedFailed ||
-            (nativeMedium as EasyAdmobPreloadNativeAd).isAdShowed) &&
+            (nativeMedium as AdmobPreloadNativeAd).isAdShowed) &&
         (nativeNormal == null ||
             nativeNormal!.isAdLoadedFailed ||
-            (nativeNormal as EasyAdmobPreloadNativeAd).isAdShowed)) {
+            (nativeNormal as AdmobPreloadNativeAd).isAdShowed)) {
       onPrepaired?.call(null);
       return;
     }
@@ -254,9 +255,9 @@ class EasyPreloadNativeController {
     );
   }
 
-  void finishPreloadAd(EasyAdsPlacementType type) {
+  void finishPreloadAd(AdsPlacementType type) {
     switch (type) {
-      case EasyAdsPlacementType.normal:
+      case AdsPlacementType.normal:
         if (nativeNormal != null) {
           nativeNormal!.dispose();
           nativeNormal = null;
@@ -266,7 +267,7 @@ class EasyPreloadNativeController {
         }
 
         break;
-      case EasyAdsPlacementType.med:
+      case AdsPlacementType.med:
         if (nativeMedium != null) {
           nativeMedium!.dispose();
           nativeMedium = null;
@@ -276,7 +277,7 @@ class EasyPreloadNativeController {
         }
 
         break;
-      case EasyAdsPlacementType.high:
+      case AdsPlacementType.high:
         if (nativeHigh != null) {
           nativeHigh!.dispose();
           nativeHigh = null;
@@ -291,7 +292,7 @@ class EasyPreloadNativeController {
 }
 
 class EasyPreloadNativeAd extends StatefulWidget {
-  final EasyPreloadNativeController controller;
+  final PreloadNativeController controller;
   final String factoryId;
 
   final double height;
@@ -329,8 +330,8 @@ class EasyPreloadNativeAd extends StatefulWidget {
 }
 
 class _EasyPreloadNativeAdState extends State<EasyPreloadNativeAd> {
-  EasyAdBase? adBase;
-  EasyAdsPlacementType? type;
+  AdsBase? adBase;
+  AdsPlacementType? type;
 
   @override
   void dispose() {
@@ -352,7 +353,7 @@ class _EasyPreloadNativeAdState extends State<EasyPreloadNativeAd> {
 
         switch (widget.controller.adNetwork) {
           default:
-            final admobPreloadNativeAd = adBase as EasyAdmobPreloadNativeAd;
+            final admobPreloadNativeAd = adBase as AdmobPreloadNativeAd;
             await admobPreloadNativeAd.setPlatformView(
               factoryId: widget.factoryId,
             );
@@ -397,7 +398,7 @@ class _EasyPreloadNativeAdState extends State<EasyPreloadNativeAd> {
               child: Container(
                 color: widget.color,
                 height: widget.height,
-                child: EasyLoadingAd(height: widget.height),
+                child: LoadingAds(height: widget.height),
               ),
             ),
           );

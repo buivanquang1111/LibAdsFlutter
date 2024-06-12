@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
-import '../easy_ad_base.dart';
-import '../easy_ads.dart';
+import '../../admob_ads_flutter.dart';
+import '../admob_ads.dart';
 import '../enums/ad_network.dart';
 import '../enums/ad_unit_type.dart';
 
-class EasyAdmobRewardedAd extends EasyAdBase {
+class AdmobInterstitialAd extends AdsBase {
   final AdRequest adRequest;
 
-  EasyAdmobRewardedAd({
+  AdmobInterstitialAd({
     required super.adUnitId,
     required this.adRequest,
     super.onAdLoaded,
@@ -22,7 +22,7 @@ class EasyAdmobRewardedAd extends EasyAdBase {
     super.onPaidEvent,
   });
 
-  RewardedAd? _rewardedAd;
+  InterstitialAd? _interstitialAd;
   bool _isAdLoaded = false;
   bool _isAdLoading = false;
   bool _isAdLoadedFailed = false;
@@ -31,7 +31,7 @@ class EasyAdmobRewardedAd extends EasyAdBase {
   AdNetwork get adNetwork => AdNetwork.admob;
 
   @override
-  AdUnitType get adUnitType => AdUnitType.rewarded;
+  AdUnitType get adUnitType => AdUnitType.interstitial;
 
   @override
   bool get isAdLoaded => _isAdLoaded;
@@ -47,22 +47,22 @@ class EasyAdmobRewardedAd extends EasyAdBase {
     _isAdLoaded = false;
     _isAdLoading = false;
     _isAdLoadedFailed = false;
-    _rewardedAd?.dispose();
-    _rewardedAd = null;
+    _interstitialAd?.dispose();
+    _interstitialAd = null;
   }
 
   @override
   Future<void> load() async {
     if (_isAdLoaded) return;
     _isAdLoading = true;
-    await RewardedAd.load(
+    await InterstitialAd.load(
       adUnitId: adUnitId,
       request: adRequest,
-      rewardedAdLoadCallback: RewardedAdLoadCallback(
-        onAdLoaded: (RewardedAd ad) {
-          _rewardedAd = ad;
-          _rewardedAd?.onPaidEvent = (ad, revenue, type, currencyCode) {
-            EasyAds.instance.onPaidEventMethod(
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (InterstitialAd ad) {
+          _interstitialAd = ad;
+          _interstitialAd?.onPaidEvent = (ad, revenue, type, currencyCode) {
+            AdmobAds.instance.onPaidEventMethod(
               adNetwork: adNetwork,
               adUnitType: adUnitType,
               revenue: revenue / 1000000,
@@ -78,17 +78,17 @@ class EasyAdmobRewardedAd extends EasyAdBase {
             );
           };
           _isAdLoaded = true;
-          _isAdLoadedFailed = false;
           _isAdLoading = false;
-          EasyAds.instance.onAdLoadedMethod(adNetwork, adUnitType, ad);
+          _isAdLoadedFailed = false;
+          AdmobAds.instance.onAdLoadedMethod(adNetwork, adUnitType, ad);
           onAdLoaded?.call(adNetwork, adUnitType, ad);
         },
         onAdFailedToLoad: (LoadAdError error) {
-          _rewardedAd = null;
+          _interstitialAd = null;
           _isAdLoaded = false;
-          _isAdLoadedFailed = true;
           _isAdLoading = false;
-          EasyAds.instance.onAdFailedToLoadMethod(
+          _isAdLoadedFailed = true;
+          AdmobAds.instance.onAdFailedToLoadMethod(
               adNetwork, adUnitType, error, error.toString());
           onAdFailedToLoad?.call(
               adNetwork, adUnitType, error, error.toString());
@@ -98,7 +98,7 @@ class EasyAdmobRewardedAd extends EasyAdBase {
   }
 
   @override
-  dynamic show({
+  show({
     double? height,
     Color? color,
     BorderRadiusGeometry? borderRadius,
@@ -106,42 +106,35 @@ class EasyAdmobRewardedAd extends EasyAdBase {
     EdgeInsetsGeometry? padding,
     EdgeInsetsGeometry? margin,
   }) {
-    final ad = _rewardedAd;
+    final ad = _interstitialAd;
     if (ad == null) return;
 
     ad.fullScreenContentCallback = FullScreenContentCallback(
-      onAdShowedFullScreenContent: (RewardedAd ad) {
-        EasyAds.instance.onAdShowedMethod(adNetwork, adUnitType, ad);
+      onAdShowedFullScreenContent: (InterstitialAd ad) {
+        AdmobAds.instance.onAdShowedMethod(adNetwork, adUnitType, ad);
         onAdShowed?.call(adNetwork, adUnitType, ad);
       },
-      onAdDismissedFullScreenContent: (RewardedAd ad) {
-        EasyAds.instance.onAdDismissedMethod(adNetwork, adUnitType, ad);
+      onAdDismissedFullScreenContent: (InterstitialAd ad) {
+        AdmobAds.instance.onAdDismissedMethod(adNetwork, adUnitType, ad);
         onAdDismissed?.call(adNetwork, adUnitType, ad);
 
         ad.dispose();
       },
-      onAdFailedToShowFullScreenContent: (RewardedAd ad, AdError error) {
-        EasyAds.instance.onAdFailedToShowMethod(
+      onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
+        AdmobAds.instance.onAdFailedToShowMethod(
             adNetwork, adUnitType, ad, error.toString());
         onAdFailedToShow?.call(adNetwork, adUnitType, ad, error.toString());
 
         ad.dispose();
       },
       onAdClicked: (ad) {
-        EasyAds.instance.onAdClickedMethod(adNetwork, adUnitType, ad);
+        AdmobAds.instance.onAdClickedMethod(adNetwork, adUnitType, ad);
         onAdClicked?.call(adNetwork, adUnitType, ad);
       },
     );
-
     ad.setImmersiveMode(true);
-    ad.show(
-      onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
-        EasyAds.instance.onEarnedRewardMethod(
-            adNetwork, adUnitType, reward.type, reward.amount);
-        onEarnedReward?.call(adNetwork, adUnitType, reward.type, reward.amount);
-      },
-    );
-    _rewardedAd = null;
+    ad.show();
+    _interstitialAd = null;
     _isAdLoaded = false;
   }
 }

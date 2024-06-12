@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import '../../easy_ads_flutter.dart';
+import '../../admob_ads_flutter.dart';
 
-class EasyRewardAd extends StatefulWidget {
+class RewardAds extends StatefulWidget {
   final AdNetwork adNetwork;
   final String adId;
   final EasyAdCallback? onAdLoaded;
@@ -16,7 +16,7 @@ class EasyRewardAd extends StatefulWidget {
   final EasyAdEarnedReward? onEarnedReward;
   final EasyAdOnPaidEvent? onPaidEvent;
 
-  const EasyRewardAd({
+  const RewardAds({
     Key? key,
     required this.adNetwork,
     required this.adId,
@@ -31,12 +31,12 @@ class EasyRewardAd extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<EasyRewardAd> createState() => _EasyRewardAdState();
+  State<RewardAds> createState() => _RewardAdsState();
 }
 
-class _EasyRewardAdState extends State<EasyRewardAd>
+class _RewardAdsState extends State<RewardAds>
     with WidgetsBindingObserver {
-  late final EasyAdBase? _rewardAd;
+  late final AdsBase? _rewardAd;
 
   Future<void> _showAd() => Future.delayed(
         const Duration(seconds: 1),
@@ -54,7 +54,7 @@ class _EasyRewardAdState extends State<EasyRewardAd>
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
-    EasyAds.instance.setFullscreenAdShowing(true);
+    AdmobAds.instance.setFullscreenAdShowing(true);
 
     ConsentManager.ins.handleRequestUmp(
       onPostExecute: () {
@@ -66,7 +66,7 @@ class _EasyRewardAdState extends State<EasyRewardAd>
           }
           widget.onAdFailedToLoad
               ?.call(widget.adNetwork, AdUnitType.rewarded, null, "");
-          EasyAds.instance.setFullscreenAdShowing(false);
+          AdmobAds.instance.setFullscreenAdShowing(false);
         }
       },
     );
@@ -122,7 +122,7 @@ class _EasyRewardAdState extends State<EasyRewardAd>
   }
 
   void _initAd() {
-    _rewardAd = EasyAds.instance.createReward(
+    _rewardAd = AdmobAds.instance.createReward(
       adNetwork: widget.adNetwork,
       adId: widget.adId,
       onAdClicked: (adNetwork, adUnitType, data) {
@@ -133,19 +133,19 @@ class _EasyRewardAdState extends State<EasyRewardAd>
           Navigator.of(context).pop();
         }
         widget.onAdDismissed?.call(adNetwork, adUnitType, data);
-        EasyAds.instance.setFullscreenAdShowing(false);
+        AdmobAds.instance.setFullscreenAdShowing(false);
       },
       onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
         Navigator.of(context).pop();
         widget.onAdFailedToLoad
             ?.call(adNetwork, adUnitType, data, errorMessage);
-        EasyAds.instance.setFullscreenAdShowing(false);
+        AdmobAds.instance.setFullscreenAdShowing(false);
       },
       onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
         Navigator.of(context).pop();
         widget.onAdFailedToShow
             ?.call(adNetwork, adUnitType, data, errorMessage);
-        EasyAds.instance.setFullscreenAdShowing(false);
+        AdmobAds.instance.setFullscreenAdShowing(false);
       },
       onAdLoaded: (adNetwork, adUnitType, data) {
         widget.onAdLoaded?.call(adNetwork, adUnitType, data);

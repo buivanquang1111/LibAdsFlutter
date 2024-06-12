@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
-class EasyLoadingAd extends StatelessWidget {
-  const EasyLoadingAd({
+class LoadingAds extends StatelessWidget {
+  const LoadingAds({
     Key? key,
     required this.height,
   }) : super(key: key);

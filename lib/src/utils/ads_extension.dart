@@ -1,8 +1,8 @@
 // ignore_for_file: deprecated_member_use
 
-part of '../easy_ads.dart';
+part of '../admob_ads.dart';
 
-extension EasyAdsExtension on EasyAds {
+extension AdsExtension on AdmobAds {
   bool isTablet() {
     final double devicePixelRatio = ui.window.devicePixelRatio;
     final ui.Size size = ui.window.physicalSize;

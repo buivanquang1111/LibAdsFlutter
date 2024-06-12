@@ -1,5 +1,5 @@
 
-import 'package:easy_ads_flutter/easy_ads_flutter.dart';
+import 'package:amazic_ads_flutter/admob_ads_flutter.dart';
 import 'package:get/get.dart';
 
 class ConnectivityService extends SuperController implements GetxService {
@@ -7,7 +7,7 @@ class ConnectivityService extends SuperController implements GetxService {
 
   @override
   void onInit() {
-    EasyAds.instance
+    AdmobAds.instance
         .isDeviceOffline()
         .then((value) => isDeviceOffLine.value = value);
     super.onInit();
@@ -24,14 +24,14 @@ class ConnectivityService extends SuperController implements GetxService {
 
   @override
   void onPaused() {
-    EasyAds.instance
+    AdmobAds.instance
         .isDeviceOffline()
         .then((value) => isDeviceOffLine.value = value);
   }
 
   @override
   void onResumed() {
-    EasyAds.instance
+    AdmobAds.instance
         .isDeviceOffline()
         .then((value) => isDeviceOffLine.value = value);
   }

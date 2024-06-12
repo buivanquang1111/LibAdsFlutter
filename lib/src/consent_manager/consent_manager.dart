@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/foundation.dart';
 
-import '../../easy_ads_flutter.dart';
+import '../../admob_ads_flutter.dart';
 
 class ConsentManager {
   static ConsentManager ins = ConsentManager._();
@@ -33,7 +33,7 @@ class ConsentManager {
       consentDebugSettings: debugUmp ? _debugSettings : null,
     );
 
-    bool? consentResult = await EasyAds.instance.getConsentResult();
+    bool? consentResult = await AdmobAds.instance.getConsentResult();
 
     if (consentResult != null) {
       _canRequestAds = consentResult;
@@ -43,7 +43,7 @@ class ConsentManager {
           await initMediation?.call(_canRequestAds);
           _isMediationInitialized = true;
         }
-        await EasyAds.instance.initAdNetwork();
+        await AdmobAds.instance.initAdNetwork();
       }
       onPostExecute?.call();
       return;
@@ -63,7 +63,7 @@ class ConsentManager {
             _isMediationInitialized = true;
           }
 
-          await EasyAds.instance.initAdNetwork();
+          await AdmobAds.instance.initAdNetwork();
           onPostExecute?.call();
         }
       },
@@ -74,7 +74,7 @@ class ConsentManager {
           _isMediationInitialized = true;
         }
 
-        await EasyAds.instance.initAdNetwork();
+        await AdmobAds.instance.initAdNetwork();
         onPostExecute?.call();
       },
     );
@@ -84,7 +84,7 @@ class ConsentManager {
     ConsentForm.loadConsentForm(
       (ConsentForm consentForm) async {
         //show the form
-        var consentResult = await EasyAds.instance.getConsentResult();
+        var consentResult = await AdmobAds.instance.getConsentResult();
         if (consentResult != null) {
           _canRequestAds = consentResult;
           if (!_isMediationInitialized) {
@@ -92,19 +92,19 @@ class ConsentManager {
             _isMediationInitialized = true;
           }
           if (_canRequestAds) {
-            await EasyAds.instance.initAdNetwork();
+            await AdmobAds.instance.initAdNetwork();
           }
 
           onPostExecute?.call();
         } else {
           consentForm.show((formError) async {
-            _canRequestAds = await EasyAds.instance.getConsentResult() ?? true;
+            _canRequestAds = await AdmobAds.instance.getConsentResult() ?? true;
             if (!_isMediationInitialized) {
               await initMediation?.call(_canRequestAds);
               _isMediationInitialized = true;
             }
             if (_canRequestAds) {
-              await EasyAds.instance.initAdNetwork();
+              await AdmobAds.instance.initAdNetwork();
             }
 
             onPostExecute?.call();
@@ -112,13 +112,13 @@ class ConsentManager {
         }
       },
       (FormError formError) async {
-        _canRequestAds = await EasyAds.instance.getConsentResult() ?? true;
+        _canRequestAds = await AdmobAds.instance.getConsentResult() ?? true;
         if (!_isMediationInitialized) {
           await initMediation?.call(_canRequestAds);
           _isMediationInitialized = true;
         }
         if (_canRequestAds) {
-          await EasyAds.instance.initAdNetwork();
+          await AdmobAds.instance.initAdNetwork();
         }
 
         onPostExecute?.call();

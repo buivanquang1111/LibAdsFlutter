@@ -1,6 +1,6 @@
 // ignore_for_file: constant_identifier_names
 
-enum EasyAdsBannerType {
+enum AdsBannerType {
   standard,
   adaptive,
   collapsible_bottom,

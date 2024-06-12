@@ -1,12 +1,11 @@
 import 'dart:async';
 
-import 'package:easy_ads_flutter/easy_ads_flutter.dart';
+import 'package:amazic_ads_flutter/admob_ads_flutter.dart';
 import 'package:flutter/material.dart';
 
-class EasySplashAdWith3Inter extends StatefulWidget {
+class SplashAdWith2IdInter extends StatefulWidget {
   final AdNetwork adNetwork;
   final String interstitialSplashId;
-  final String interstitialSplashMediumId;
   final String interstitialSplashHighId;
 
   final EasyAdCallback? onAdLoaded;
@@ -18,15 +17,6 @@ class EasySplashAdWith3Inter extends StatefulWidget {
   final EasyAdOnPaidEvent? onPaidEvent;
   final bool config;
 
-  final EasyAdCallback? onAdMediumLoaded;
-  final EasyAdCallback? onAdMediumShowed;
-  final EasyAdCallback? onAdMediumClicked;
-  final EasyAdFailedCallback? onAdMediumFailedToLoad;
-  final EasyAdFailedCallback? onAdMediumFailedToShow;
-  final EasyAdCallback? onAdMediumDismissed;
-  final EasyAdOnPaidEvent? onMediumPaidEvent;
-  final bool configMedium;
-
   final EasyAdCallback? onAdHighLoaded;
   final EasyAdCallback? onAdHighShowed;
   final EasyAdCallback? onAdHighClicked;
@@ -36,23 +26,17 @@ class EasySplashAdWith3Inter extends StatefulWidget {
   final EasyAdOnPaidEvent? onHighPaidEvent;
   final bool configHigh;
 
-  final Function(EasyAdsPlacementType type)? onShowed;
-  final Function(EasyAdsPlacementType type)? onDismissed;
+  final Function(AdsPlacementType type)? onShowed;
+  final Function(AdsPlacementType type)? onDismissed;
   final Function()? onFailedToLoad;
-  final Function(EasyAdsPlacementType type)? onFailedToShow;
-  final Function(EasyAdsPlacementType type)? onClicked;
+  final Function(AdsPlacementType type)? onFailedToShow;
+  final Function(AdsPlacementType type)? onClicked;
 
-  const EasySplashAdWith3Inter({
+  const SplashAdWith2IdInter({
     Key? key,
     this.adNetwork = AdNetwork.admob,
     required this.interstitialSplashId,
-    required this.interstitialSplashMediumId,
     required this.interstitialSplashHighId,
-    required this.onShowed,
-    required this.onDismissed,
-    required this.onFailedToLoad,
-    required this.onFailedToShow,
-    required this.onClicked,
     this.onAdLoaded,
     this.onAdShowed,
     this.onAdClicked,
@@ -61,14 +45,6 @@ class EasySplashAdWith3Inter extends StatefulWidget {
     this.onAdDismissed,
     this.onPaidEvent,
     required this.config,
-    this.onAdMediumLoaded,
-    this.onAdMediumShowed,
-    this.onAdMediumClicked,
-    this.onAdMediumFailedToLoad,
-    this.onAdMediumFailedToShow,
-    this.onAdMediumDismissed,
-    this.onMediumPaidEvent,
-    required this.configMedium,
     this.onAdHighLoaded,
     this.onAdHighShowed,
     this.onAdHighClicked,
@@ -77,19 +53,24 @@ class EasySplashAdWith3Inter extends StatefulWidget {
     this.onAdHighDismissed,
     this.onHighPaidEvent,
     required this.configHigh,
+    required this.onShowed,
+    required this.onDismissed,
+    required this.onFailedToLoad,
+    required this.onFailedToShow,
+    required this.onClicked,
   }) : super(key: key);
 
   @override
-  State<EasySplashAdWith3Inter> createState() => _EasySplashAdWith3InterState();
+  State<SplashAdWith2IdInter> createState() => _SplashAdWith2IdInterState();
 }
 
-class _EasySplashAdWith3InterState extends State<EasySplashAdWith3Inter>
+class _SplashAdWith2IdInterState extends State<SplashAdWith2IdInter>
     with WidgetsBindingObserver {
   //
-  EasyAdBase? _ads;
-  late final EasyAdBase? _interstitialAd;
-  late final EasyAdBase? _interstitialMediumAd;
-  late final EasyAdBase? _interstitialHighAd;
+  AdsBase? _ads;
+  late final AdsBase? _interstitialAd;
+
+  late final AdsBase? _interstitialHighAd;
 
   Timer? _timer;
 
@@ -114,7 +95,8 @@ class _EasySplashAdWith3InterState extends State<EasySplashAdWith3Inter>
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
-    EasyAds.instance.setFullscreenAdShowing(true);
+    AdmobAds.instance.setFullscreenAdShowing(true);
+
     ConsentManager.ins.handleRequestUmp(
       onPostExecute: () {
         if (ConsentManager.ins.canRequestAds) {
@@ -125,7 +107,7 @@ class _EasySplashAdWith3InterState extends State<EasySplashAdWith3Inter>
           }
           widget.onAdFailedToLoad
               ?.call(widget.adNetwork, AdUnitType.interstitial, null, "");
-          EasyAds.instance.setFullscreenAdShowing(false);
+          AdmobAds.instance.setFullscreenAdShowing(false);
         }
       },
     );
@@ -145,7 +127,6 @@ class _EasySplashAdWith3InterState extends State<EasySplashAdWith3Inter>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _interstitialAd?.dispose();
-    _interstitialMediumAd?.dispose();
     _interstitialHighAd?.dispose();
     super.dispose();
   }
@@ -180,20 +161,20 @@ class _EasySplashAdWith3InterState extends State<EasySplashAdWith3Inter>
   }
 
   void _initAds() {
-    _interstitialAd = EasyAds.instance.createInterstitial(
+    _interstitialAd = AdmobAds.instance.createInterstitial(
       adNetwork: widget.adNetwork,
       adId: widget.interstitialSplashId,
       onAdClicked: (adNetwork, adUnitType, data) {
         widget.onAdClicked?.call(adNetwork, adUnitType, data);
-        widget.onClicked?.call(EasyAdsPlacementType.normal);
+        widget.onClicked?.call(AdsPlacementType.normal);
       },
       onAdDismissed: (adNetwork, adUnitType, data) {
         if (widget.onShowed == null) {
           Navigator.of(context).pop();
         }
         widget.onAdDismissed?.call(adNetwork, adUnitType, data);
-        widget.onDismissed?.call(EasyAdsPlacementType.normal);
-        EasyAds.instance.setFullscreenAdShowing(false);
+        widget.onDismissed?.call(AdsPlacementType.normal);
+        AdmobAds.instance.setFullscreenAdShowing(false);
       },
       onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
         widget.onAdFailedToLoad
@@ -203,8 +184,8 @@ class _EasySplashAdWith3InterState extends State<EasySplashAdWith3Inter>
         Navigator.of(context).pop();
         widget.onAdFailedToShow
             ?.call(adNetwork, adUnitType, data, errorMessage);
-        widget.onFailedToShow?.call(EasyAdsPlacementType.normal);
-        EasyAds.instance.setFullscreenAdShowing(false);
+        widget.onFailedToShow?.call(AdsPlacementType.normal);
+        AdmobAds.instance.setFullscreenAdShowing(false);
       },
       onAdLoaded: (adNetwork, adUnitType, data) {
         widget.onAdLoaded?.call(adNetwork, adUnitType, data);
@@ -212,7 +193,7 @@ class _EasySplashAdWith3InterState extends State<EasySplashAdWith3Inter>
       onAdShowed: (adNetwork, adUnitType, data) {
         if (widget.onShowed != null) {
           Navigator.of(context).pop();
-          widget.onShowed!.call(EasyAdsPlacementType.normal);
+          widget.onShowed!.call(AdsPlacementType.normal);
         }
         widget.onAdShowed?.call(adNetwork, adUnitType, data);
       },
@@ -237,77 +218,20 @@ class _EasySplashAdWith3InterState extends State<EasySplashAdWith3Inter>
       },
     );
 
-    _interstitialMediumAd = EasyAds.instance.createInterstitial(
-      adNetwork: widget.adNetwork,
-      adId: widget.interstitialSplashMediumId,
-      onAdClicked: (adNetwork, adUnitType, data) {
-        widget.onAdMediumClicked?.call(adNetwork, adUnitType, data);
-        widget.onClicked?.call(EasyAdsPlacementType.med);
-      },
-      onAdDismissed: (adNetwork, adUnitType, data) {
-        if (widget.onShowed == null) {
-          Navigator.of(context).pop();
-        }
-        widget.onAdMediumDismissed?.call(adNetwork, adUnitType, data);
-        widget.onDismissed?.call(EasyAdsPlacementType.med);
-        EasyAds.instance.setFullscreenAdShowing(false);
-      },
-      onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
-        widget.onAdMediumFailedToLoad
-            ?.call(adNetwork, adUnitType, data, errorMessage);
-      },
-      onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
-        Navigator.of(context).pop();
-        widget.onAdMediumFailedToShow
-            ?.call(adNetwork, adUnitType, data, errorMessage);
-        widget.onFailedToShow?.call(EasyAdsPlacementType.med);
-        EasyAds.instance.setFullscreenAdShowing(false);
-      },
-      onAdLoaded: (adNetwork, adUnitType, data) {
-        widget.onAdMediumLoaded?.call(adNetwork, adUnitType, data);
-      },
-      onAdShowed: (adNetwork, adUnitType, data) {
-        if (widget.onShowed != null) {
-          Navigator.of(context).pop();
-          widget.onShowed!.call(EasyAdsPlacementType.med);
-        }
-        widget.onAdMediumShowed?.call(adNetwork, adUnitType, data);
-      },
-      onPaidEvent: ({
-        required AdNetwork adNetwork,
-        required AdUnitType adUnitType,
-        required double revenue,
-        required String currencyCode,
-        String? network,
-        String? unit,
-        String? placement,
-      }) {
-        widget.onMediumPaidEvent?.call(
-          adNetwork: adNetwork,
-          adUnitType: adUnitType,
-          revenue: revenue,
-          currencyCode: currencyCode,
-          network: network,
-          unit: unit,
-          placement: placement,
-        );
-      },
-    );
-
-    _interstitialHighAd = EasyAds.instance.createInterstitial(
+    _interstitialHighAd = AdmobAds.instance.createInterstitial(
       adNetwork: widget.adNetwork,
       adId: widget.interstitialSplashHighId,
       onAdClicked: (adNetwork, adUnitType, data) {
         widget.onAdHighClicked?.call(adNetwork, adUnitType, data);
-        widget.onClicked?.call(EasyAdsPlacementType.high);
+        widget.onClicked?.call(AdsPlacementType.high);
       },
       onAdDismissed: (adNetwork, adUnitType, data) {
         if (widget.onShowed == null) {
           Navigator.of(context).pop();
         }
         widget.onAdHighDismissed?.call(adNetwork, adUnitType, data);
-        widget.onDismissed?.call(EasyAdsPlacementType.high);
-        EasyAds.instance.setFullscreenAdShowing(false);
+        widget.onDismissed?.call(AdsPlacementType.high);
+        AdmobAds.instance.setFullscreenAdShowing(false);
       },
       onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
         widget.onAdHighFailedToLoad
@@ -317,8 +241,8 @@ class _EasySplashAdWith3InterState extends State<EasySplashAdWith3Inter>
         Navigator.of(context).pop();
         widget.onAdHighFailedToShow
             ?.call(adNetwork, adUnitType, data, errorMessage);
-        widget.onFailedToShow?.call(EasyAdsPlacementType.high);
-        EasyAds.instance.setFullscreenAdShowing(false);
+        widget.onFailedToShow?.call(AdsPlacementType.high);
+        AdmobAds.instance.setFullscreenAdShowing(false);
       },
       onAdLoaded: (adNetwork, adUnitType, data) {
         widget.onAdHighLoaded?.call(adNetwork, adUnitType, data);
@@ -326,7 +250,7 @@ class _EasySplashAdWith3InterState extends State<EasySplashAdWith3Inter>
       onAdShowed: (adNetwork, adUnitType, data) {
         if (widget.onShowed != null) {
           Navigator.of(context).pop();
-          widget.onShowed!.call(EasyAdsPlacementType.high);
+          widget.onShowed!.call(AdsPlacementType.high);
         }
         widget.onAdHighShowed?.call(adNetwork, adUnitType, data);
       },
@@ -354,12 +278,11 @@ class _EasySplashAdWith3InterState extends State<EasySplashAdWith3Inter>
     if (widget.configHigh) {
       _interstitialHighAd?.load();
     }
-    if (widget.configMedium) {
-      _interstitialMediumAd?.load();
-    }
+
     if (widget.config) {
       _interstitialAd?.load();
     }
+
     _timer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
       if (_ads != null) {
         _timer?.cancel();
@@ -370,30 +293,20 @@ class _EasySplashAdWith3InterState extends State<EasySplashAdWith3Inter>
         _timer?.cancel();
         _timer = null;
         _ads = _interstitialHighAd;
-      } else if (_interstitialMediumAd?.isAdLoaded == true &&
-          (_interstitialHighAd?.isAdLoadedFailed == true ||
-              !widget.configHigh)) {
-        _timer?.cancel();
-        _timer = null;
-        _ads = _interstitialMediumAd;
       } else if (_interstitialAd?.isAdLoaded == true &&
           (_interstitialHighAd?.isAdLoadedFailed == true ||
-              !widget.configHigh) &&
-          (_interstitialMediumAd?.isAdLoadedFailed == true ||
-              !widget.configMedium)) {
+              !widget.configHigh)) {
         _timer?.cancel();
         _timer = null;
         _ads = _interstitialAd;
       } else if ((_interstitialHighAd?.isAdLoadedFailed == true ||
               !widget.configHigh) &&
-          (_interstitialMediumAd?.isAdLoadedFailed == true ||
-              !widget.configMedium) &&
           (_interstitialAd?.isAdLoadedFailed == true || !widget.config)) {
         _timer?.cancel();
         _timer = null;
         Navigator.of(context).pop();
         widget.onFailedToLoad?.call();
-        EasyAds.instance.setFullscreenAdShowing(false);
+        AdmobAds.instance.setFullscreenAdShowing(false);
         return;
       }
 

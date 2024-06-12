@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs
 import 'package:flutter/material.dart';
 
-import '../../easy_ads_flutter.dart';
+import '../../admob_ads_flutter.dart';
 
 /// Listens for app foreground events and shows app open ads.
 class AppLifecycleReactor {
@@ -42,28 +42,28 @@ class AppLifecycleReactor {
     // Show AppOpenAd when back to foreground but do not show on excluded screens
     if (appState == AppState.foreground) {
       if (!_isExcludeScreen) {
-        if (EasyAds.instance.isFullscreenAdShowing) {
+        if (AdmobAds.instance.isFullscreenAdShowing) {
           return;
         }
-        if (!EasyAds.instance.isEnabled) {
+        if (!AdmobAds.instance.isEnabled) {
           return;
         }
-        if (await EasyAds.instance.isDeviceOffline()) {
+        if (await AdmobAds.instance.isDeviceOffline()) {
           return;
         }
         if (!ConsentManager.ins.canRequestAds) {
           return;
         }
 
-        final String id = EasyAds.instance.isDevMode ? TestAdsId.admobOpenResume : adId!;
+        final String id = AdmobAds.instance.isDevMode ? TestAdsId.admobOpenResume : adId!;
         if (id.isNotEmpty != true) return;
-        EasyAds.instance.showAppOpen(
+        AdmobAds.instance.showAppOpen(
           adId: id,
           config: true,
         );
 
         // navigatorKey.currentState?.push(
-        //   EasyAppOpenAd.getRoute(
+        //   AppOpenAds.getRoute(
         //     context: navigatorKey.currentContext!,
         //     adId: id,
         //     adNetwork: adNetwork,

@@ -1,24 +1,24 @@
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
-import 'easy_ad_method_channel.dart';
+import 'ad_method_channel.dart';
 
-abstract class EasyAdPlatform extends PlatformInterface {
+abstract class AdPlatform extends PlatformInterface {
   /// Constructs a EasyAd_2Platform.
-  EasyAdPlatform() : super(token: _token);
+  AdPlatform() : super(token: _token);
 
   static final Object _token = Object();
 
-  static EasyAdPlatform _instance = MethodChannelEasyAd();
+  static AdPlatform _instance = MethodChannelAd();
 
-  /// The default instance of [EasyAdPlatform] to use.
+  /// The default instance of [AdPlatform] to use.
   ///
-  /// Defaults to [MethodChannelEasyAd].
-  static EasyAdPlatform get instance => _instance;
+  /// Defaults to [MethodChannelAd].
+  static AdPlatform get instance => _instance;
 
   /// Platform-specific implementations should set this with their own
-  /// platform-specific class that extends [EasyAdPlatform] when
+  /// platform-specific class that extends [AdPlatform] when
   /// they register themselves.
-  static set instance(EasyAdPlatform instance) {
+  static set instance(AdPlatform instance) {
     PlatformInterface.verifyToken(instance, _token);
     _instance = instance;
   }

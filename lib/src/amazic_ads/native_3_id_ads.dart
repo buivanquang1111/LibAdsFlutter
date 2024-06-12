@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import '../../easy_ads_flutter.dart';
-import 'easy_loading_ad.dart';
+import '../../admob_ads_flutter.dart';
+import 'loading_ads.dart';
 
-class EasyNative3Ad extends StatefulWidget {
+class Native3IdAds extends StatefulWidget {
   final AdNetwork adNetwork;
   final String factoryId;
   final String adId;
@@ -48,13 +48,13 @@ class EasyNative3Ad extends StatefulWidget {
   final EasyAdOnPaidEvent? onHighPaidEvent;
   final bool configHigh;
 
-  final Function(EasyAdsPlacementType type)? onShowed;
-  final Function(EasyAdsPlacementType type)? onDismissed;
+  final Function(AdsPlacementType type)? onShowed;
+  final Function(AdsPlacementType type)? onDismissed;
   final Function()? onFailedToLoad;
-  final Function(EasyAdsPlacementType type)? onFailedToShow;
-  final Function(EasyAdsPlacementType type)? onClicked;
+  final Function(AdsPlacementType type)? onFailedToShow;
+  final Function(AdsPlacementType type)? onClicked;
 
-  const EasyNative3Ad({
+  const Native3IdAds({
     this.adNetwork = AdNetwork.admob,
     required this.factoryId,
     required this.adId,
@@ -102,16 +102,16 @@ class EasyNative3Ad extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<EasyNative3Ad> createState() => _EasyNative3AdState();
+  State<Native3IdAds> createState() => _Native3IdAdsState();
 }
 
-class _EasyNative3AdState extends State<EasyNative3Ad> {
-  EasyAdBase? _ad;
-  late final EasyAdBase? _nativeAd;
+class _Native3IdAdsState extends State<Native3IdAds> {
+  AdsBase? _ad;
+  late final AdsBase? _nativeAd;
 
-  late final EasyAdBase? _nativeAdMedium;
+  late final AdsBase? _nativeAdMedium;
 
-  late final EasyAdBase? _nativeAdHigh;
+  late final AdsBase? _nativeAdHigh;
   Timer? _timer;
   bool _isAdLoaded = false;
   bool _isAdLoading = false;
@@ -123,13 +123,13 @@ class _EasyNative3AdState extends State<EasyNative3Ad> {
   }
 
   Future<void> _prepareAds() async {
-    if (!EasyAds.instance.isEnabled) {
+    if (!AdmobAds.instance.isEnabled) {
       widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.native, null);
       widget.onAdMediumDisabled?.call(widget.adNetwork, AdUnitType.native, null);
       widget.onAdHighDisabled?.call(widget.adNetwork, AdUnitType.native, null);
       return;
     }
-    if (await EasyAds.instance.isDeviceOffline()) {
+    if (await AdmobAds.instance.isDeviceOffline()) {
       widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.native, null);
       widget.onAdMediumDisabled?.call(widget.adNetwork, AdUnitType.native, null);
       widget.onAdHighDisabled?.call(widget.adNetwork, AdUnitType.native, null);
@@ -195,7 +195,7 @@ class _EasyNative3AdState extends State<EasyNative3Ad> {
           borderRadius: widget.borderRadius,
           child: SizedBox(
             height: widget.height,
-            child: EasyLoadingAd(
+            child: LoadingAds(
               height: widget.height,
             ),
           ),
@@ -216,20 +216,20 @@ class _EasyNative3AdState extends State<EasyNative3Ad> {
   }
 
   void _initAds() {
-    _nativeAd = EasyAds.instance.createNative(
+    _nativeAd = AdmobAds.instance.createNative(
       adNetwork: widget.adNetwork,
       factoryId: widget.factoryId,
       adId: widget.adId,
       onAdClicked: (adNetwork, adUnitType, data) {
         widget.onAdClicked?.call(adNetwork, adUnitType, data);
-        widget.onClicked?.call(EasyAdsPlacementType.normal);
+        widget.onClicked?.call(AdsPlacementType.normal);
         if (mounted) {
           setState(() {});
         }
       },
       onAdDismissed: (adNetwork, adUnitType, data) {
         widget.onAdDismissed?.call(adNetwork, adUnitType, data);
-        widget.onDismissed?.call(EasyAdsPlacementType.normal);
+        widget.onDismissed?.call(AdsPlacementType.normal);
         if (mounted) {
           setState(() {});
         }
@@ -242,7 +242,7 @@ class _EasyNative3AdState extends State<EasyNative3Ad> {
       },
       onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
         widget.onAdFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);
-        widget.onFailedToShow?.call(EasyAdsPlacementType.normal);
+        widget.onFailedToShow?.call(AdsPlacementType.normal);
         if (mounted) {
           setState(() {});
         }
@@ -255,7 +255,7 @@ class _EasyNative3AdState extends State<EasyNative3Ad> {
       },
       onAdShowed: (adNetwork, adUnitType, data) {
         widget.onAdShowed?.call(adNetwork, adUnitType, data);
-        widget.onShowed?.call(EasyAdsPlacementType.normal);
+        widget.onShowed?.call(AdsPlacementType.normal);
         if (mounted) {
           setState(() {});
         }
@@ -284,20 +284,20 @@ class _EasyNative3AdState extends State<EasyNative3Ad> {
       },
     );
 
-    _nativeAdMedium = EasyAds.instance.createNative(
+    _nativeAdMedium = AdmobAds.instance.createNative(
       adNetwork: widget.adNetwork,
       factoryId: widget.factoryId,
       adId: widget.adIdMedium,
       onAdClicked: (adNetwork, adUnitType, data) {
         widget.onAdMediumClicked?.call(adNetwork, adUnitType, data);
-        widget.onClicked?.call(EasyAdsPlacementType.med);
+        widget.onClicked?.call(AdsPlacementType.med);
         if (mounted) {
           setState(() {});
         }
       },
       onAdDismissed: (adNetwork, adUnitType, data) {
         widget.onAdMediumDismissed?.call(adNetwork, adUnitType, data);
-        widget.onDismissed?.call(EasyAdsPlacementType.med);
+        widget.onDismissed?.call(AdsPlacementType.med);
         if (mounted) {
           setState(() {});
         }
@@ -310,7 +310,7 @@ class _EasyNative3AdState extends State<EasyNative3Ad> {
       },
       onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
         widget.onAdMediumFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);
-        widget.onFailedToShow?.call(EasyAdsPlacementType.med);
+        widget.onFailedToShow?.call(AdsPlacementType.med);
         if (mounted) {
           setState(() {});
         }
@@ -323,7 +323,7 @@ class _EasyNative3AdState extends State<EasyNative3Ad> {
       },
       onAdShowed: (adNetwork, adUnitType, data) {
         widget.onAdMediumShowed?.call(adNetwork, adUnitType, data);
-        widget.onShowed?.call(EasyAdsPlacementType.med);
+        widget.onShowed?.call(AdsPlacementType.med);
         if (mounted) {
           setState(() {});
         }
@@ -352,20 +352,20 @@ class _EasyNative3AdState extends State<EasyNative3Ad> {
       },
     );
 
-    _nativeAdHigh = EasyAds.instance.createNative(
+    _nativeAdHigh = AdmobAds.instance.createNative(
       adNetwork: widget.adNetwork,
       factoryId: widget.factoryId,
       adId: widget.adIdHigh,
       onAdClicked: (adNetwork, adUnitType, data) {
         widget.onAdHighClicked?.call(adNetwork, adUnitType, data);
-        widget.onClicked?.call(EasyAdsPlacementType.high);
+        widget.onClicked?.call(AdsPlacementType.high);
         if (mounted) {
           setState(() {});
         }
       },
       onAdDismissed: (adNetwork, adUnitType, data) {
         widget.onAdHighDismissed?.call(adNetwork, adUnitType, data);
-        widget.onDismissed?.call(EasyAdsPlacementType.high);
+        widget.onDismissed?.call(AdsPlacementType.high);
         if (mounted) {
           setState(() {});
         }
@@ -378,7 +378,7 @@ class _EasyNative3AdState extends State<EasyNative3Ad> {
       },
       onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
         widget.onAdHighFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);
-        widget.onFailedToShow?.call(EasyAdsPlacementType.high);
+        widget.onFailedToShow?.call(AdsPlacementType.high);
         if (mounted) {
           setState(() {});
         }
@@ -391,7 +391,7 @@ class _EasyNative3AdState extends State<EasyNative3Ad> {
       },
       onAdShowed: (adNetwork, adUnitType, data) {
         widget.onAdHighShowed?.call(adNetwork, adUnitType, data);
-        widget.onShowed?.call(EasyAdsPlacementType.high);
+        widget.onShowed?.call(AdsPlacementType.high);
         if (mounted) {
           setState(() {});
         }

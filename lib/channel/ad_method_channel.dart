@@ -1,10 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
-import 'easy_ad_platform_interface.dart';
+import 'ad_platform_interface.dart';
 
-/// An implementation of [EasyAdPlatform] that uses method channels.
-class MethodChannelEasyAd extends EasyAdPlatform {
+
+/// An implementation of [AdPlatform] that uses method channels.
+class MethodChannelAd extends AdPlatform {
   /// The method channel used to interact with the native platform.
   @visibleForTesting
   final methodChannel = const MethodChannel('easy_ads_flutter');

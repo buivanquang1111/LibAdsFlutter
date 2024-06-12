@@ -1,5 +1,5 @@
 import 'package:device_info_plus/device_info_plus.dart';
-import 'package:easy_ads_flutter/easy_ads_flutter.dart';
+import 'package:amazic_ads_flutter/admob_ads_flutter.dart';
 import 'package:example/ads/ad_helper.dart';
 import 'package:example/const/resource.dart';
 import 'package:example/language/l.dart';
@@ -52,7 +52,7 @@ class OnboardController extends GetxController {
     } else {
       EventLog.logEvent("Onboarding3_start", null);
       if (AdHelper.canShowNextInterstitialAd()) {
-        EasyAds.instance.showInterstitialAd(
+        AdmobAds.instance.showInterstitialAd(
           adId: adIdManager.interIntro,
           config: RemoteConfig.configs[RemoteConfigKey.inter_intro.name],
           onDisabled: () => handleNavigate(),

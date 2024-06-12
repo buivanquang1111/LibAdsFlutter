@@ -1,1 +1,1 @@
-enum EasyAdsPlacementType { normal, high, med }
+enum AdsPlacementType { normal, high, med }

@@ -1,10 +1,9 @@
 import 'dart:async';
 
+import 'package:amazic_ads_flutter/admob_ads_flutter.dart';
 import 'package:flutter/material.dart';
 
-import '../../easy_ads_flutter.dart';
-
-class EasyAppOpenAd extends StatefulWidget {
+class InterstitialAds extends StatefulWidget {
   final AdNetwork adNetwork;
   final String adId;
   final EasyAdCallback? onAdLoaded;
@@ -13,12 +12,11 @@ class EasyAppOpenAd extends StatefulWidget {
   final EasyAdFailedCallback? onAdFailedToLoad;
   final EasyAdFailedCallback? onAdFailedToShow;
   final EasyAdCallback? onAdDismissed;
-  final EasyAdEarnedReward? onEarnedReward;
   final EasyAdOnPaidEvent? onPaidEvent;
 
-  const EasyAppOpenAd({
+  const InterstitialAds({
     Key? key,
-    this.adNetwork = AdNetwork.admob,
+    required this.adNetwork,
     required this.adId,
     this.onAdLoaded,
     this.onAdShowed,
@@ -26,7 +24,6 @@ class EasyAppOpenAd extends StatefulWidget {
     this.onAdFailedToLoad,
     this.onAdFailedToShow,
     this.onAdDismissed,
-    this.onEarnedReward,
     this.onPaidEvent,
   }) : super(key: key);
 
@@ -43,13 +40,12 @@ class EasyAppOpenAd extends StatefulWidget {
     EasyAdFailedCallback? onAdFailedToLoad,
     EasyAdFailedCallback? onAdFailedToShow,
     EasyAdCallback? onAdDismissed,
-    EasyAdEarnedReward? onEarnedReward,
     EasyAdOnPaidEvent? onPaidEvent,
   }) {
     currentRoute = null;
     currentRoute = DialogRoute(
       context: context,
-      builder: (context) => EasyAppOpenAd(
+      builder: (context) => InterstitialAds(
         adId: adId,
         adNetwork: adNetwork,
         onAdLoaded: onAdLoaded,
@@ -58,7 +54,6 @@ class EasyAppOpenAd extends StatefulWidget {
         onAdFailedToLoad: onAdFailedToLoad,
         onAdFailedToShow: onAdFailedToShow,
         onAdDismissed: onAdDismissed,
-        onEarnedReward: onEarnedReward,
         onPaidEvent: onPaidEvent,
       ),
     );
@@ -67,18 +62,19 @@ class EasyAppOpenAd extends StatefulWidget {
   }
 
   @override
-  State<EasyAppOpenAd> createState() => _EasyAppOpenAdState();
+  State<InterstitialAds> createState() => _InterstitialAdsState();
 }
 
-class _EasyAppOpenAdState extends State<EasyAppOpenAd> with WidgetsBindingObserver {
-  late final EasyAdBase? _appOpenAd;
+class _InterstitialAdsState extends State<InterstitialAds>
+    with WidgetsBindingObserver {
+  late final AdsBase? _interstitialAd;
 
   Future<void> _showAd() => Future.delayed(
-        const Duration(milliseconds: 500),
+        const Duration(seconds: 1),
         () {
           if (_appLifecycleState == AppLifecycleState.resumed) {
             if (mounted) {
-              _appOpenAd!.show();
+              _interstitialAd?.show();
             }
           } else {
             _adFailedToShow = true;
@@ -87,9 +83,10 @@ class _EasyAppOpenAdState extends State<EasyAppOpenAd> with WidgetsBindingObserv
       );
 
   void _closeAd() {
-    if (EasyAppOpenAd.currentRoute != null) {
-      Navigator.of(context).removeRoute(EasyAppOpenAd.currentRoute as Route);
-      EasyAppOpenAd.currentRoute = null;
+    if (InterstitialAds.currentRoute != null) {
+      Navigator.of(context)
+          .removeRoute(InterstitialAds.currentRoute as Route);
+      InterstitialAds.currentRoute = null;
     } else {
       Navigator.of(context).pop();
     }
@@ -98,20 +95,22 @@ class _EasyAppOpenAdState extends State<EasyAppOpenAd> with WidgetsBindingObserv
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
-    EasyAds.instance.setFullscreenAdShowing(true);
+    AdmobAds.instance.setFullscreenAdShowing(true);
     ConsentManager.ins.handleRequestUmp(
       onPostExecute: () {
         if (ConsentManager.ins.canRequestAds) {
-          initAndLoadAd();
+          _initAd();
         } else {
           if (mounted) {
             _closeAd();
           }
-          widget.onAdFailedToLoad?.call(widget.adNetwork, AdUnitType.appOpen, null, "");
-          EasyAds.instance.setFullscreenAdShowing(false);
+          widget.onAdFailedToLoad
+              ?.call(widget.adNetwork, AdUnitType.appOpen, null, "");
+          AdmobAds.instance.setFullscreenAdShowing(false);
         }
       },
     );
+
     super.initState();
   }
 
@@ -130,71 +129,8 @@ class _EasyAppOpenAdState extends State<EasyAppOpenAd> with WidgetsBindingObserv
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _interstitialAd?.dispose();
     super.dispose();
-  }
-
-  void initAndLoadAd() {
-    _appOpenAd = EasyAds.instance.createAppOpenAd(
-      adNetwork: widget.adNetwork,
-      adId: widget.adId,
-      onAdLoaded: (adNetwork, adUnitType, data) {
-        widget.onAdLoaded?.call(adNetwork, adUnitType, data);
-        _showAd();
-      },
-      onAdClicked: (adNetwork, adUnitType, data) {
-        widget.onAdClicked?.call(adNetwork, adUnitType, data);
-      },
-      onAdDismissed: (adNetwork, adUnitType, data) {
-        if (widget.onAdShowed == null) {
-          _closeAd();
-        }
-        widget.onAdDismissed?.call(adNetwork, adUnitType, data);
-        EasyAds.instance.setFullscreenAdShowing(false);
-      },
-      onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
-        widget.onAdFailedToLoad?.call(adNetwork, adUnitType, data, errorMessage);
-        if (mounted) {
-          _closeAd();
-        }
-        EasyAds.instance.setFullscreenAdShowing(false);
-      },
-      onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
-        widget.onAdFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);
-        if (mounted) {
-          _closeAd();
-        }
-        EasyAds.instance.setFullscreenAdShowing(false);
-      },
-      onAdShowed: (adNetwork, adUnitType, data) {
-        if (widget.onAdShowed != null) {
-          _closeAd();
-          widget.onAdShowed!.call(adNetwork, adUnitType, data);
-        }
-      },
-      onEarnedReward: (adNetwork, adUnitType, rewardType, rewardAmount) {
-        widget.onEarnedReward?.call(adNetwork, adUnitType, rewardType, rewardAmount);
-      },
-      onPaidEvent: ({
-        required AdNetwork adNetwork,
-        required AdUnitType adUnitType,
-        required double revenue,
-        required String currencyCode,
-        String? network,
-        String? unit,
-        String? placement,
-      }) {
-        widget.onPaidEvent?.call(
-          adNetwork: adNetwork,
-          adUnitType: adUnitType,
-          revenue: revenue,
-          currencyCode: currencyCode,
-          network: network,
-          unit: unit,
-          placement: placement,
-        );
-      },
-    );
-    _appOpenAd?.load();
   }
 
   @override
@@ -216,7 +152,7 @@ class _EasyAppOpenAdState extends State<EasyAppOpenAd> with WidgetsBindingObserv
             ),
             SizedBox(height: 8),
             Text(
-              'Welcome back',
+              'Loading Ads',
               style: TextStyle(
                 color: Colors.black,
               ),
@@ -225,5 +161,64 @@ class _EasyAppOpenAdState extends State<EasyAppOpenAd> with WidgetsBindingObserv
         ),
       ),
     );
+  }
+
+  void _initAd() {
+    _interstitialAd = AdmobAds.instance.createInterstitial(
+      adNetwork: widget.adNetwork,
+      adId: widget.adId,
+      onAdClicked: (adNetwork, adUnitType, data) {
+        widget.onAdClicked?.call(adNetwork, adUnitType, data);
+      },
+      onAdDismissed: (adNetwork, adUnitType, data) {
+        if (widget.onAdShowed == null) {
+          _closeAd();
+        }
+        widget.onAdDismissed?.call(adNetwork, adUnitType, data);
+        AdmobAds.instance.setFullscreenAdShowing(false);
+      },
+      onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
+        _closeAd();
+        widget.onAdFailedToLoad
+            ?.call(adNetwork, adUnitType, data, errorMessage);
+        AdmobAds.instance.setFullscreenAdShowing(false);
+      },
+      onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
+        _closeAd();
+        widget.onAdFailedToShow
+            ?.call(adNetwork, adUnitType, data, errorMessage);
+        AdmobAds.instance.setFullscreenAdShowing(false);
+      },
+      onAdLoaded: (adNetwork, adUnitType, data) {
+        widget.onAdLoaded?.call(adNetwork, adUnitType, data);
+        _showAd();
+      },
+      onAdShowed: (adNetwork, adUnitType, data) {
+        if (widget.onAdShowed != null) {
+          _closeAd();
+          widget.onAdShowed!.call(adNetwork, adUnitType, data);
+        }
+      },
+      onPaidEvent: ({
+        required AdNetwork adNetwork,
+        required AdUnitType adUnitType,
+        required double revenue,
+        required String currencyCode,
+        String? network,
+        String? unit,
+        String? placement,
+      }) {
+        widget.onPaidEvent?.call(
+          adNetwork: adNetwork,
+          adUnitType: adUnitType,
+          revenue: revenue,
+          currencyCode: currencyCode,
+          network: network,
+          unit: unit,
+          placement: placement,
+        );
+      },
+    );
+    _interstitialAd?.load();
   }
 }

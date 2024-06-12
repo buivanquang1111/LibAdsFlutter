@@ -2,7 +2,7 @@ library language;
 
 import 'dart:async';
 
-import 'package:easy_ads_flutter/easy_ads_flutter.dart';
+import 'package:amazic_ads_flutter/admob_ads_flutter.dart';
 import 'package:example/common/app_app_bar.dart';
 import 'package:example/common/app_scafold.dart';
 import 'package:example/const/resource.dart';
@@ -40,7 +40,7 @@ class LanguageScreen extends StatefulWidget {
 
 class LanguageScreenState extends State<LanguageScreen> {
   final controller = Get.find<LanguageController>();
-  final key = GlobalKey<EasyBannerPluginState>();
+  final key = GlobalKey<CollapseBannerAdsState>();
 
   @override
   void initState() {
@@ -131,15 +131,15 @@ class LanguageScreenState extends State<LanguageScreen> {
             ),
           ),
           !widget.isFromSetting
-              ? EasyBannerPlugin(
+              ? CollapseBannerAds(
                   key: key,
-                  type: EasyAdsBannerType.collapsible_bottom,
+                  type: AdsBannerType.collapsible_bottom,
                   adId: adIdManager.collapseHome,
                   refreshRateSec: 10,
                   cbFetchIntervalSec: 5,
                   config: RemoteConfig.configs[RemoteConfigKey.banner_all.name],
                   visibilityDetectorKey: 'banner-lang')
-              : EasyNativeAd(
+              : NativeAds(
                   factoryId: adIdManager.nativeLanguageFactory,
                   adId: adIdManager.nativeLanguage,
                   height: adIdManager.largeNativeAdHeight,

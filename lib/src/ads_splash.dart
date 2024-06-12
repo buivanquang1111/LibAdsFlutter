@@ -1,7 +1,9 @@
 import 'dart:math';
 
-import 'package:easy_ads_flutter/easy_ads_flutter.dart';
-import 'package:easy_ads_flutter/src/enums/state_ad_splash.dart';
+import 'package:amazic_ads_flutter/admob_ads_flutter.dart';
+import 'package:amazic_ads_flutter/src/enums/state_ad_splash.dart';
+
+import 'ads_base.dart';
 
 class AdsSplash {
   AdsSplash._instance();
@@ -37,7 +39,7 @@ class AdsSplash {
     EasyAdCallback? onAdShowed,
   }) {
     if (getState() == StateAdSplash.open) {
-      EasyAds.instance.showAppOpen(
+      AdmobAds.instance.showAppOpen(
         adId: idOpen,
         config: configAdsOpen!,
         onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
@@ -57,7 +59,7 @@ class AdsSplash {
         },
       );
     } else if (getState() == StateAdSplash.inter) {
-      EasyAds.instance.showInterstitialAd(
+      AdmobAds.instance.showInterstitialAd(
           adId: idInter,
           config: configAdsInter!,
         isShowAdsSplash: true,

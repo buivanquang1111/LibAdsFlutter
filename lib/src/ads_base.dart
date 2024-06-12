@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'enums/ad_network.dart';
 import 'enums/ad_unit_type.dart';
 
-abstract class EasyAdBase {
+abstract class AdsBase {
   final String adUnitId;
   EasyAdCallback? onAdLoaded;
   EasyAdCallback? onAdShowed;
@@ -16,7 +16,7 @@ abstract class EasyAdBase {
   EasyAdCallback? onBannerAdReadyForSetState;
 
   /// This will be called for initialization when we don't have to wait for the initialization
-  EasyAdBase({
+  AdsBase({
     required this.adUnitId,
     this.onAdLoaded,
     this.onAdShowed,

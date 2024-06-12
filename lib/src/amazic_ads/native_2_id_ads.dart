@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:easy_ads_flutter/easy_ads_flutter.dart';
+import 'package:amazic_ads_flutter/admob_ads_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-import 'easy_loading_ad.dart';
+import 'loading_ads.dart';
 
-class EasyNative2Ad extends StatefulWidget {
+class Native2IdAds extends StatefulWidget {
   final AdNetwork adNetwork;
   final String factoryId;
   final String adId;
@@ -42,13 +42,13 @@ class EasyNative2Ad extends StatefulWidget {
 
   final bool reloadOnClick;
 
-  final Function(EasyAdsPlacementType type)? onShowed;
-  final Function(EasyAdsPlacementType type)? onDismissed;
+  final Function(AdsPlacementType type)? onShowed;
+  final Function(AdsPlacementType type)? onDismissed;
   final Function()? onFailedToLoad;
-  final Function(EasyAdsPlacementType type)? onFailedToShow;
-  final Function(EasyAdsPlacementType type)? onClicked;
+  final Function(AdsPlacementType type)? onFailedToShow;
+  final Function(AdsPlacementType type)? onClicked;
 
-  const EasyNative2Ad({
+  const Native2IdAds({
     this.adNetwork = AdNetwork.admob,
     required this.factoryId,
     this.visibilityController,
@@ -89,18 +89,18 @@ class EasyNative2Ad extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<EasyNative2Ad> createState() => _EasyNative2AdState();
+  State<Native2IdAds> createState() => _Native2IdAdsState();
 }
 
-class _EasyNative2AdState extends State<EasyNative2Ad> with WidgetsBindingObserver {
-  EasyAdBase? _ad;
+class _Native2IdAdsState extends State<Native2IdAds> with WidgetsBindingObserver {
+  AdsBase? _ad;
   bool isClicked = false;
   late final ValueNotifier<bool> visibilityController;
   int loadFailedCount = 0;
   static const int maxFailedTimes = 3;
 
-  EasyAdBase? _nativeAd;
-  EasyAdBase? _nativeAdHigh;
+  AdsBase? _nativeAd;
+  AdsBase? _nativeAdHigh;
 
   Timer? _timer;
   bool _isAdLoaded = false;
@@ -133,12 +133,12 @@ class _EasyNative2AdState extends State<EasyNative2Ad> with WidgetsBindingObserv
     if (loadFailedCount >= maxFailedTimes) {
       return;
     }
-    if (!EasyAds.instance.isEnabled) {
+    if (!AdmobAds.instance.isEnabled) {
       widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.native, null);
       widget.onAdHighDisabled?.call(widget.adNetwork, AdUnitType.native, null);
       return;
     }
-    if (await EasyAds.instance.isDeviceOffline()) {
+    if (await AdmobAds.instance.isDeviceOffline()) {
       widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.native, null);
       widget.onAdHighDisabled?.call(widget.adNetwork, AdUnitType.native, null);
       return;
@@ -248,7 +248,7 @@ class _EasyNative2AdState extends State<EasyNative2Ad> with WidgetsBindingObserv
                         borderRadius: widget.borderRadius,
                         child: SizedBox(
                           height: widget.height,
-                          child: EasyLoadingAd(
+                          child: LoadingAds(
                             height: widget.height,
                           ),
                         ),
@@ -286,13 +286,13 @@ class _EasyNative2AdState extends State<EasyNative2Ad> with WidgetsBindingObserv
       _nativeAdHigh = null;
     }
 
-    _nativeAd ??= EasyAds.instance.createNative(
+    _nativeAd ??= AdmobAds.instance.createNative(
       adNetwork: widget.adNetwork,
       factoryId: widget.factoryId,
       adId: widget.adId,
       onAdClicked: (adNetwork, adUnitType, data) {
         widget.onAdClicked?.call(adNetwork, adUnitType, data);
-        widget.onClicked?.call(EasyAdsPlacementType.normal);
+        widget.onClicked?.call(AdsPlacementType.normal);
         isClicked = widget.reloadOnClick;
         if (mounted) {
           setState(() {});
@@ -300,7 +300,7 @@ class _EasyNative2AdState extends State<EasyNative2Ad> with WidgetsBindingObserv
       },
       onAdDismissed: (adNetwork, adUnitType, data) {
         widget.onAdDismissed?.call(adNetwork, adUnitType, data);
-        widget.onDismissed?.call(EasyAdsPlacementType.normal);
+        widget.onDismissed?.call(AdsPlacementType.normal);
         if (mounted) {
           setState(() {});
         }
@@ -314,7 +314,7 @@ class _EasyNative2AdState extends State<EasyNative2Ad> with WidgetsBindingObserv
       },
       onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
         widget.onAdFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);
-        widget.onFailedToShow?.call(EasyAdsPlacementType.normal);
+        widget.onFailedToShow?.call(AdsPlacementType.normal);
         if (mounted) {
           setState(() {});
         }
@@ -328,7 +328,7 @@ class _EasyNative2AdState extends State<EasyNative2Ad> with WidgetsBindingObserv
       },
       onAdShowed: (adNetwork, adUnitType, data) {
         widget.onAdShowed?.call(adNetwork, adUnitType, data);
-        widget.onShowed?.call(EasyAdsPlacementType.normal);
+        widget.onShowed?.call(AdsPlacementType.normal);
         if (mounted) {
           setState(() {});
         }
@@ -358,13 +358,13 @@ class _EasyNative2AdState extends State<EasyNative2Ad> with WidgetsBindingObserv
       },
     );
 
-    _nativeAdHigh ??= EasyAds.instance.createNative(
+    _nativeAdHigh ??= AdmobAds.instance.createNative(
       adNetwork: widget.adNetwork,
       factoryId: widget.factoryId,
       adId: widget.adIdHigh,
       onAdClicked: (adNetwork, adUnitType, data) {
         widget.onAdHighClicked?.call(adNetwork, adUnitType, data);
-        widget.onClicked?.call(EasyAdsPlacementType.high);
+        widget.onClicked?.call(AdsPlacementType.high);
         isClicked = widget.reloadOnClick;
         if (mounted) {
           setState(() {});
@@ -372,7 +372,7 @@ class _EasyNative2AdState extends State<EasyNative2Ad> with WidgetsBindingObserv
       },
       onAdDismissed: (adNetwork, adUnitType, data) {
         widget.onAdHighDismissed?.call(adNetwork, adUnitType, data);
-        widget.onClicked?.call(EasyAdsPlacementType.high);
+        widget.onClicked?.call(AdsPlacementType.high);
         if (mounted) {
           setState(() {});
         }
@@ -386,7 +386,7 @@ class _EasyNative2AdState extends State<EasyNative2Ad> with WidgetsBindingObserv
       },
       onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
         widget.onAdHighFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);
-        widget.onFailedToShow?.call(EasyAdsPlacementType.high);
+        widget.onFailedToShow?.call(AdsPlacementType.high);
         if (mounted) {
           setState(() {});
         }
@@ -400,7 +400,7 @@ class _EasyNative2AdState extends State<EasyNative2Ad> with WidgetsBindingObserv
       },
       onAdShowed: (adNetwork, adUnitType, data) {
         widget.onAdHighShowed?.call(adNetwork, adUnitType, data);
-        widget.onShowed?.call(EasyAdsPlacementType.high);
+        widget.onShowed?.call(AdsPlacementType.high);
         if (mounted) {
           setState(() {});
         }

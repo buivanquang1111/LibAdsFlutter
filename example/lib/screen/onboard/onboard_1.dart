@@ -1,4 +1,4 @@
-import 'package:easy_ads_flutter/easy_ads_flutter.dart';
+import 'package:amazic_ads_flutter/admob_ads_flutter.dart';
 import 'package:example/config/global_colors.dart';
 import 'package:example/config/global_txt_style.dart';
 import 'package:example/main.dart';

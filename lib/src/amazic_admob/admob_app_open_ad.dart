@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../../easy_ads_flutter.dart';
+import '../../admob_ads_flutter.dart';
 
-class EasyAdmobAppOpenAd extends EasyAdBase {
+class AdmobAppOpenAd extends AdsBase {
   final AdRequest adRequest;
 
-  EasyAdmobAppOpenAd({
+  AdmobAppOpenAd({
     required super.adUnitId,
     required this.adRequest,
     super.onAdLoaded,
@@ -60,7 +60,7 @@ class EasyAdmobAppOpenAd extends EasyAdBase {
           _appOpenAd = ad;
           _appOpenAd?.onPaidEvent = (ad, revenue, type, currencyCode) {
             final info = ad.responseInfo?.loadedAdapterResponseInfo;
-            EasyAds.instance.onPaidEventMethod(
+            AdmobAds.instance.onPaidEventMethod(
               adNetwork: adNetwork,
               adUnitType: adUnitType,
               revenue: revenue / 1000000,
@@ -78,7 +78,7 @@ class EasyAdmobAppOpenAd extends EasyAdBase {
           _isAdLoading = false;
           _isAdLoadedFailed = false;
           _isAdLoaded = true;
-          EasyAds.instance.onAdLoadedMethod(adNetwork, adUnitType, ad);
+          AdmobAds.instance.onAdLoadedMethod(adNetwork, adUnitType, ad);
           onAdLoaded?.call(adNetwork, adUnitType, ad);
         },
         onAdFailedToLoad: (LoadAdError error) {
@@ -86,7 +86,7 @@ class EasyAdmobAppOpenAd extends EasyAdBase {
           _isAdLoading = false;
           _isAdLoadedFailed = true;
           _isAdLoaded = false;
-          EasyAds.instance.onAdFailedToLoadMethod(adNetwork, adUnitType, error, error.toString());
+          AdmobAds.instance.onAdFailedToLoadMethod(adNetwork, adUnitType, error, error.toString());
           onAdFailedToLoad?.call(adNetwork, adUnitType, error, error.toString());
         },
       ),
@@ -108,7 +108,7 @@ class EasyAdmobAppOpenAd extends EasyAdBase {
     }
 
     if (_isShowingAd) {
-      EasyAds.instance.onAdFailedToShowMethod(
+      AdmobAds.instance.onAdFailedToShowMethod(
           adNetwork, adUnitType, null, 'Tried to show ad while already showing an ad.');
       onAdFailedToShow?.call(
           adNetwork, adUnitType, null, 'Tried to show ad while already showing an ad.');
@@ -119,13 +119,13 @@ class EasyAdmobAppOpenAd extends EasyAdBase {
       onAdShowedFullScreenContent: (AppOpenAd ad) {
         _isShowingAd = true;
 
-        EasyAds.instance.onAdShowedMethod(adNetwork, adUnitType, ad);
+        AdmobAds.instance.onAdShowedMethod(adNetwork, adUnitType, ad);
         onAdShowed?.call(adNetwork, adUnitType, ad);
       },
       onAdDismissedFullScreenContent: (AppOpenAd ad) {
         _isShowingAd = false;
 
-        EasyAds.instance.onAdDismissedMethod(adNetwork, adUnitType, ad);
+        AdmobAds.instance.onAdDismissedMethod(adNetwork, adUnitType, ad);
         onAdDismissed?.call(adNetwork, adUnitType, ad);
         ad.dispose();
         _appOpenAd = null;
@@ -133,14 +133,14 @@ class EasyAdmobAppOpenAd extends EasyAdBase {
       onAdFailedToShowFullScreenContent: (AppOpenAd ad, AdError error) {
         _isShowingAd = false;
 
-        EasyAds.instance.onAdFailedToShowMethod(adNetwork, adUnitType, ad, error.toString());
+        AdmobAds.instance.onAdFailedToShowMethod(adNetwork, adUnitType, ad, error.toString());
         onAdFailedToShow?.call(adNetwork, adUnitType, ad, error.toString());
 
         ad.dispose();
         _appOpenAd = null;
       },
       onAdClicked: (ad) {
-        EasyAds.instance.onAdClickedMethod(adNetwork, adUnitType, ad);
+        AdmobAds.instance.onAdClickedMethod(adNetwork, adUnitType, ad);
         onAdClicked?.call(adNetwork, adUnitType, ad);
       },
     );

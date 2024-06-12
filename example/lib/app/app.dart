@@ -6,7 +6,7 @@ import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_ad_revenue.dart';
 import 'package:adjust_sdk/adjust_config.dart';
 import 'package:adjust_sdk/adjust_event.dart';
-import 'package:easy_ads_flutter/easy_ads_flutter.dart';
+import 'package:amazic_ads_flutter/admob_ads_flutter.dart';
 import 'package:example/config/global_colors.dart';
 import 'package:example/config/global_constant.dart';
 import 'package:example/screen/language/language.dart';
@@ -33,7 +33,7 @@ class AppState extends State<App> with WidgetsBindingObserver {
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
-    _streamSubscription = EasyAds.instance.onEvent.listen((event) {
+    _streamSubscription = AdmobAds.instance.onEvent.listen((event) {
       if (event.type == AdEventType.onPaidEvent) {
         try {
           final Map<String, dynamic>? data =
@@ -91,7 +91,7 @@ class AppState extends State<App> with WidgetsBindingObserver {
     if (state == AppLifecycleState.resumed) {
       Adjust.onResume();
       if (_state == AppLifecycleState.paused) {
-        EasyAds.instance.appLifecycleReactor?.setIsExcludeScreen(false);
+        AdmobAds.instance.appLifecycleReactor?.setIsExcludeScreen(false);
       }
     } else if (state == AppLifecycleState.paused) {
       Adjust.onPause();

@@ -1,23 +1,25 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-import '../../easy_ads_flutter.dart';
+import '../../admob_ads_flutter.dart';
 
-class EasyNativeAdReload extends StatefulWidget {
+class CollapseBannerAds extends StatefulWidget {
+  final AdNetwork adNetwork;
+
+  final String adId;
+  final AdsBannerType type;
+
   /// refresh_rate_sec
   final int refreshRateSec;
 
-  final AdNetwork adNetwork;
-  final String factoryId;
-  final String adId;
-  final double height;
-  final Color? color;
-  final BorderRadiusGeometry borderRadius;
-  final BoxBorder? border;
-  final EdgeInsetsGeometry? padding;
-  final EdgeInsetsGeometry? margin;
+  /// cb_fetch_interval_sec
+  final int cbFetchIntervalSec;
+
+  final String visibilityDetectorKey;
+  final ValueNotifier<bool>? visibilityController;
 
   final EasyAdCallback? onAdLoaded;
   final EasyAdCallback? onAdShowed;
@@ -26,21 +28,18 @@ class EasyNativeAdReload extends StatefulWidget {
   final EasyAdFailedCallback? onAdFailedToShow;
   final EasyAdCallback? onAdDismissed;
   final EasyAdCallback? onAdDisabled;
+  final EasyAdEarnedReward? onEarnedReward;
   final EasyAdOnPaidEvent? onPaidEvent;
   final bool config;
 
-  final bool reloadOnClick;
-
-  final String visibilityDetectorKey;
-  final ValueNotifier<bool>? visibilityController;
-
-  const EasyNativeAdReload({
+  const CollapseBannerAds({
     this.adNetwork = AdNetwork.admob,
     required this.adId,
+    required this.type,
     required this.refreshRateSec,
+    required this.cbFetchIntervalSec,
     required this.visibilityDetectorKey,
     this.visibilityController,
-    required this.factoryId,
     this.onAdLoaded,
     this.onAdShowed,
     this.onAdClicked,
@@ -48,28 +47,23 @@ class EasyNativeAdReload extends StatefulWidget {
     this.onAdFailedToShow,
     this.onAdDismissed,
     this.onAdDisabled,
+    this.onEarnedReward,
     this.onPaidEvent,
     required this.config,
     Key? key,
-    required this.height,
-    this.color,
-    required this.borderRadius,
-    this.border,
-    this.padding,
-    this.margin,
-    this.reloadOnClick = false,
   }) : super(key: key);
 
   @override
-  State<EasyNativeAdReload> createState() => _EasyNativeAdReloadState();
+  State<CollapseBannerAds> createState() => CollapseBannerAdsState();
 }
 
-class _EasyNativeAdReloadState extends State<EasyNativeAdReload> with WidgetsBindingObserver {
-  EasyAdBase? _nativeAd;
+class CollapseBannerAdsState extends State<CollapseBannerAds> with WidgetsBindingObserver {
+  AdsBase? _bannerAd;
 
   Timer? _timer;
   bool _isPaused = false;
   bool _isDestroy = false;
+  late DateTime _lastCBRequestTime;
 
   @override
   Widget build(BuildContext context) {
@@ -98,27 +92,15 @@ class _EasyNativeAdReloadState extends State<EasyNativeAdReload> with WidgetsBin
         builder: (_, isVisible, __) {
           return Visibility(
             visible: isVisible,
-            maintainState: false,
-            maintainAnimation: false,
-            maintainSize: false,
-            maintainSemantics: false,
-            maintainInteractivity: false,
-            replacement: SizedBox(
-              height: ConsentManager.ins.canRequestAds ? widget.height : 1,
-              width: MediaQuery.sizeOf(context).width,
-            ),
-            child: _nativeAd?.show(
-                  height: widget.height,
-                  borderRadius: widget.borderRadius,
-                  color: widget.color,
-                  border: widget.border,
-                  padding: widget.padding,
-                  margin: widget.margin,
-                ) ??
-                SizedBox(
+            child: _bannerAd?.show() ??
+                const SizedBox(
                   height: 1,
-                  width: MediaQuery.sizeOf(context).width,
+                  width: 1,
                 ),
+            replacement: SizedBox(
+              height: ConsentManager.ins.canRequestAds ? 50 : 1,
+              width: MediaQuery.sizeOf(_).width,
+            ),
           );
         },
       ),
@@ -126,11 +108,11 @@ class _EasyNativeAdReloadState extends State<EasyNativeAdReload> with WidgetsBin
   }
 
   Future<void> _prepareAd() async {
-    if (!EasyAds.instance.isEnabled) {
+    if (!AdmobAds.instance.isEnabled) {
       widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.banner, null);
       return;
     }
-    if (await EasyAds.instance.isDeviceOffline()) {
+    if (await AdmobAds.instance.isDeviceOffline()) {
       widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.banner, null);
       return;
     }
@@ -157,17 +139,30 @@ class _EasyNativeAdReloadState extends State<EasyNativeAdReload> with WidgetsBin
   Future<void> _initAd() async {
     _stopTimer();
 
-    if (_nativeAd != null) {
-      _nativeAd!.dispose();
-      _nativeAd = null;
+    if (_bannerAd != null) {
+      _bannerAd!.dispose();
+      _bannerAd = null;
       if (mounted) {
         setState(() {});
       }
     }
 
-    _nativeAd = EasyAds.instance.createNative(
+    AdsBannerType type = widget.type;
+    if (type == AdsBannerType.collapsible_bottom || type == AdsBannerType.collapsible_top) {
+      /// Check if need request collapsible
+      bool shouldRequestCollapsible =
+          DateTime.now().difference(_lastCBRequestTime).inSeconds >= widget.cbFetchIntervalSec;
+      if (shouldRequestCollapsible) {
+        _lastCBRequestTime = DateTime.now();
+      } else {
+        type = AdsBannerType.adaptive;
+      }
+    }
+
+    _bannerAd = AdmobAds.instance.createBanner(
       adNetwork: widget.adNetwork,
       adId: widget.adId,
+      type: type,
       onAdLoaded: (adNetwork, adUnitType, data) {
         if (!_isDestroy && !_isPaused) {
           _startTimer();
@@ -233,9 +228,8 @@ class _EasyNativeAdReloadState extends State<EasyNativeAdReload> with WidgetsBin
           setState(() {});
         }
       },
-      factoryId: widget.factoryId,
     );
-    _nativeAd?.load();
+    _bannerAd?.load();
     if (mounted) {
       setState(() {});
     }
@@ -249,6 +243,7 @@ class _EasyNativeAdReloadState extends State<EasyNativeAdReload> with WidgetsBin
     super.initState();
     WidgetsBinding.instance.addObserver(this);
 
+    _lastCBRequestTime = DateTime.now().subtract(Duration(seconds: widget.cbFetchIntervalSec + 1));
     visibilityController = widget.visibilityController ?? ValueNotifier(true);
     visibilityController.addListener(_listener);
   }
@@ -256,15 +251,15 @@ class _EasyNativeAdReloadState extends State<EasyNativeAdReload> with WidgetsBin
   late final ValueNotifier<bool> visibilityController;
 
   void _listener() {
-    if (_nativeAd?.isAdLoading != true && visibilityController.value) {
+    if (_bannerAd?.isAdLoading != true && visibilityController.value) {
       _prepareAd();
       return;
     }
 
     if (!visibilityController.value) {
-      if (_nativeAd != null) {
-        _nativeAd!.dispose();
-        _nativeAd = null;
+      if (_bannerAd != null) {
+        _bannerAd!.dispose();
+        _bannerAd = null;
         if (mounted) {
           setState(() {});
         }
@@ -281,12 +276,16 @@ class _EasyNativeAdReloadState extends State<EasyNativeAdReload> with WidgetsBin
   }
 
   @override
-  void dispose() {
+  void dispose(){
     WidgetsBinding.instance.removeObserver(this);
-    _nativeAd?.dispose();
+    closeCollapse();
     onDestroyed();
 
     super.dispose();
+  }
+
+  Future<void> closeCollapse() async{
+    return _bannerAd?.dispose();
   }
 
   @override

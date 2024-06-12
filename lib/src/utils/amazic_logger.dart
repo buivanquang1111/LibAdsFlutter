@@ -2,20 +2,20 @@ import 'dart:async';
 
 import 'package:logger/logger.dart';
 
-import '../easy_ads.dart';
+import '../admob_ads.dart';
 import '../enums/ad_event_type.dart';
 import 'ad_event.dart';
 
-/// [EasyLogger] is used to listen to the callbacks in stream & show logs
-class EasyLogger {
-  /// [Logger] is used to show logs in console for EasyAds
+/// [AmazicLogger] is used to listen to the callbacks in stream & show logs
+class AmazicLogger {
+  /// [Logger] is used to show logs in console for AdmobAds
   final _logger = Logger();
   StreamSubscription? streamSubscription;
 
   void enable(bool enabled) {
     streamSubscription?.cancel();
     if (enabled) {
-      streamSubscription = EasyAds.instance.onEvent.listen(_onAdEvent);
+      streamSubscription = AdmobAds.instance.onEvent.listen(_onAdEvent);
     }
   }
 

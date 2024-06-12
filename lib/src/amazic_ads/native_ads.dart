@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:easy_ads_flutter/src/easy_ads/easy_loading_ad.dart';
 import 'package:flutter/material.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-import '../../easy_ads_flutter.dart';
+import '../../admob_ads_flutter.dart';
+import 'loading_ads.dart';
 
-class EasyNativeAd extends StatefulWidget {
+class NativeAds extends StatefulWidget {
   final AdNetwork adNetwork;
   final String factoryId;
   final String adId;
@@ -32,7 +32,7 @@ class EasyNativeAd extends StatefulWidget {
   final String visibilityDetectorKey;
   final ValueNotifier<bool>? visibilityController;
 
-  const EasyNativeAd({
+  const NativeAds({
     this.adNetwork = AdNetwork.admob,
     required this.factoryId,
     required this.adId,
@@ -58,11 +58,11 @@ class EasyNativeAd extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<EasyNativeAd> createState() => _EasyNativeAdState();
+  State<NativeAds> createState() => _NativeAdsState();
 }
 
-class _EasyNativeAdState extends State<EasyNativeAd> with WidgetsBindingObserver {
-  EasyAdBase? _nativeAd;
+class _NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
+  AdsBase? _nativeAd;
 
   late final ValueNotifier<bool> visibilityController;
   int loadFailedCount = 0;
@@ -103,14 +103,14 @@ class _EasyNativeAdState extends State<EasyNativeAd> with WidgetsBindingObserver
       }
       return;
     }
-    if (!EasyAds.instance.isEnabled) {
+    if (!AdmobAds.instance.isEnabled) {
       if (_isLoading.value) {
         _isLoading.value = false;
       }
       widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.native, null);
       return;
     }
-    if (await EasyAds.instance.isDeviceOffline()) {
+    if (await AdmobAds.instance.isDeviceOffline()) {
       if (_isLoading.value) {
         _isLoading.value = false;
       }
@@ -242,7 +242,7 @@ class _EasyNativeAdState extends State<EasyNativeAd> with WidgetsBindingObserver
                           borderRadius: widget.borderRadius,
                           child: SizedBox(
                             height: widget.height,
-                            child: EasyLoadingAd(
+                            child: LoadingAds(
                               height: widget.height,
                             ),
                           ),
@@ -262,7 +262,7 @@ class _EasyNativeAdState extends State<EasyNativeAd> with WidgetsBindingObserver
       _nativeAd = null;
     }
 
-    _nativeAd ??= EasyAds.instance.createNative(
+    _nativeAd ??= AdmobAds.instance.createNative(
       adNetwork: widget.adNetwork,
       factoryId: widget.factoryId,
       adId: widget.adId,

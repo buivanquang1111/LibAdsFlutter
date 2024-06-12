@@ -1,9 +1,10 @@
 import 'dart:async';
 
-import 'package:easy_ads_flutter/easy_ads_flutter.dart';
 import 'package:flutter/material.dart';
 
-class EasyInterstitialAd extends StatefulWidget {
+import '../../admob_ads_flutter.dart';
+
+class AppOpenAds extends StatefulWidget {
   final AdNetwork adNetwork;
   final String adId;
   final EasyAdCallback? onAdLoaded;
@@ -12,11 +13,12 @@ class EasyInterstitialAd extends StatefulWidget {
   final EasyAdFailedCallback? onAdFailedToLoad;
   final EasyAdFailedCallback? onAdFailedToShow;
   final EasyAdCallback? onAdDismissed;
+  final EasyAdEarnedReward? onEarnedReward;
   final EasyAdOnPaidEvent? onPaidEvent;
 
-  const EasyInterstitialAd({
+  const AppOpenAds({
     Key? key,
-    required this.adNetwork,
+    this.adNetwork = AdNetwork.admob,
     required this.adId,
     this.onAdLoaded,
     this.onAdShowed,
@@ -24,6 +26,7 @@ class EasyInterstitialAd extends StatefulWidget {
     this.onAdFailedToLoad,
     this.onAdFailedToShow,
     this.onAdDismissed,
+    this.onEarnedReward,
     this.onPaidEvent,
   }) : super(key: key);
 
@@ -40,12 +43,13 @@ class EasyInterstitialAd extends StatefulWidget {
     EasyAdFailedCallback? onAdFailedToLoad,
     EasyAdFailedCallback? onAdFailedToShow,
     EasyAdCallback? onAdDismissed,
+    EasyAdEarnedReward? onEarnedReward,
     EasyAdOnPaidEvent? onPaidEvent,
   }) {
     currentRoute = null;
     currentRoute = DialogRoute(
       context: context,
-      builder: (context) => EasyInterstitialAd(
+      builder: (context) => AppOpenAds(
         adId: adId,
         adNetwork: adNetwork,
         onAdLoaded: onAdLoaded,
@@ -54,6 +58,7 @@ class EasyInterstitialAd extends StatefulWidget {
         onAdFailedToLoad: onAdFailedToLoad,
         onAdFailedToShow: onAdFailedToShow,
         onAdDismissed: onAdDismissed,
+        onEarnedReward: onEarnedReward,
         onPaidEvent: onPaidEvent,
       ),
     );
@@ -62,19 +67,18 @@ class EasyInterstitialAd extends StatefulWidget {
   }
 
   @override
-  State<EasyInterstitialAd> createState() => _EasyInterstitialAdState();
+  State<AppOpenAds> createState() => _AppOpenAdsState();
 }
 
-class _EasyInterstitialAdState extends State<EasyInterstitialAd>
-    with WidgetsBindingObserver {
-  late final EasyAdBase? _interstitialAd;
+class _AppOpenAdsState extends State<AppOpenAds> with WidgetsBindingObserver {
+  late final AdsBase? _appOpenAd;
 
   Future<void> _showAd() => Future.delayed(
-        const Duration(seconds: 1),
+        const Duration(milliseconds: 500),
         () {
           if (_appLifecycleState == AppLifecycleState.resumed) {
             if (mounted) {
-              _interstitialAd?.show();
+              _appOpenAd!.show();
             }
           } else {
             _adFailedToShow = true;
@@ -83,10 +87,9 @@ class _EasyInterstitialAdState extends State<EasyInterstitialAd>
       );
 
   void _closeAd() {
-    if (EasyInterstitialAd.currentRoute != null) {
-      Navigator.of(context)
-          .removeRoute(EasyInterstitialAd.currentRoute as Route);
-      EasyInterstitialAd.currentRoute = null;
+    if (AppOpenAds.currentRoute != null) {
+      Navigator.of(context).removeRoute(AppOpenAds.currentRoute as Route);
+      AppOpenAds.currentRoute = null;
     } else {
       Navigator.of(context).pop();
     }
@@ -95,22 +98,20 @@ class _EasyInterstitialAdState extends State<EasyInterstitialAd>
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
-    EasyAds.instance.setFullscreenAdShowing(true);
+    AdmobAds.instance.setFullscreenAdShowing(true);
     ConsentManager.ins.handleRequestUmp(
       onPostExecute: () {
         if (ConsentManager.ins.canRequestAds) {
-          _initAd();
+          initAndLoadAd();
         } else {
           if (mounted) {
             _closeAd();
           }
-          widget.onAdFailedToLoad
-              ?.call(widget.adNetwork, AdUnitType.appOpen, null, "");
-          EasyAds.instance.setFullscreenAdShowing(false);
+          widget.onAdFailedToLoad?.call(widget.adNetwork, AdUnitType.appOpen, null, "");
+          AdmobAds.instance.setFullscreenAdShowing(false);
         }
       },
     );
-
     super.initState();
   }
 
@@ -129,44 +130,17 @@ class _EasyInterstitialAdState extends State<EasyInterstitialAd>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    _interstitialAd?.dispose();
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return const PopScope(
-      canPop: false,
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Center(
-              child: SizedBox(
-                height: 50,
-                width: 50,
-                child: CircularProgressIndicator(),
-              ),
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Loading Ads',
-              style: TextStyle(
-                color: Colors.black,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _initAd() {
-    _interstitialAd = EasyAds.instance.createInterstitial(
+  void initAndLoadAd() {
+    _appOpenAd = AdmobAds.instance.createAppOpenAd(
       adNetwork: widget.adNetwork,
       adId: widget.adId,
+      onAdLoaded: (adNetwork, adUnitType, data) {
+        widget.onAdLoaded?.call(adNetwork, adUnitType, data);
+        _showAd();
+      },
       onAdClicked: (adNetwork, adUnitType, data) {
         widget.onAdClicked?.call(adNetwork, adUnitType, data);
       },
@@ -175,29 +149,30 @@ class _EasyInterstitialAdState extends State<EasyInterstitialAd>
           _closeAd();
         }
         widget.onAdDismissed?.call(adNetwork, adUnitType, data);
-        EasyAds.instance.setFullscreenAdShowing(false);
+        AdmobAds.instance.setFullscreenAdShowing(false);
       },
       onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
-        _closeAd();
-        widget.onAdFailedToLoad
-            ?.call(adNetwork, adUnitType, data, errorMessage);
-        EasyAds.instance.setFullscreenAdShowing(false);
+        widget.onAdFailedToLoad?.call(adNetwork, adUnitType, data, errorMessage);
+        if (mounted) {
+          _closeAd();
+        }
+        AdmobAds.instance.setFullscreenAdShowing(false);
       },
       onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
-        _closeAd();
-        widget.onAdFailedToShow
-            ?.call(adNetwork, adUnitType, data, errorMessage);
-        EasyAds.instance.setFullscreenAdShowing(false);
-      },
-      onAdLoaded: (adNetwork, adUnitType, data) {
-        widget.onAdLoaded?.call(adNetwork, adUnitType, data);
-        _showAd();
+        widget.onAdFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);
+        if (mounted) {
+          _closeAd();
+        }
+        AdmobAds.instance.setFullscreenAdShowing(false);
       },
       onAdShowed: (adNetwork, adUnitType, data) {
         if (widget.onAdShowed != null) {
           _closeAd();
           widget.onAdShowed!.call(adNetwork, adUnitType, data);
         }
+      },
+      onEarnedReward: (adNetwork, adUnitType, rewardType, rewardAmount) {
+        widget.onEarnedReward?.call(adNetwork, adUnitType, rewardType, rewardAmount);
       },
       onPaidEvent: ({
         required AdNetwork adNetwork,
@@ -219,6 +194,36 @@ class _EasyInterstitialAdState extends State<EasyInterstitialAd>
         );
       },
     );
-    _interstitialAd?.load();
+    _appOpenAd?.load();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return const PopScope(
+      canPop: false,
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Center(
+              child: SizedBox(
+                height: 50,
+                width: 50,
+                child: CircularProgressIndicator(),
+              ),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'Welcome back',
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

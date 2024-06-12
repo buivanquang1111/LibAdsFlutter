@@ -2,7 +2,7 @@
 
 library splash;
 
-import 'package:easy_ads_flutter/easy_ads_flutter.dart';
+import 'package:amazic_ads_flutter/admob_ads_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -20,7 +20,7 @@ import 'package:example/utils/connectivity.dart';
 import 'package:example/utils/event_log.dart';
 import 'package:example/utils/remote_config.dart';
 
-EasyPreloadNativeController? introAdCtrl;
+PreloadNativeController? introAdCtrl;
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -45,14 +45,14 @@ class SplashState extends State<SplashScreen> {
   }
 
   Future<void> initAdModule() async {
-    EasyAds.instance.setOpenAppTime(DateTime.now().millisecondsSinceEpoch);
-    EasyAds.instance.setTimeIntervalBetweenInter(RemoteConfig.configs[RemoteConfigKey.interval_between_interstitial.name]);
-    EasyAds.instance.setTimeIntervalInterFromStart(RemoteConfig.configs[RemoteConfigKey.interval_from_start.name]);
+    AdmobAds.instance.setOpenAppTime(DateTime.now().millisecondsSinceEpoch);
+    AdmobAds.instance.setTimeIntervalBetweenInter(RemoteConfig.configs[RemoteConfigKey.interval_between_interstitial.name]);
+    AdmobAds.instance.setTimeIntervalInterFromStart(RemoteConfig.configs[RemoteConfigKey.interval_from_start.name]);
 
 
     adIdManager = DevAdIdManager();
     try {
-      await EasyAds.instance.initialize(
+      await AdmobAds.instance.initialize(
         adIdManager,
         adResumeConfig:
             RemoteConfig.configs[RemoteConfigKey.appopen_resume.name],
@@ -69,7 +69,7 @@ class SplashState extends State<SplashScreen> {
         onInitialized: (bool canRequestAds) {
           if (canRequestAds) {
             if (RemoteConfig.configs[RemoteConfigKey.native_intro.name]) {
-              introAdCtrl = EasyPreloadNativeController(
+              introAdCtrl = PreloadNativeController(
                 autoReloadOnFinish: false,
                 nativeNormalId: adIdManager.nativeIntro1,
                 nativeMediumId: null,
@@ -93,21 +93,21 @@ class SplashState extends State<SplashScreen> {
 
   void initAndLoadAd() {
     if (AdHelper.splashType == AdSplashType.open) {
-      EasyAds.instance.showAppOpen(
+      AdmobAds.instance.showAppOpen(
         onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
-          EasyAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
+          AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
           handleNavigate();
         },
         onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
-          EasyAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
+          AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
           handleNavigate();
         },
         onDisabled: () {
-          EasyAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
+          AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
           handleNavigate();
         },
         onAdDismissed: (adNetwork, adUnitType, data) {
-          EasyAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
+          AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
         },
         onAdShowed: (adNetwork, adUnitType, data) {
           handleNavigate();
@@ -116,21 +116,21 @@ class SplashState extends State<SplashScreen> {
         config: RemoteConfig.configs[RemoteConfigKey.open_splash.name],
       );
     } else if (AdHelper.splashType == AdSplashType.inter) {
-      EasyAds.instance.showInterstitialAd(
+      AdmobAds.instance.showInterstitialAd(
         onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
-          EasyAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
+          AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
           handleNavigate();
         },
         onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
-          EasyAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
+          AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
           handleNavigate();
         },
         onDisabled: () {
-          EasyAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
+          AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
           handleNavigate();
         },
         onAdDismissed: (adNetwork, adUnitType, data) {
-          EasyAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
+          AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
         },
         onAdShowed: (adNetwork, adUnitType, data) {
           handleNavigate();
@@ -139,7 +139,7 @@ class SplashState extends State<SplashScreen> {
         config: RemoteConfig.configs[RemoteConfigKey.inter_splash.name],
       );
     } else {
-      EasyAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
+      AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
       handleNavigate();
     }
   }
@@ -157,18 +157,18 @@ class SplashState extends State<SplashScreen> {
         handleNavigate();
       },
       onAdDismissed: (adNetwork, adUnitType, data) {
-        EasyAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
+        AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
       },
       onDisabled: () {
-        EasyAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
+        AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
         handleNavigate();
       },
       onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
-        EasyAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
+        AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
         handleNavigate();
       },
       onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
-        EasyAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
+        AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
         handleNavigate();
       },
     );
