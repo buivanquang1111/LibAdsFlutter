@@ -27,3 +27,5 @@ export 'package:amazic_ads_flutter/src/utils/test_ads_id.dart';
 export 'package:amazic_ads_flutter/src/consent_manager/consent_manager.dart';
 export 'package:google_mobile_ads/google_mobile_ads.dart';
 export 'package:amazic_ads_flutter/src/ads_splash.dart';
+export 'package:amazic_ads_flutter/call_data/ads_model.dart';
+export 'package:amazic_ads_flutter/call_data/network_request.dart';
