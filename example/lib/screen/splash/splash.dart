@@ -45,6 +45,11 @@ class SplashState extends State<SplashScreen> {
   }
 
   Future<void> initAdModule() async {
+    EasyAds.instance.setOpenAppTime(DateTime.now().millisecondsSinceEpoch);
+    EasyAds.instance.setTimeIntervalBetweenInter(RemoteConfig.configs[RemoteConfigKey.interval_between_interstitial.name]);
+    EasyAds.instance.setTimeIntervalInterFromStart(RemoteConfig.configs[RemoteConfigKey.interval_from_start.name]);
+
+
     adIdManager = DevAdIdManager();
     try {
       await EasyAds.instance.initialize(

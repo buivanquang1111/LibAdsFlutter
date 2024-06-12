@@ -72,6 +72,16 @@ class EasyAds {
 
   bool _isAdmobInitialized = false;
 
+  ///Khoảng thời gian giữa 2 lần hiển thị quảng cáo inter
+  int _timeInterval = 0;
+  int _lastTimeDismissInter = 0;
+
+  ///Thời gian từ khi mở app tới khi bắt đầu show quảng cáo inter đầu tiên
+  int _timeIntervalFromStart = 0;
+
+  ///Thời gian mở app
+  int _openAppTime = 0;
+
   Future<void> initAdmob() async {
     if (_isAdmobInitialized) {
       return;
@@ -87,7 +97,8 @@ class EasyAds {
     final initializationStatus = await MobileAds.instance.initialize();
 
     initializationStatus.adapterStatuses.forEach((key, value) {
-      _logger.logInfo('Adapter status for $key: ${value.description} | ${value.state}');
+      _logger.logInfo(
+          'Adapter status for $key: ${value.description} | ${value.state}');
     });
     _isAdmobInitialized = true;
     fireNetworkInitializedEvent(
@@ -142,14 +153,15 @@ class EasyAds {
     if (debugUmp) {
       resetUmp();
     }
-    ConsentManager.ins
-        .handleRequestUmp(onPostExecute: () => onInitialized(ConsentManager.ins.canRequestAds));
+    ConsentManager.ins.handleRequestUmp(
+        onPostExecute: () => onInitialized(ConsentManager.ins.canRequestAds));
 
     if (manager.admobAdIds?.appId != null) {
       this.admobConfiguration = admobConfiguration;
       if (navigatorKey?.currentContext != null) {
-        admobAdSize = await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
-            MediaQuery.sizeOf(navigatorKey!.currentContext!).width.toInt());
+        admobAdSize =
+            await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
+                MediaQuery.sizeOf(navigatorKey!.currentContext!).width.toInt());
       }
     }
 
@@ -252,7 +264,8 @@ class EasyAds {
     EasyAdBase? ad;
     switch (adNetwork) {
       default:
-        final String id = EasyAds.instance.isDevMode ? TestAdsId.admobNativeId : adId;
+        final String id =
+            EasyAds.instance.isDevMode ? TestAdsId.admobNativeId : adId;
         ad = EasyAdmobNativeAd(
           adUnitId: id,
           factoryId: factoryId,
@@ -288,7 +301,8 @@ class EasyAds {
     EasyAdBase? ad;
     switch (adNetwork) {
       default:
-        final String id = EasyAds.instance.isDevMode ? TestAdsId.admobNativeId : adId;
+        final String id =
+            EasyAds.instance.isDevMode ? TestAdsId.admobNativeId : adId;
         ad = EasyAdmobPreloadNativeAd(
           adUnitId: id,
           type: type,
@@ -323,7 +337,8 @@ class EasyAds {
     EasyAdBase? ad;
     switch (adNetwork) {
       default:
-        final String id = EasyAds.instance.isDevMode ? TestAdsId.admobInterstitialId : adId;
+        final String id =
+            EasyAds.instance.isDevMode ? TestAdsId.admobInterstitialId : adId;
         ad = EasyAdmobInterstitialAd(
           adUnitId: id,
           adRequest: _adRequest,
@@ -356,7 +371,8 @@ class EasyAds {
     EasyAdBase? ad;
     switch (adNetwork) {
       default:
-        final String id = EasyAds.instance.isDevMode ? TestAdsId.admobRewardId : adId;
+        final String id =
+            EasyAds.instance.isDevMode ? TestAdsId.admobRewardId : adId;
         ad = EasyAdmobRewardedAd(
           adUnitId: id,
           adRequest: _adRequest,
@@ -390,7 +406,8 @@ class EasyAds {
     EasyAdBase? ad;
     switch (adNetwork) {
       default:
-        String id = EasyAds.instance.isDevMode ? TestAdsId.admobOpenResume : adId;
+        String id =
+            EasyAds.instance.isDevMode ? TestAdsId.admobOpenResume : adId;
         ad = EasyAdmobAppOpenAd(
           adUnitId: id,
           adRequest: _adRequest,
@@ -486,6 +503,7 @@ class EasyAds {
     required String adId,
     Function()? onDisabled,
     required bool config,
+    bool? isShowAdsSplash = false,
     EasyAdCallback? onAdLoaded,
     EasyAdCallback? onAdShowed,
     EasyAdCallback? onAdClicked,
@@ -510,11 +528,27 @@ class EasyAds {
       onDisabled?.call();
       return;
     }
+
+    ///check nếu là show ads màn Splash thì k cần check interval_interstitial_from_start
+    if (isShowAdsSplash == false &&
+        DateTime.now().millisecondsSinceEpoch - _openAppTime < _timeIntervalFromStart) {
+      onDisabled?.call();
+      return;
+    }
+
+    ///check timeinterval
+    if (DateTime.now().millisecondsSinceEpoch - _lastTimeDismissInter <=
+        _timeInterval) {
+      onDisabled?.call();
+      return;
+    }
+
     final interstitialAd = createInterstitial(
       adNetwork: adNetwork,
       adId: adId,
       onAdClicked: onAdClicked,
       onAdDismissed: (adNetwork, adUnitType, data) {
+        _lastTimeDismissInter = DateTime.now().millisecondsSinceEpoch;
         onAdDismissed?.call(adNetwork, adUnitType, data);
         EasyAds.instance.setFullscreenAdShowing(false);
       },
@@ -676,6 +710,13 @@ class EasyAds {
       onDisabled?.call();
       return;
     }
+
+    ///check timeinterval
+    if (DateTime.now().millisecondsSinceEpoch - _lastTimeDismissInter <=
+        _timeInterval) {
+      onDisabled?.call();
+      return;
+    }
     // ignore: use_build_context_synchronously
     navigatorKey?.currentState?.pushAndRemoveUntil(
       MaterialPageRoute(
@@ -760,6 +801,13 @@ class EasyAds {
       return;
     }
     if (await isDeviceOffline()) {
+      onDisabled?.call();
+      return;
+    }
+
+    ///check timeinterval
+    if (DateTime.now().millisecondsSinceEpoch - _lastTimeDismissInter <=
+        _timeInterval) {
       onDisabled?.call();
       return;
     }
@@ -892,8 +940,11 @@ class EasyAds {
       if (navigatorKey?.currentContext != null) {
         Future(
           () async {
-            admobAdSize = await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
-                MediaQuery.sizeOf(navigatorKey!.currentContext!).width.toInt());
+            admobAdSize =
+                await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
+                    MediaQuery.sizeOf(navigatorKey!.currentContext!)
+                        .width
+                        .toInt());
           },
         );
       }
@@ -923,4 +974,17 @@ class EasyAds {
   }
 
   void logInfo(String message) => _logger.logInfo(message);
+
+  void setTimeIntervalBetweenInter(int time) {
+    _lastTimeDismissInter = 0;
+    _timeInterval = time;
+  }
+
+  void setTimeIntervalInterFromStart(int time) {
+    _timeIntervalFromStart = time;
+  }
+
+  void setOpenAppTime(int time) {
+    _openAppTime = time;
+  }
 }

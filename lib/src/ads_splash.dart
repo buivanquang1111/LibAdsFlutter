@@ -60,6 +60,7 @@ class AdsSplash {
       EasyAds.instance.showInterstitialAd(
           adId: idInter,
           config: configAdsInter!,
+        isShowAdsSplash: true,
         onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
           onAdFailedToShow?.call(adNetwork,adUnitType,data,errorMessage);
         },
