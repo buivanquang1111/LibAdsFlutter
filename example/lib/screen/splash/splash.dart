@@ -20,7 +20,7 @@ import 'package:example/utils/connectivity.dart';
 import 'package:example/utils/event_log.dart';
 import 'package:example/utils/remote_config.dart';
 
-PreloadNativeController? introAdCtrl;
+// PreloadNativeController? introAdCtrl;
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -68,17 +68,17 @@ class SplashState extends State<SplashScreen> {
         isDevMode: appFlavor != 'prod',
         onInitialized: (bool canRequestAds) {
           if (canRequestAds) {
-            if (RemoteConfig.configs[RemoteConfigKey.native_intro.name]) {
-              introAdCtrl = PreloadNativeController(
-                autoReloadOnFinish: false,
-                nativeNormalId: adIdManager.nativeIntro1,
-                nativeMediumId: null,
-                nativeHighId: null,
-              );
-              if (introAdCtrl != null) {
-                introAdCtrl!.load();
-              }
-            }
+            // if (RemoteConfig.configs[RemoteConfigKey.native_intro.name]) {
+            //   introAdCtrl = PreloadNativeController(
+            //     autoReloadOnFinish: false,
+            //     nativeNormalId: adIdManager.nativeIntro1,
+            //     nativeMediumId: null,
+            //     nativeHighId: null,
+            //   );
+            //   if (introAdCtrl != null) {
+            //     introAdCtrl!.load();
+            //   }
+            // }
             // initAndLoadAd();
             showAdsSplash();
           } else {

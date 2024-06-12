@@ -9,6 +9,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
+import '../../utils/remote_config.dart';
+
 class OnboardScreen1 extends StatefulWidget {
   const OnboardScreen1({super.key});
 
@@ -77,14 +79,25 @@ class OnBoardState1 extends State<OnboardScreen1> {
             ),
             SizedBox(
               height: adIdManager.smallNativeAdHeight,
-              child: introAdCtrl != null
-                  ? EasyPreloadNativeAd(
-                      controller: introAdCtrl!,
-                      factoryId: adIdManager.nativeIntroFactory,
-                      height: adIdManager.smallNativeAdHeight,
-                      color: GlobalColors.lightGray,
-                    )
-                  : null,
+              // child: introAdCtrl != null
+              //     ? EasyPreloadNativeAd(
+              //         controller: introAdCtrl!,
+              //         factoryId: adIdManager.nativeIntroFactory,
+              //         height: adIdManager.smallNativeAdHeight,
+              //         color: GlobalColors.lightGray,
+              //       )
+              //     : null,
+              child: NativeAds(
+                factoryId: adIdManager.nativeIntroFactory,
+                adId: adIdManager.nativeIntro1,
+                height: adIdManager.mediumNativeAdHeight,
+                color: GlobalColors.lightGray,
+                border: null,
+                padding: null,
+                config: RemoteConfig
+                    .configs[RemoteConfigKey.native_intro.name],
+                visibilityDetectorKey: 'native-intro',
+              ),
             ),
           ],
         ),

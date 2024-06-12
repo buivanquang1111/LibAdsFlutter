@@ -289,42 +289,42 @@ class AdmobAds {
     return ad;
   }
 
-  AdsBase? createPreloadNative({
-    required AdNetwork adNetwork,
-    required AdsPlacementType type,
-    required String adId,
-    EasyAdCallback? onAdLoaded,
-    EasyAdCallback? onAdShowed,
-    EasyAdCallback? onAdClicked,
-    EasyAdFailedCallback? onAdFailedToLoad,
-    EasyAdFailedCallback? onAdFailedToShow,
-    EasyAdCallback? onAdDismissed,
-    EasyAdEarnedReward? onEarnedReward,
-    EasyAdOnPaidEvent? onPaidEvent,
-  }) {
-    AdsBase? ad;
-    switch (adNetwork) {
-      default:
-        final String id =
-            AdmobAds.instance.isDevMode ? TestAdsId.admobNativeId : adId;
-        ad = AdmobPreloadNativeAd(
-          adUnitId: id,
-          type: type,
-          adRequest: _adRequest,
-          onAdLoaded: onAdLoaded,
-          onAdShowed: onAdShowed,
-          onAdClicked: onAdClicked,
-          onAdFailedToLoad: onAdFailedToLoad,
-          onAdFailedToShow: onAdFailedToShow,
-          onAdDismissed: onAdDismissed,
-          onEarnedReward: onEarnedReward,
-          onPaidEvent: onPaidEvent,
-        );
-        break;
-    }
-
-    return ad;
-  }
+  // AdsBase? createPreloadNative({
+  //   required AdNetwork adNetwork,
+  //   required AdsPlacementType type,
+  //   required String adId,
+  //   EasyAdCallback? onAdLoaded,
+  //   EasyAdCallback? onAdShowed,
+  //   EasyAdCallback? onAdClicked,
+  //   EasyAdFailedCallback? onAdFailedToLoad,
+  //   EasyAdFailedCallback? onAdFailedToShow,
+  //   EasyAdCallback? onAdDismissed,
+  //   EasyAdEarnedReward? onEarnedReward,
+  //   EasyAdOnPaidEvent? onPaidEvent,
+  // }) {
+  //   AdsBase? ad;
+  //   switch (adNetwork) {
+  //     default:
+  //       final String id =
+  //           AdmobAds.instance.isDevMode ? TestAdsId.admobNativeId : adId;
+  //       ad = AdmobPreloadNativeAd(
+  //         adUnitId: id,
+  //         type: type,
+  //         adRequest: _adRequest,
+  //         onAdLoaded: onAdLoaded,
+  //         onAdShowed: onAdShowed,
+  //         onAdClicked: onAdClicked,
+  //         onAdFailedToLoad: onAdFailedToLoad,
+  //         onAdFailedToShow: onAdFailedToShow,
+  //         onAdDismissed: onAdDismissed,
+  //         onEarnedReward: onEarnedReward,
+  //         onPaidEvent: onPaidEvent,
+  //       );
+  //       break;
+  //   }
+  //
+  //   return ad;
+  // }
 
   AdsBase? createInterstitial({
     required AdNetwork adNetwork,

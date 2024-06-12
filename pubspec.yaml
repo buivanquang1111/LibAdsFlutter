@@ -11,8 +11,9 @@ dependencies:
   flutter:
     sdk: flutter
   plugin_platform_interface: ^2.0.2
-  google_mobile_ads:
-    path: packages/google_mobile_ads
+#  google_mobile_ads:
+#    path: packages/google_mobile_ads
+  google_mobile_ads: ^5.1.0
 
   collection: ^1.17.2
   logger: ^2.0.2
