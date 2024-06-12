@@ -29,4 +29,5 @@ class NetworkRequest{
       throw Exception('Can\'t get ads id');
     }
   }
+
 }
