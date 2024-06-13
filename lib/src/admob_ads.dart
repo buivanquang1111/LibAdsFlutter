@@ -540,7 +540,7 @@ class AdmobAds {
 
     ///check nếu là show ads màn Splash thì k cần check interval_interstitial_from_start
     if (isShowAdsSplash == false &&
-        DateTime.now().millisecondsSinceEpoch - _openAppTime < _timeIntervalFromStart) {
+        DateTime.now().millisecondsSinceEpoch - _lastTimeDismissInter < _timeIntervalFromStart) {
       _logger.logInfo('5. isShowAdsSplash: $isShowAdsSplash');
       onDisabled?.call();
       return;
