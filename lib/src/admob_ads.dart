@@ -541,7 +541,7 @@ class AdmobAds {
     ///check nếu là show ads màn Splash thì k cần check interval_interstitial_from_start
     if (isShowAdsSplash == false &&
         DateTime.now().millisecondsSinceEpoch - _openAppTime < _timeIntervalFromStart) {
-      _logger.logInfo('5. isShowAdsSplash: $isShowAdsSplash, time: ${DateTime.now().millisecondsSinceEpoch - _openAppTime}, _timeIntervalFromStart: $_timeIntervalFromStart');
+      _logger.logInfo('5. isShowAdsSplash: $isShowAdsSplash, timeMinus: ${DateTime.now().millisecondsSinceEpoch - _openAppTime}, _timeIntervalFromStart: $_timeIntervalFromStart');
 
       onDisabled?.call();
       return;
@@ -550,8 +550,7 @@ class AdmobAds {
     ///check timeinterval
     if (isShowAdsSplash == false && DateTime.now().millisecondsSinceEpoch - _lastTimeDismissInter <=
         _timeInterval) {
-      Fluttertoast.showToast(msg: '6. _timeInterval: ${DateTime.now().millisecondsSinceEpoch - _lastTimeDismissInter}');
-      _logger.logInfo('6. isShowAdsSplash: $isShowAdsSplash, _timeInterval: ${DateTime.now().millisecondsSinceEpoch - _lastTimeDismissInter}, _timeInterval: $_timeInterval');
+      _logger.logInfo('6. isShowAdsSplash: $isShowAdsSplash, timeMinus: ${DateTime.now().millisecondsSinceEpoch - _lastTimeDismissInter}, _timeInterval: $_timeInterval');
       onDisabled?.call();
       return;
     }
