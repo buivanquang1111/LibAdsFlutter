@@ -51,54 +51,56 @@ class SplashState extends State<SplashScreen> {
     AdmobAds.instance.setTimeIntervalInterFromStart(
         RemoteConfig.configs[RemoteConfigKey.interval_from_start.name]);
 
-    NetworkRequest.instance.fetchAdsModel('https://language-master.top',
-        'ca-app-pub-4973559944609228~2346710863', null, () async{
-      
-      print('inter_splash: ${NetworkRequest.instance.getListIDByName('inter_splash')}');
-      print('open_splash: ${NetworkRequest.instance.getListIDByName('open_splash')}');
+    NetworkRequest.instance.fetchAdsModel(
+        linkServer: null,
+        appId: null,
+        packageName: null,
+        onResponse: () async {
+          print(
+              'inter_splash: ${NetworkRequest.instance.getListIDByName('inter_splash')}');
+          print(
+              'open_splash: ${NetworkRequest.instance.getListIDByName('open_splash')}');
 
-      adIdManager = DevAdIdManager();
-      try {
-        await AdmobAds.instance.initialize(
-          adResumeConfig:
-          RemoteConfig.configs[RemoteConfigKey.appopen_resume.name],
-          adMobAdRequest: const AdRequest(httpTimeoutMillis: 30000),
-          admobConfiguration: RequestConfiguration(testDeviceIds: ['']),
-          navigatorKey: Get.key,
-          listResumeId: NetworkRequest.instance.getListIDByName('open_resume'),
-          initMediationCallback: (bool canRequestAds) {
-            print('initMediationCallback: $canRequestAds');
-            return const MethodChannel('channel')
-                .invokeMethod<bool>('init_mediation', canRequestAds);
-          },
-          isDevMode: appFlavor != 'prod',
-          onInitialized: (bool canRequestAds) {
-            if (canRequestAds) {
-              // if (RemoteConfig.configs[RemoteConfigKey.native_intro.name]) {
-              //   introAdCtrl = PreloadNativeController(
-              //     autoReloadOnFinish: false,
-              //     nativeNormalId: adIdManager.nativeIntro1,
-              //     nativeMediumId: null,
-              //     nativeHighId: null,
-              //   );
-              //   if (introAdCtrl != null) {
-              //     introAdCtrl!.load();
-              //   }
-              // }
-              // initAndLoadAd();
-              showAdsSplash();
-            } else {
-              handleNavigate();
-            }
-          },
-        );
-      } catch (e) {
-        handleNavigate();
-      }
-        }, () {
-
-        });
-
+          adIdManager = DevAdIdManager();
+          try {
+            await AdmobAds.instance.initialize(
+              adResumeConfig:
+                  RemoteConfig.configs[RemoteConfigKey.appopen_resume.name],
+              adMobAdRequest: const AdRequest(httpTimeoutMillis: 30000),
+              admobConfiguration: RequestConfiguration(testDeviceIds: ['']),
+              navigatorKey: Get.key,
+              listResumeId:
+                  NetworkRequest.instance.getListIDByName('open_resume'),
+              initMediationCallback: (bool canRequestAds) {
+                print('initMediationCallback: $canRequestAds');
+                return const MethodChannel('channel')
+                    .invokeMethod<bool>('init_mediation', canRequestAds);
+              },
+              onInitialized: (bool canRequestAds) {
+                if (canRequestAds) {
+                  // if (RemoteConfig.configs[RemoteConfigKey.native_intro.name]) {
+                  //   introAdCtrl = PreloadNativeController(
+                  //     autoReloadOnFinish: false,
+                  //     nativeNormalId: adIdManager.nativeIntro1,
+                  //     nativeMediumId: null,
+                  //     nativeHighId: null,
+                  //   );
+                  //   if (introAdCtrl != null) {
+                  //     introAdCtrl!.load();
+                  //   }
+                  // }
+                  // initAndLoadAd();
+                  showAdsSplash();
+                } else {
+                  handleNavigate();
+                }
+              },
+            );
+          } catch (e) {
+            handleNavigate();
+          }
+        },
+        onError: () {});
   }
 
   // void initAndLoadAd() {

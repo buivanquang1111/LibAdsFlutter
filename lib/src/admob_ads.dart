@@ -70,9 +70,9 @@ class AdmobAds {
 
   RequestConfiguration? admobConfiguration;
 
-  bool _isDevMode = true;
+  // bool _isDevMode = true;
 
-  bool get isDevMode => _isDevMode;
+  // bool get isDevMode => _isDevMode;
 
   bool _isAdmobInitialized = false;
 
@@ -127,7 +127,6 @@ class AdmobAds {
     AdRequest? adMobAdRequest,
     RequestConfiguration? admobConfiguration,
     bool enableLogger = true,
-    required bool isDevMode,
     bool debugUmp = false,
     GlobalKey<NavigatorState>? navigatorKey,
     required List<String> listResumeId,
@@ -141,7 +140,7 @@ class AdmobAds {
     VisibilityDetectorController.instance.updateInterval = Duration.zero;
     if (enableLogger) _logger.enable(enableLogger);
 
-    _isDevMode = isDevMode;
+    // _isDevMode = isDevMode;
 
     // adIdManager = manager;
     if (adMobAdRequest != null) {
