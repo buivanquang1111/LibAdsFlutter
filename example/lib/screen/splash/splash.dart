@@ -47,9 +47,9 @@ class SplashState extends State<SplashScreen> {
   Future<void> initAdModule() async {
     AdmobAds.instance.setOpenAppTime(DateTime.now().millisecondsSinceEpoch);
     AdmobAds.instance.setTimeIntervalBetweenInter(RemoteConfig
-        .configs[RemoteConfigKey.interval_between_interstitial.name]);
+        .configs[RemoteConfigKey.interval_between_interstitial.name]*1000);
     AdmobAds.instance.setTimeIntervalInterFromStart(
-        RemoteConfig.configs[RemoteConfigKey.interval_from_start.name]);
+        RemoteConfig.configs[RemoteConfigKey.interval_from_start.name]*1000);
 
     NetworkRequest.instance.fetchAdsModel(
         linkServer: null,

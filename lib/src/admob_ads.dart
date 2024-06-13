@@ -518,22 +518,22 @@ class AdmobAds {
     EasyAdOnPaidEvent? onPaidEvent,
   }) async {
     if (!isEnabled || !config) {
-      Fluttertoast.showToast(msg: '1. isEnabled: $isEnabled, config: $config');
+      _logger.logInfo('1. isEnabled: $isEnabled, config: $config');
       onDisabled?.call();
       return;
     }
     if (_isFullscreenAdShowing) {
-      Fluttertoast.showToast(msg: '2. _isFullscreenAdShowing: $_isFullscreenAdShowing');
+      _logger.logInfo('2. _isFullscreenAdShowing: $_isFullscreenAdShowing');
       onDisabled?.call();
       return;
     }
     if (await isDeviceOffline()) {
-      Fluttertoast.showToast(msg: '3. isDeviceOffline: ${isDeviceOffline()}');
+      _logger.logInfo('3. isDeviceOffline: ${isDeviceOffline()}');
       onDisabled?.call();
       return;
     }
     if (!ConsentManager.ins.canRequestAds) {
-      Fluttertoast.showToast(msg: '4. canRequestAds: ${ConsentManager.ins.canRequestAds}');
+      _logger.logInfo('4. canRequestAds: ${ConsentManager.ins.canRequestAds}');
       onDisabled?.call();
       return;
     }
@@ -541,18 +541,18 @@ class AdmobAds {
     ///check nếu là show ads màn Splash thì k cần check interval_interstitial_from_start
     if (isShowAdsSplash == false &&
         DateTime.now().millisecondsSinceEpoch - _openAppTime < _timeIntervalFromStart) {
-      Fluttertoast.showToast(msg: '5. isShowAdsSplash: $isShowAdsSplash');
+      _logger.logInfo('5. isShowAdsSplash: $isShowAdsSplash');
       onDisabled?.call();
       return;
     }
 
     ///check timeinterval
-    if (DateTime.now().millisecondsSinceEpoch - _lastTimeDismissInter <=
-        _timeInterval) {
-      Fluttertoast.showToast(msg: '6. _timeInterval: ${DateTime.now().millisecondsSinceEpoch - _lastTimeDismissInter}');
-      onDisabled?.call();
-      return;
-    }
+    // if (DateTime.now().millisecondsSinceEpoch - _lastTimeDismissInter <=
+    //     _timeInterval) {
+    //   Fluttertoast.showToast(msg: '6. _timeInterval: ${DateTime.now().millisecondsSinceEpoch - _lastTimeDismissInter}');
+    //   onDisabled?.call();
+    //   return;
+    // }
 
     final interstitialAd = createInterstitial(
       adNetwork: adNetwork,
