@@ -8,7 +8,7 @@ import 'loading_ads.dart';
 class Native3IdAds extends StatefulWidget {
   final AdNetwork adNetwork;
   final String factoryId;
-  final String adId;
+  final List<String> listId;
   final String adIdHigh;
   final String adIdMedium;
   final double height;
@@ -57,7 +57,7 @@ class Native3IdAds extends StatefulWidget {
   const Native3IdAds({
     this.adNetwork = AdNetwork.admob,
     required this.factoryId,
-    required this.adId,
+    required this.listId,
     required this.adIdMedium,
     required this.adIdHigh,
     required this.height,
@@ -219,7 +219,7 @@ class _Native3IdAdsState extends State<Native3IdAds> {
     _nativeAd = AdmobAds.instance.createNative(
       adNetwork: widget.adNetwork,
       factoryId: widget.factoryId,
-      adId: widget.adId,
+      listId: widget.listId,
       onAdClicked: (adNetwork, adUnitType, data) {
         widget.onAdClicked?.call(adNetwork, adUnitType, data);
         widget.onClicked?.call(AdsPlacementType.normal);
@@ -287,7 +287,7 @@ class _Native3IdAdsState extends State<Native3IdAds> {
     _nativeAdMedium = AdmobAds.instance.createNative(
       adNetwork: widget.adNetwork,
       factoryId: widget.factoryId,
-      adId: widget.adIdMedium,
+      listId: widget.listId,
       onAdClicked: (adNetwork, adUnitType, data) {
         widget.onAdMediumClicked?.call(adNetwork, adUnitType, data);
         widget.onClicked?.call(AdsPlacementType.med);
@@ -355,7 +355,7 @@ class _Native3IdAdsState extends State<Native3IdAds> {
     _nativeAdHigh = AdmobAds.instance.createNative(
       adNetwork: widget.adNetwork,
       factoryId: widget.factoryId,
-      adId: widget.adIdHigh,
+      listId: widget.listId,
       onAdClicked: (adNetwork, adUnitType, data) {
         widget.onAdHighClicked?.call(adNetwork, adUnitType, data);
         widget.onClicked?.call(AdsPlacementType.high);

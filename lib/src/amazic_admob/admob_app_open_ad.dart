@@ -6,7 +6,7 @@ class AdmobAppOpenAd extends AdsBase {
   final AdRequest adRequest;
 
   AdmobAppOpenAd({
-    required super.adUnitId,
+    required super.listId,
     required this.adRequest,
     super.onAdLoaded,
     super.onAdShowed,
@@ -51,9 +51,10 @@ class AdmobAppOpenAd extends AdsBase {
   @override
   Future<void> load() {
     if (isAdLoaded) return Future.value();
+    if (listId.isEmpty) return Future.value();
     _isAdLoading = true;
     return AppOpenAd.load(
-      adUnitId: adUnitId,
+      adUnitId: listId[0],
       request: adRequest,
       adLoadCallback: AppOpenAdLoadCallback(
         onAdLoaded: (AppOpenAd ad) {
@@ -82,12 +83,19 @@ class AdmobAppOpenAd extends AdsBase {
           onAdLoaded?.call(adNetwork, adUnitType, ad);
         },
         onAdFailedToLoad: (LoadAdError error) {
-          _appOpenAd = null;
-          _isAdLoading = false;
-          _isAdLoadedFailed = true;
-          _isAdLoaded = false;
-          AdmobAds.instance.onAdFailedToLoadMethod(adNetwork, adUnitType, error, error.toString());
-          onAdFailedToLoad?.call(adNetwork, adUnitType, error, error.toString());
+          if(listId.length > 1){
+            listId.removeAt(0);
+            load();
+          }else {
+            _appOpenAd = null;
+            _isAdLoading = false;
+            _isAdLoadedFailed = true;
+            _isAdLoaded = false;
+            AdmobAds.instance.onAdFailedToLoadMethod(
+                adNetwork, adUnitType, error, error.toString());
+            onAdFailedToLoad?.call(
+                adNetwork, adUnitType, error, error.toString());
+          }
         },
       ),
     );
@@ -108,10 +116,10 @@ class AdmobAppOpenAd extends AdsBase {
     }
 
     if (_isShowingAd) {
-      AdmobAds.instance.onAdFailedToShowMethod(
-          adNetwork, adUnitType, null, 'Tried to show ad while already showing an ad.');
-      onAdFailedToShow?.call(
-          adNetwork, adUnitType, null, 'Tried to show ad while already showing an ad.');
+      AdmobAds.instance.onAdFailedToShowMethod(adNetwork, adUnitType, null,
+          'Tried to show ad while already showing an ad.');
+      onAdFailedToShow?.call(adNetwork, adUnitType, null,
+          'Tried to show ad while already showing an ad.');
       return;
     }
 
@@ -133,7 +141,8 @@ class AdmobAppOpenAd extends AdsBase {
       onAdFailedToShowFullScreenContent: (AppOpenAd ad, AdError error) {
         _isShowingAd = false;
 
-        AdmobAds.instance.onAdFailedToShowMethod(adNetwork, adUnitType, ad, error.toString());
+        AdmobAds.instance.onAdFailedToShowMethod(
+            adNetwork, adUnitType, ad, error.toString());
         onAdFailedToShow?.call(adNetwork, adUnitType, ad, error.toString());
 
         ad.dispose();

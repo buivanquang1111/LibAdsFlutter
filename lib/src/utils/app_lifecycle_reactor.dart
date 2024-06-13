@@ -6,7 +6,7 @@ import '../../admob_ads_flutter.dart';
 /// Listens for app foreground events and shows app open ads.
 class AppLifecycleReactor {
   final GlobalKey<NavigatorState> navigatorKey;
-  final String? adId;
+  final List<String> listId;
   final AdNetwork adNetwork;
 
   bool _onSplashScreen = true;
@@ -15,7 +15,7 @@ class AppLifecycleReactor {
 
   AppLifecycleReactor({
     required this.navigatorKey,
-    required this.adId,
+    required this.listId,
     this.config = true,
     required this.adNetwork,
   });
@@ -55,10 +55,10 @@ class AppLifecycleReactor {
           return;
         }
 
-        final String id = AdmobAds.instance.isDevMode ? TestAdsId.admobOpenResume : adId!;
-        if (id.isNotEmpty != true) return;
+        // final String id = AdmobAds.instance.isDevMode ? TestAdsId.admobOpenResume : adId!;
+        if (listId.isNotEmpty != true) return;
         AdmobAds.instance.showAppOpen(
-          adId: id,
+          listId: listId,
           config: true,
         );
 

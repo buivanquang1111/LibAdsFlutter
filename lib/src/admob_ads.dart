@@ -34,7 +34,7 @@ class AdmobAds {
 
   /// Google admob's ad request
   AdRequest _adRequest = const AdRequest();
-  late final IAdIdManager adIdManager;
+  // late final IAdIdManager adIdManager;
 
   /// True value when there is exist an Ad and false otherwise.
   bool _isFullscreenAdShowing = false;
@@ -91,9 +91,9 @@ class AdmobAds {
       return;
     }
 
-    if (adIdManager.admobAdIds?.appId.isNotEmpty != true) {
-      return;
-    }
+    // if (adIdManager.admobAdIds?.appId.isNotEmpty != true) {
+    //   return;
+    // }
     if (AdmobAds.instance.admobConfiguration != null) {
       await MobileAds.instance.updateRequestConfiguration(admobConfiguration!);
     }
@@ -123,15 +123,14 @@ class AdmobAds {
   ///
   /// Call this method as early as possible after the app launches
   /// [adMobAdRequest] will be used in all the admob requests. By default empty request will be used if nothing passed here.
-  Future<void> initialize(
-    IAdIdManager manager, {
+  Future<void> initialize({
     AdRequest? adMobAdRequest,
     RequestConfiguration? admobConfiguration,
     bool enableLogger = true,
     required bool isDevMode,
     bool debugUmp = false,
     GlobalKey<NavigatorState>? navigatorKey,
-    String? adResumeId,
+    required List<String> listResumeId,
     required bool adResumeConfig,
     AdNetwork adResumeNetwork = AdNetwork.admob,
 
@@ -144,7 +143,7 @@ class AdmobAds {
 
     _isDevMode = isDevMode;
 
-    adIdManager = manager;
+    // adIdManager = manager;
     if (adMobAdRequest != null) {
       _adRequest = adMobAdRequest;
     }
@@ -160,20 +159,20 @@ class AdmobAds {
     ConsentManager.ins.handleRequestUmp(
         onPostExecute: () => onInitialized(ConsentManager.ins.canRequestAds));
 
-    if (manager.admobAdIds?.appId != null) {
+    // if (manager.admobAdIds?.appId != null) {
       this.admobConfiguration = admobConfiguration;
       if (navigatorKey?.currentContext != null) {
         admobAdSize =
             await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
                 MediaQuery.sizeOf(navigatorKey!.currentContext!).width.toInt());
       }
-    }
+    // }
 
     if (navigatorKey != null) {
       this.navigatorKey = navigatorKey;
       appLifecycleReactor = AppLifecycleReactor(
         navigatorKey: navigatorKey,
-        adId: adResumeId,
+        listId: listResumeId,
         config: adResumeConfig,
         adNetwork: adResumeNetwork,
       );
@@ -187,7 +186,7 @@ class AdmobAds {
   /// [admobAdSize] is used to provide ad banner size
   AdsBase? createBanner({
     required AdNetwork adNetwork,
-    required String adId,
+    required List<String> listId,
     required AdsBannerType type,
     EasyAdCallback? onAdLoaded,
     EasyAdCallback? onAdShowed,
@@ -228,15 +227,17 @@ class AdmobAds {
         type: type,
       );
 
-      final String id = AdmobAds.instance.isDevMode
-          ? (type == AdsBannerType.collapsible_bottom ||
-                  type == AdsBannerType.collapsible_top)
-              ? TestAdsId.admobBannerCollapseId
-              : TestAdsId.admobBannerId
-          : adId;
+      // final String id = AdmobAds.instance.isDevMode
+      //     ? (type == AdsBannerType.collapsible_bottom ||
+      //             type == AdsBannerType.collapsible_top)
+      //         ? TestAdsId.admobBannerCollapseId
+      //         : TestAdsId.admobBannerId
+      //     : adId;
+
+
 
       ad = AdmobBannerAd(
-        adUnitId: id,
+        listId: listId,
         adSize: adSize,
         adRequest: adRequest,
         onAdLoaded: onAdLoaded,
@@ -255,7 +256,7 @@ class AdmobAds {
   AdsBase? createNative({
     required AdNetwork adNetwork,
     required String factoryId,
-    required String adId,
+    required List<String> listId,
     EasyAdCallback? onAdLoaded,
     EasyAdCallback? onAdShowed,
     EasyAdCallback? onAdClicked,
@@ -268,10 +269,10 @@ class AdmobAds {
     AdsBase? ad;
     switch (adNetwork) {
       default:
-        final String id =
-            AdmobAds.instance.isDevMode ? TestAdsId.admobNativeId : adId;
+        // final String id =
+        //     AdmobAds.instance.isDevMode ? TestAdsId.admobNativeId : adId;
         ad = AdmobNativeAd(
-          adUnitId: id,
+          listId: listId,
           factoryId: factoryId,
           adRequest: _adRequest,
           onAdLoaded: onAdLoaded,
@@ -328,7 +329,7 @@ class AdmobAds {
 
   AdsBase? createInterstitial({
     required AdNetwork adNetwork,
-    required String adId,
+    required List<String> listId,
     EasyAdCallback? onAdLoaded,
     EasyAdCallback? onAdShowed,
     EasyAdCallback? onAdClicked,
@@ -341,10 +342,10 @@ class AdmobAds {
     AdsBase? ad;
     switch (adNetwork) {
       default:
-        final String id =
-            AdmobAds.instance.isDevMode ? TestAdsId.admobInterstitialId : adId;
+        // final String id =
+        //     AdmobAds.instance.isDevMode ? TestAdsId.admobInterstitialId : adId;
         ad = AdmobInterstitialAd(
-          adUnitId: id,
+          listId: listId,
           adRequest: _adRequest,
           onAdLoaded: onAdLoaded,
           onAdShowed: onAdShowed,
@@ -362,7 +363,7 @@ class AdmobAds {
 
   AdsBase? createReward({
     required AdNetwork adNetwork,
-    required String adId,
+    required List<String> listId,
     EasyAdCallback? onAdLoaded,
     EasyAdCallback? onAdShowed,
     EasyAdCallback? onAdClicked,
@@ -375,10 +376,10 @@ class AdmobAds {
     AdsBase? ad;
     switch (adNetwork) {
       default:
-        final String id =
-            AdmobAds.instance.isDevMode ? TestAdsId.admobRewardId : adId;
+        // final String id =
+        //     AdmobAds.instance.isDevMode ? TestAdsId.admobRewardId : adId;
         ad = AdmobRewardedAd(
-          adUnitId: id,
+          listId: listId,
           adRequest: _adRequest,
           onAdLoaded: onAdLoaded,
           onAdShowed: onAdShowed,
@@ -397,7 +398,7 @@ class AdmobAds {
 
   AdsBase? createAppOpenAd({
     required AdNetwork adNetwork,
-    required String adId,
+    required List<String> listId,
     EasyAdCallback? onAdLoaded,
     EasyAdCallback? onAdShowed,
     EasyAdCallback? onAdClicked,
@@ -410,10 +411,10 @@ class AdmobAds {
     AdsBase? ad;
     switch (adNetwork) {
       default:
-        String id =
-            AdmobAds.instance.isDevMode ? TestAdsId.admobOpenResume : adId;
+        // String id =
+        //     AdmobAds.instance.isDevMode ? TestAdsId.admobOpenResume : adId;
         ad = AdmobAppOpenAd(
-          adUnitId: id,
+          listId: listId,
           adRequest: _adRequest,
           onAdLoaded: onAdLoaded,
           onAdShowed: onAdShowed,
@@ -432,7 +433,7 @@ class AdmobAds {
 
   Future<void> showAppOpen({
     AdNetwork adNetwork = AdNetwork.admob,
-    required String adId,
+    required List<String> listId,
     Function()? onDisabled,
     required bool config,
     EasyAdCallback? onAdLoaded,
@@ -462,7 +463,7 @@ class AdmobAds {
 
     final appOpen = createAppOpenAd(
       adNetwork: adNetwork,
-      adId: adId,
+      listId: listId,
       onAdClicked: onAdClicked,
       onAdDismissed: (adNetwork, adUnitType, data) {
         onAdDismissed?.call(adNetwork, adUnitType, data);
@@ -504,7 +505,7 @@ class AdmobAds {
 
   Future<void> showInterstitialAd({
     AdNetwork adNetwork = AdNetwork.admob,
-    required String adId,
+    required List<String> listId,
     Function()? onDisabled,
     required bool config,
     bool? isShowAdsSplash = false,
@@ -549,7 +550,7 @@ class AdmobAds {
 
     final interstitialAd = createInterstitial(
       adNetwork: adNetwork,
-      adId: adId,
+      listId: listId,
       onAdClicked: onAdClicked,
       onAdDismissed: (adNetwork, adUnitType, data) {
         _lastTimeDismissInter = DateTime.now().millisecondsSinceEpoch;
@@ -599,7 +600,7 @@ class AdmobAds {
 
   Future<void> showRewardAd({
     AdNetwork adNetwork = AdNetwork.admob,
-    required String adId,
+    required List<String> listId,
     Function()? onDisabled,
     required bool config,
     EasyAdCallback? onAdLoaded,
@@ -629,7 +630,7 @@ class AdmobAds {
     }
     final rewardAd = createReward(
       adNetwork: adNetwork,
-      adId: adId,
+      listId: listId,
       onAdClicked: onAdClicked,
       onAdDismissed: (adNetwork, adUnitType, data) {
         onAdDismissed?.call(adNetwork, adUnitType, data);
@@ -671,7 +672,7 @@ class AdmobAds {
 
   Future<void> showSplashAdWith2Inter({
     AdNetwork adNetwork = AdNetwork.admob,
-    required String interstitialSplashId,
+    required List<String> listId,
     required String interstitialSplashHighId,
     required Function()? onDisabled,
     EasyAdCallback? onAdLoaded,
@@ -726,7 +727,7 @@ class AdmobAds {
       MaterialPageRoute(
         builder: (context) => SplashAdWith2IdInter(
           adNetwork: adNetwork,
-          interstitialSplashId: interstitialSplashId,
+          listId: listId,
           interstitialSplashHighId: interstitialSplashHighId,
           onAdLoaded: onAdLoaded,
           onAdShowed: onAdShowed,
@@ -758,7 +759,7 @@ class AdmobAds {
 
   Future<void> showSplashAdWith3Inter({
     AdNetwork adNetwork = AdNetwork.admob,
-    required String interstitialSplashId,
+    required List<String> listId,
     required String interstitialSplashMediumId,
     required String interstitialSplashHighId,
     required Function()? onDisabled,
@@ -820,7 +821,7 @@ class AdmobAds {
       MaterialPageRoute(
         builder: (context) => SplashAdWith3IdInter(
           adNetwork: adNetwork,
-          interstitialSplashId: interstitialSplashId,
+          listId: listId,
           interstitialSplashMediumId: interstitialSplashMediumId,
           interstitialSplashHighId: interstitialSplashHighId,
           onShowed: onShowed,
@@ -861,8 +862,8 @@ class AdmobAds {
 
   Future<void> showSplashAdWithInterstitialAndAppOpen({
     AdNetwork adNetwork = AdNetwork.admob,
-    required String interstitialSplashAdId,
-    required String appOpenAdId,
+    required List<String> listInterId,
+    required List<String> listOpenId,
     required Function()? onDisabled,
     void Function(AdUnitType type)? onShowed,
     void Function(AdUnitType type)? onDismissed,
@@ -908,8 +909,8 @@ class AdmobAds {
       MaterialPageRoute(
         builder: (context) => SplashAdWithInterstitialAndAppOpen(
           adNetwork: adNetwork,
-          interstitialSplashAdId: interstitialSplashAdId,
-          appOpenAdId: appOpenAdId,
+          listInterId: listInterId,
+          listOpenId: listOpenId,
           onShowed: onShowed,
           onDismissed: onDismissed,
           onFailedToLoad: onFailedToLoad,

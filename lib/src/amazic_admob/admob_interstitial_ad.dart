@@ -10,7 +10,7 @@ class AdmobInterstitialAd extends AdsBase {
   final AdRequest adRequest;
 
   AdmobInterstitialAd({
-    required super.adUnitId,
+    required super.listId,
     required this.adRequest,
     super.onAdLoaded,
     super.onAdShowed,
@@ -54,9 +54,10 @@ class AdmobInterstitialAd extends AdsBase {
   @override
   Future<void> load() async {
     if (_isAdLoaded) return;
+    if(listId.isEmpty) return;
     _isAdLoading = true;
     await InterstitialAd.load(
-      adUnitId: adUnitId,
+      adUnitId: listId[0],
       request: adRequest,
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (InterstitialAd ad) {
@@ -84,14 +85,19 @@ class AdmobInterstitialAd extends AdsBase {
           onAdLoaded?.call(adNetwork, adUnitType, ad);
         },
         onAdFailedToLoad: (LoadAdError error) {
-          _interstitialAd = null;
-          _isAdLoaded = false;
-          _isAdLoading = false;
-          _isAdLoadedFailed = true;
-          AdmobAds.instance.onAdFailedToLoadMethod(
-              adNetwork, adUnitType, error, error.toString());
-          onAdFailedToLoad?.call(
-              adNetwork, adUnitType, error, error.toString());
+          if(listId.length > 1){
+            listId.removeAt(0);
+            load();
+          }else {
+            _interstitialAd = null;
+            _isAdLoaded = false;
+            _isAdLoading = false;
+            _isAdLoadedFailed = true;
+            AdmobAds.instance.onAdFailedToLoadMethod(
+                adNetwork, adUnitType, error, error.toString());
+            onAdFailedToLoad?.call(
+                adNetwork, adUnitType, error, error.toString());
+          }
         },
       ),
     );

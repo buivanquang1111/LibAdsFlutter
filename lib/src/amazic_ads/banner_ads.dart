@@ -6,7 +6,7 @@ import 'package:visibility_detector/visibility_detector.dart';
 
 class BannerAds extends StatefulWidget {
   final AdNetwork adNetwork;
-  final String adId;
+  final List<String> listId;
   final AdsBannerType type;
 
   final EasyAdCallback? onAdLoaded;
@@ -28,7 +28,7 @@ class BannerAds extends StatefulWidget {
 
   const BannerAds({
     this.adNetwork = AdNetwork.admob,
-    required this.adId,
+    required this.listId,
     this.type = AdsBannerType.standard,
     this.onAdLoaded,
     this.onAdShowed,
@@ -223,7 +223,7 @@ class _BannerAdsState extends State<BannerAds> with WidgetsBindingObserver {
 
     _bannerAd ??= AdmobAds.instance.createBanner(
       adNetwork: widget.adNetwork,
-      adId: widget.adId,
+      listId: widget.listId,
       type: widget.type,
       onAdClicked: (adNetwork, adUnitType, data) {
         widget.onAdClicked?.call(adNetwork, adUnitType, data);

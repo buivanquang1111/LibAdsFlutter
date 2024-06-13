@@ -89,7 +89,7 @@ class OnBoardState1 extends State<OnboardScreen1> {
               //     : null,
               child: NativeAds(
                 factoryId: adIdManager.nativeIntroFactory,
-                adId: adIdManager.nativeIntro1,
+                listId: NetworkRequest.instance.getListIDByName('native_intro'),
                 height: adIdManager.mediumNativeAdHeight,
                 color: GlobalColors.lightGray,
                 border: null,

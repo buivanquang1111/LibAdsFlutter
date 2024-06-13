@@ -4,7 +4,7 @@ import 'enums/ad_network.dart';
 import 'enums/ad_unit_type.dart';
 
 abstract class AdsBase {
-  final String adUnitId;
+  final List<String> listId;
   EasyAdCallback? onAdLoaded;
   EasyAdCallback? onAdShowed;
   EasyAdCallback? onAdClicked;
@@ -17,7 +17,7 @@ abstract class AdsBase {
 
   /// This will be called for initialization when we don't have to wait for the initialization
   AdsBase({
-    required this.adUnitId,
+    required this.listId,
     this.onAdLoaded,
     this.onAdShowed,
     this.onAdClicked,
@@ -52,9 +52,13 @@ abstract class AdsBase {
   }
 
   AdNetwork get adNetwork;
+
   AdUnitType get adUnitType;
+
   bool get isAdLoaded;
+
   bool get isAdLoading;
+
   bool get isAdLoadedFailed;
 
   Future<void> dispose();

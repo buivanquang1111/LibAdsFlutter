@@ -10,7 +10,7 @@ class AdmobRewardedAd extends AdsBase {
   final AdRequest adRequest;
 
   AdmobRewardedAd({
-    required super.adUnitId,
+    required super.listId,
     required this.adRequest,
     super.onAdLoaded,
     super.onAdShowed,
@@ -54,9 +54,10 @@ class AdmobRewardedAd extends AdsBase {
   @override
   Future<void> load() async {
     if (_isAdLoaded) return;
+    if(listId.isEmpty) return;
     _isAdLoading = true;
     await RewardedAd.load(
-      adUnitId: adUnitId,
+      adUnitId: listId[0],
       request: adRequest,
       rewardedAdLoadCallback: RewardedAdLoadCallback(
         onAdLoaded: (RewardedAd ad) {
@@ -84,14 +85,19 @@ class AdmobRewardedAd extends AdsBase {
           onAdLoaded?.call(adNetwork, adUnitType, ad);
         },
         onAdFailedToLoad: (LoadAdError error) {
-          _rewardedAd = null;
-          _isAdLoaded = false;
-          _isAdLoadedFailed = true;
-          _isAdLoading = false;
-          AdmobAds.instance.onAdFailedToLoadMethod(
-              adNetwork, adUnitType, error, error.toString());
-          onAdFailedToLoad?.call(
-              adNetwork, adUnitType, error, error.toString());
+          if(listId.length > 1){
+            listId.removeAt(0);
+            load();
+          }else {
+            _rewardedAd = null;
+            _isAdLoaded = false;
+            _isAdLoadedFailed = true;
+            _isAdLoading = false;
+            AdmobAds.instance.onAdFailedToLoadMethod(
+                adNetwork, adUnitType, error, error.toString());
+            onAdFailedToLoad?.call(
+                adNetwork, adUnitType, error, error.toString());
+          }
         },
       ),
     );

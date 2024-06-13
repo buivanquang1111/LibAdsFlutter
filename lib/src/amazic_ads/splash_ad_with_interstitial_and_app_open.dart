@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 
 class SplashAdWithInterstitialAndAppOpen extends StatefulWidget {
   final AdNetwork adNetwork;
-  final String interstitialSplashAdId;
-  final String appOpenAdId;
+  final List<String> listInterId;
+  final List<String> listOpenId;
   final void Function(AdUnitType type)? onShowed;
   final void Function(AdUnitType type)? onDismissed;
   final void Function()? onFailedToLoad;
@@ -34,8 +34,8 @@ class SplashAdWithInterstitialAndAppOpen extends StatefulWidget {
   const SplashAdWithInterstitialAndAppOpen({
     Key? key,
     this.adNetwork = AdNetwork.admob,
-    required this.interstitialSplashAdId,
-    required this.appOpenAdId,
+    required this.listInterId,
+    required this.listOpenId,
     required this.onShowed,
     required this.onDismissed,
     required this.onFailedToLoad,
@@ -161,7 +161,7 @@ class _SplashAdWithInterstitialAndAppOpenState
   void _initAds() {
     _interstitialAd = AdmobAds.instance.createInterstitial(
       adNetwork: widget.adNetwork,
-      adId: widget.interstitialSplashAdId,
+      listId: widget.listInterId,
       onAdClicked: (adNetwork, adUnitType, data) {
         widget.onAdInterstitialClicked?.call(adNetwork, adUnitType, data);
         widget.onClicked?.call(AdUnitType.interstitial);
@@ -216,7 +216,7 @@ class _SplashAdWithInterstitialAndAppOpenState
 
     _appOpenAd = AdmobAds.instance.createAppOpenAd(
       adNetwork: widget.adNetwork,
-      adId: widget.appOpenAdId,
+      listId: widget.listOpenId,
       onAdClicked: (adNetwork, adUnitType, data) {
         widget.onAdAppOpenClicked?.call(adNetwork, adUnitType, data);
         widget.onClicked?.call(AdUnitType.appOpen);

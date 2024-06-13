@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 class InterstitialAds extends StatefulWidget {
   final AdNetwork adNetwork;
-  final String adId;
+  final List<String> listId;
   final EasyAdCallback? onAdLoaded;
   final EasyAdCallback? onAdShowed;
   final EasyAdCallback? onAdClicked;
@@ -17,7 +17,7 @@ class InterstitialAds extends StatefulWidget {
   const InterstitialAds({
     Key? key,
     required this.adNetwork,
-    required this.adId,
+    required this.listId,
     this.onAdLoaded,
     this.onAdShowed,
     this.onAdClicked,
@@ -32,7 +32,7 @@ class InterstitialAds extends StatefulWidget {
 
   static DialogRoute getRoute({
     required BuildContext context,
-    required String adId,
+    required List<String> listId,
     AdNetwork adNetwork = AdNetwork.admob,
     EasyAdCallback? onAdLoaded,
     EasyAdCallback? onAdShowed,
@@ -46,7 +46,7 @@ class InterstitialAds extends StatefulWidget {
     currentRoute = DialogRoute(
       context: context,
       builder: (context) => InterstitialAds(
-        adId: adId,
+        listId: listId,
         adNetwork: adNetwork,
         onAdLoaded: onAdLoaded,
         onAdShowed: onAdShowed,
@@ -166,7 +166,7 @@ class _InterstitialAdsState extends State<InterstitialAds>
   void _initAd() {
     _interstitialAd = AdmobAds.instance.createInterstitial(
       adNetwork: widget.adNetwork,
-      adId: widget.adId,
+      listId: widget.listId,
       onAdClicked: (adNetwork, adUnitType, data) {
         widget.onAdClicked?.call(adNetwork, adUnitType, data);
       },

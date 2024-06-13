@@ -134,14 +134,14 @@ class LanguageScreenState extends State<LanguageScreen> {
               ? CollapseBannerAds(
                   key: key,
                   type: AdsBannerType.collapsible_bottom,
-                  adId: adIdManager.collapseHome,
+                  listId: NetworkRequest.instance.getListIDByName('collapse_banner'),
                   refreshRateSec: 10,
                   cbFetchIntervalSec: 5,
                   config: RemoteConfig.configs[RemoteConfigKey.banner_all.name],
                   visibilityDetectorKey: 'banner-lang')
               : NativeAds(
                   factoryId: adIdManager.nativeLanguageFactory,
-                  adId: adIdManager.nativeLanguage,
+                  listId: NetworkRequest.instance.getListIDByName('native_language'),
                   height: adIdManager.largeNativeAdHeight,
                   color: GlobalColors.lightGray,
                   border: null,

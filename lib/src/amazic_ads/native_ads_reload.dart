@@ -11,7 +11,7 @@ class NativeAdsReload extends StatefulWidget {
 
   final AdNetwork adNetwork;
   final String factoryId;
-  final String adId;
+  final List<String> listId;
   final double height;
   final Color? color;
   final BorderRadiusGeometry borderRadius;
@@ -36,7 +36,7 @@ class NativeAdsReload extends StatefulWidget {
 
   const NativeAdsReload({
     this.adNetwork = AdNetwork.admob,
-    required this.adId,
+    required this.listId,
     required this.refreshRateSec,
     required this.visibilityDetectorKey,
     this.visibilityController,
@@ -167,7 +167,7 @@ class _NativeAdsReloadState extends State<NativeAdsReload> with WidgetsBindingOb
 
     _nativeAd = AdmobAds.instance.createNative(
       adNetwork: widget.adNetwork,
-      adId: widget.adId,
+      listId: widget.listId,
       onAdLoaded: (adNetwork, adUnitType, data) {
         if (!_isDestroy && !_isPaused) {
           _startTimer();

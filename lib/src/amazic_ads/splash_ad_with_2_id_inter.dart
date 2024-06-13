@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 class SplashAdWith2IdInter extends StatefulWidget {
   final AdNetwork adNetwork;
-  final String interstitialSplashId;
+  final List<String> listId;
   final String interstitialSplashHighId;
 
   final EasyAdCallback? onAdLoaded;
@@ -35,7 +35,7 @@ class SplashAdWith2IdInter extends StatefulWidget {
   const SplashAdWith2IdInter({
     Key? key,
     this.adNetwork = AdNetwork.admob,
-    required this.interstitialSplashId,
+    required this.listId,
     required this.interstitialSplashHighId,
     this.onAdLoaded,
     this.onAdShowed,
@@ -163,7 +163,7 @@ class _SplashAdWith2IdInterState extends State<SplashAdWith2IdInter>
   void _initAds() {
     _interstitialAd = AdmobAds.instance.createInterstitial(
       adNetwork: widget.adNetwork,
-      adId: widget.interstitialSplashId,
+      listId: widget.listId,
       onAdClicked: (adNetwork, adUnitType, data) {
         widget.onAdClicked?.call(adNetwork, adUnitType, data);
         widget.onClicked?.call(AdsPlacementType.normal);
@@ -220,7 +220,7 @@ class _SplashAdWith2IdInterState extends State<SplashAdWith2IdInter>
 
     _interstitialHighAd = AdmobAds.instance.createInterstitial(
       adNetwork: widget.adNetwork,
-      adId: widget.interstitialSplashHighId,
+      listId: widget.listId,
       onAdClicked: (adNetwork, adUnitType, data) {
         widget.onAdHighClicked?.call(adNetwork, adUnitType, data);
         widget.onClicked?.call(AdsPlacementType.high);

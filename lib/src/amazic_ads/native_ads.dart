@@ -9,7 +9,7 @@ import 'loading_ads.dart';
 class NativeAds extends StatefulWidget {
   final AdNetwork adNetwork;
   final String factoryId;
-  final String adId;
+  final List<String> listId;
   final double height;
   final Color? color;
   final BorderRadiusGeometry borderRadius;
@@ -35,7 +35,7 @@ class NativeAds extends StatefulWidget {
   const NativeAds({
     this.adNetwork = AdNetwork.admob,
     required this.factoryId,
-    required this.adId,
+    required this.listId,
     required this.height,
     this.color,
     this.border,
@@ -265,7 +265,7 @@ class _NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
     _nativeAd ??= AdmobAds.instance.createNative(
       adNetwork: widget.adNetwork,
       factoryId: widget.factoryId,
-      adId: widget.adId,
+      listId: widget.listId,
       onAdClicked: (adNetwork, adUnitType, data) {
         widget.onAdClicked?.call(adNetwork, adUnitType, data);
         isClicked = widget.reloadOnClick;

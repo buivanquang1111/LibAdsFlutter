@@ -30,8 +30,8 @@ class AdsSplash {
   }
 
   void showAdSplash({
-    required String idOpen,
-    required String idInter,
+    required List<String> listOpenId,
+    required List<String> listInterId,
     EasyAdFailedCallback? onAdFailedToShow,
     EasyAdFailedCallback? onAdFailedToLoad,
     Function()? onDisabled,
@@ -40,7 +40,7 @@ class AdsSplash {
   }) {
     if (getState() == StateAdSplash.open) {
       AdmobAds.instance.showAppOpen(
-        adId: idOpen,
+        listId: listOpenId,
         config: configAdsOpen!,
         onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
           onAdFailedToShow?.call(adNetwork,adUnitType,data,errorMessage);
@@ -60,7 +60,7 @@ class AdsSplash {
       );
     } else if (getState() == StateAdSplash.inter) {
       AdmobAds.instance.showInterstitialAd(
-          adId: idInter,
+          listId: listInterId,
           config: configAdsInter!,
         isShowAdsSplash: true,
         onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {

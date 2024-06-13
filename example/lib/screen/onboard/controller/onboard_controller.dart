@@ -50,24 +50,24 @@ class OnboardController extends GetxController {
         curve: Curves.linear,
       );
     } else {
-      EventLog.logEvent("Onboarding3_start", null);
-      if (AdHelper.canShowNextInterstitialAd()) {
-        AdmobAds.instance.showInterstitialAd(
-          adId: adIdManager.interIntro,
-          config: RemoteConfig.configs[RemoteConfigKey.inter_intro.name],
-          onDisabled: () => handleNavigate(),
-          onAdShowed: (adNetwork, adUnitType, data) => handleNavigate(),
-          onAdDismissed: (adNetwork, adUnitType, data) => {
-            AdHelper.lastTimeShowInter = DateTime.now().millisecondsSinceEpoch
-          },
-          onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) =>
-              handleNavigate(),
-          onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) =>
-              handleNavigate(),
-        );
-      } else {
-        handleNavigate();
-      }
+      // EventLog.logEvent("Onboarding3_start", null);
+      // if (AdHelper.canShowNextInterstitialAd()) {
+      //   AdmobAds.instance.showInterstitialAd(
+      //     adId: adIdManager.interIntro,
+      //     config: RemoteConfig.configs[RemoteConfigKey.inter_intro.name],
+      //     onDisabled: () => handleNavigate(),
+      //     onAdShowed: (adNetwork, adUnitType, data) => handleNavigate(),
+      //     onAdDismissed: (adNetwork, adUnitType, data) => {
+      //       AdHelper.lastTimeShowInter = DateTime.now().millisecondsSinceEpoch
+      //     },
+      //     onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) =>
+      //         handleNavigate(),
+      //     onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) =>
+      //         handleNavigate(),
+      //   );
+      // } else {
+      //   handleNavigate();
+      // }
     }
   }
 

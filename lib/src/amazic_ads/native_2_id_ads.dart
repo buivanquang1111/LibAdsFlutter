@@ -9,7 +9,7 @@ import 'loading_ads.dart';
 class Native2IdAds extends StatefulWidget {
   final AdNetwork adNetwork;
   final String factoryId;
-  final String adId;
+  final List<String> listId;
   final String adIdHigh;
   final double height;
   final Color? color;
@@ -52,7 +52,7 @@ class Native2IdAds extends StatefulWidget {
     this.adNetwork = AdNetwork.admob,
     required this.factoryId,
     this.visibilityController,
-    required this.adId,
+    required this.listId,
     required this.adIdHigh,
     required this.height,
     required this.visibilityDetectorKey,
@@ -289,7 +289,7 @@ class _Native2IdAdsState extends State<Native2IdAds> with WidgetsBindingObserver
     _nativeAd ??= AdmobAds.instance.createNative(
       adNetwork: widget.adNetwork,
       factoryId: widget.factoryId,
-      adId: widget.adId,
+      listId: widget.listId,
       onAdClicked: (adNetwork, adUnitType, data) {
         widget.onAdClicked?.call(adNetwork, adUnitType, data);
         widget.onClicked?.call(AdsPlacementType.normal);
@@ -361,7 +361,7 @@ class _Native2IdAdsState extends State<Native2IdAds> with WidgetsBindingObserver
     _nativeAdHigh ??= AdmobAds.instance.createNative(
       adNetwork: widget.adNetwork,
       factoryId: widget.factoryId,
-      adId: widget.adIdHigh,
+      listId: widget.listId,
       onAdClicked: (adNetwork, adUnitType, data) {
         widget.onAdHighClicked?.call(adNetwork, adUnitType, data);
         widget.onClicked?.call(AdsPlacementType.high);

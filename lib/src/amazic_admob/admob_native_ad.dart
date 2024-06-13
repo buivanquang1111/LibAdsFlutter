@@ -12,7 +12,7 @@ class AdmobNativeAd extends AdsBase {
   final String factoryId;
 
   AdmobNativeAd({
-    required super.adUnitId,
+    required super.listId,
     required this.adRequest,
     required this.factoryId,
     super.onAdLoaded,
@@ -53,8 +53,9 @@ class AdmobNativeAd extends AdsBase {
   @override
   Future<void> load() async {
     if (_isAdLoaded) return;
+    if(listId.isEmpty) return;
     _nativeAd = NativeAd(
-      adUnitId: adUnitId,
+      adUnitId: listId[0],
       factoryId: factoryId,
       request: adRequest,
       listener: NativeAdListener(
@@ -67,14 +68,19 @@ class AdmobNativeAd extends AdsBase {
           onAdLoaded?.call(adNetwork, adUnitType, ad);
         },
         onAdFailedToLoad: (Ad ad, LoadAdError error) {
-          _nativeAd = null;
-          _isAdLoaded = false;
-          _isAdLoading = false;
-          _isAdLoadedFailed = true;
-          AdmobAds.instance.onAdFailedToLoadMethod(
-              adNetwork, adUnitType, ad, error.toString());
-          onAdFailedToLoad?.call(adNetwork, adUnitType, ad, error.toString());
-          ad.dispose();
+          if(listId.length > 1){
+            listId.removeAt(0);
+            load();
+          }else {
+            _nativeAd = null;
+            _isAdLoaded = false;
+            _isAdLoading = false;
+            _isAdLoadedFailed = true;
+            AdmobAds.instance.onAdFailedToLoadMethod(
+                adNetwork, adUnitType, ad, error.toString());
+            onAdFailedToLoad?.call(adNetwork, adUnitType, ad, error.toString());
+            ad.dispose();
+          }
         },
         onAdClicked: (ad) {
           AdmobAds.instance.appLifecycleReactor?.setIsExcludeScreen(true);

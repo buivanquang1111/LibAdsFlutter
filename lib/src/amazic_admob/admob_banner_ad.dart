@@ -12,7 +12,7 @@ class AdmobBannerAd extends AdsBase {
   final AdSize adSize;
 
   AdmobBannerAd({
-    required super.adUnitId,
+    required super.listId,
     required this.adRequest,
     this.adSize = AdSize.banner,
     super.onAdLoaded,
@@ -58,9 +58,11 @@ class AdmobBannerAd extends AdsBase {
   Future<void> load() async {
     if (_isAdLoaded) return;
 
+    if(listId.isEmpty) return;
+
     _bannerAd = BannerAd(
       size: adSize,
-      adUnitId: adUnitId,
+      adUnitId: listId[0],
       listener: BannerAdListener(
         onAdLoaded: (Ad ad) {
           _bannerAd = ad as BannerAd?;
@@ -70,14 +72,19 @@ class AdmobBannerAd extends AdsBase {
           onAdLoaded?.call(adNetwork, adUnitType, ad);
         },
         onAdFailedToLoad: (Ad ad, LoadAdError error) {
-          _bannerAd = null;
-          _isAdLoaded = false;
-          _isAdLoading = false;
-          _isAdLoadedFailed = true;
-          AdmobAds.instance.onAdFailedToLoadMethod(
-              adNetwork, adUnitType, ad, error.toString());
-          onAdFailedToLoad?.call(adNetwork, adUnitType, ad, error.toString());
-          ad.dispose();
+          if(listId.length > 1){
+            listId.removeAt(0);
+            load();
+          }else {
+            _bannerAd = null;
+            _isAdLoaded = false;
+            _isAdLoading = false;
+            _isAdLoadedFailed = true;
+            AdmobAds.instance.onAdFailedToLoadMethod(
+                adNetwork, adUnitType, ad, error.toString());
+            onAdFailedToLoad?.call(adNetwork, adUnitType, ad, error.toString());
+            ad.dispose();
+          }
         },
         onAdClicked: (ad) {
           AdmobAds.instance.appLifecycleReactor?.setIsExcludeScreen(true);
