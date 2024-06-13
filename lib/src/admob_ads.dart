@@ -7,6 +7,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:amazic_ads_flutter/src/utils/amazic_logger.dart';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -517,18 +518,22 @@ class AdmobAds {
     EasyAdOnPaidEvent? onPaidEvent,
   }) async {
     if (!isEnabled || !config) {
+      Fluttertoast.showToast(msg: '1. isEnabled: $isEnabled, config: $config');
       onDisabled?.call();
       return;
     }
     if (_isFullscreenAdShowing) {
+      Fluttertoast.showToast(msg: '2. _isFullscreenAdShowing: $_isFullscreenAdShowing');
       onDisabled?.call();
       return;
     }
     if (await isDeviceOffline()) {
+      Fluttertoast.showToast(msg: '3. isDeviceOffline: ${isDeviceOffline()}');
       onDisabled?.call();
       return;
     }
     if (!ConsentManager.ins.canRequestAds) {
+      Fluttertoast.showToast(msg: '4. canRequestAds: ${ConsentManager.ins.canRequestAds}');
       onDisabled?.call();
       return;
     }
@@ -536,6 +541,7 @@ class AdmobAds {
     ///check nếu là show ads màn Splash thì k cần check interval_interstitial_from_start
     if (isShowAdsSplash == false &&
         DateTime.now().millisecondsSinceEpoch - _openAppTime < _timeIntervalFromStart) {
+      Fluttertoast.showToast(msg: '5. isShowAdsSplash: $isShowAdsSplash');
       onDisabled?.call();
       return;
     }
@@ -543,6 +549,7 @@ class AdmobAds {
     ///check timeinterval
     if (DateTime.now().millisecondsSinceEpoch - _lastTimeDismissInter <=
         _timeInterval) {
+      Fluttertoast.showToast(msg: '6. _timeInterval: ${DateTime.now().millisecondsSinceEpoch - _lastTimeDismissInter}');
       onDisabled?.call();
       return;
     }
