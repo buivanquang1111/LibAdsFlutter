@@ -561,7 +561,7 @@ class AdmobAds {
       listId: listId,
       onAdClicked: onAdClicked,
       onAdDismissed: (adNetwork, adUnitType, data) {
-        _lastTimeDismissInter = DateTime.now().millisecondsSinceEpoch;
+        if(isShowAdsSplash == false) _lastTimeDismissInter = DateTime.now().millisecondsSinceEpoch;
         onAdDismissed?.call(adNetwork, adUnitType, data);
         AdmobAds.instance.setFullscreenAdShowing(false);
       },
