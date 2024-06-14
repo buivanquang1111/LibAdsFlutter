@@ -1,9 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import '../../admob_ads_flutter.dart';
+import '../utils/amazic_logger.dart';
 import 'loading_ads.dart';
 
 class NativeAds extends StatefulWidget {
@@ -62,6 +64,8 @@ class NativeAds extends StatefulWidget {
 }
 
 class _NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
+  final AmazicLogger _logger = AmazicLogger();
+
   AdsBase? _nativeAd;
 
   late final ValueNotifier<bool> visibilityController;
@@ -152,11 +156,11 @@ class _NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _nativeAd?.dispose();
     visibilityController.removeListener(_listener);
     visibilityController.dispose();
     _isLoading.dispose();
-    WidgetsBinding.instance.removeObserver(this);
 
     super.dispose();
   }
@@ -215,6 +219,9 @@ class _NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
                       replacement: SizedBox(
                         height: ConsentManager.ins.canRequestAds ? widget.height : 1,
                         width: MediaQuery.sizeOf(context).width,
+                        child: Container(
+                          color: Colors.amberAccent,
+                        ),
                       ),
                       child: _nativeAd?.show(
                             height: widget.height,
@@ -227,6 +234,9 @@ class _NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
                           SizedBox(
                             height: 1,
                             width: MediaQuery.sizeOf(context).width,
+                            child: Container(
+                              color: Colors.deepOrange,
+                            ),
                           ),
                     ),
                     if (isLoading)
@@ -269,12 +279,15 @@ class _NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
       onAdClicked: (adNetwork, adUnitType, data) {
         widget.onAdClicked?.call(adNetwork, adUnitType, data);
         isClicked = widget.reloadOnClick;
+        // Fluttertoast.showToast(msg: 'onAdClicked');
+        _logger.logInfo('native ad: onAdClicked');
         if (mounted) {
           setState(() {});
         }
       },
       onAdDismissed: (adNetwork, adUnitType, data) {
         widget.onAdDismissed?.call(adNetwork, adUnitType, data);
+        _logger.logInfo('native ad: onAdDismissed');
         if (mounted) {
           setState(() {});
         }
@@ -283,6 +296,7 @@ class _NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
         _isLoading.value = false;
         loadFailedCount++;
         widget.onAdFailedToLoad?.call(adNetwork, adUnitType, data, errorMessage);
+        _logger.logInfo('native ad: onAdFailedToLoad');
         if (mounted) {
           setState(() {});
         }
@@ -290,6 +304,7 @@ class _NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
       onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
         _isLoading.value = false;
         widget.onAdFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);
+        _logger.logInfo('native ad: onAdFailedToShow');
         if (mounted) {
           setState(() {});
         }
@@ -299,12 +314,14 @@ class _NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
         loadFailedCount = 0;
 
         widget.onAdLoaded?.call(adNetwork, adUnitType, data);
+        _logger.logInfo('native ad: onAdLoaded');
         if (mounted) {
           setState(() {});
         }
       },
       onAdShowed: (adNetwork, adUnitType, data) {
         widget.onAdShowed?.call(adNetwork, adUnitType, data);
+        _logger.logInfo('native ad: onAdShowed');
         if (mounted) {
           setState(() {});
         }
@@ -327,6 +344,7 @@ class _NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
           unit: unit,
           placement: placement,
         );
+        _logger.logInfo('native ad: onPaidEvent');
         if (mounted) {
           setState(() {});
         }

@@ -68,8 +68,8 @@ class LanguageScreenState extends State<LanguageScreen> {
               actions: [
                 IconButton(
                   onPressed: () {
-                    key.currentState?.closeCollapse().then(
-                      (value) {
+                    // key.currentState?.closeCollapse().then(
+                    //   (value) {
                         Timer(
                           const Duration(milliseconds: 800),
                           () {
@@ -78,25 +78,21 @@ class LanguageScreenState extends State<LanguageScreen> {
                                   .getListIDByName('inter_intro'),
                               config: true,
                               onDisabled: () {
-                                Fluttertoast.showToast(msg: 'onDisabled');
                                 controller.foSave();
                               },
                               onAdFailedToLoad:
                                   (adNetwork, adUnitType, data, errorMessage) {
-                                Fluttertoast.showToast(msg: 'onAdFailedToLoad');
                                 controller.foSave();
                               },
                               onAdFailedToShow:
                                   (adNetwork, adUnitType, data, errorMessage) {
-                                Fluttertoast.showToast(msg: 'onAdFailedToShow');
                                 controller.foSave();
                               },
                               onAdDismissed: (adNetwork, adUnitType, data) {
-                                Fluttertoast.showToast(msg: 'onAdDismissed');
                                 controller.foSave();
                               },
-                            );
-                          },
+                          //   );
+                          // },
                         );
                       },
                     );
@@ -158,27 +154,28 @@ class LanguageScreenState extends State<LanguageScreen> {
             ),
           ),
           !widget.isFromSetting
-              ? CollapseBannerAds(
-                  key: key,
-                  type: AdsBannerType.collapsible_bottom,
-                  listId: NetworkRequest.instance
-                      .getListIDByName('collapse_banner'),
-                  refreshRateSec: 10,
-                  cbFetchIntervalSec: 5,
-                  config: RemoteConfig.configs[RemoteConfigKey.banner_all.name],
-                  visibilityDetectorKey: 'banner-lang')
-              : NativeAds(
+              ?
+               NativeAds(
                   factoryId: 'native_language',
                   listId: NetworkRequest.instance
                       .getListIDByName('native_language'),
-                  height: 265,
+                  height: adIdManager.largeNativeAdHeight,
                   color: GlobalColors.lightGray,
                   border: null,
                   padding: null,
                   config: RemoteConfig
                       .configs[RemoteConfigKey.native_language.name],
                   visibilityDetectorKey: 'native-lang',
-                ),
+                )
+              :CollapseBannerAds(
+              key: key,
+              type: AdsBannerType.collapsible_bottom,
+              listId: NetworkRequest.instance
+                  .getListIDByName('collapse_banner'),
+              refreshRateSec: 10,
+              cbFetchIntervalSec: 5,
+              config: RemoteConfig.configs[RemoteConfigKey.banner_all.name],
+              visibilityDetectorKey: 'banner-lang'),
         ],
       ),
     );

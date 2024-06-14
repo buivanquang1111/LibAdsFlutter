@@ -6,6 +6,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../../admob_ads_flutter.dart';
 import '../amazic_ads/loading_ads.dart';
 import '../admob_ads.dart';
+import '../utils/amazic_logger.dart';
 
 class AdmobNativeAd extends AdsBase {
   final AdRequest adRequest;
@@ -29,6 +30,8 @@ class AdmobNativeAd extends AdsBase {
   bool _isAdLoaded = false;
   bool _isAdLoading = false;
   bool _isAdLoadedFailed = false;
+
+  final AmazicLogger _logger = AmazicLogger();
 
   @override
   AdUnitType get adUnitType => AdUnitType.native;
@@ -132,13 +135,14 @@ class AdmobNativeAd extends AdsBase {
         width: 1,
       );
     }
-    final ad = _nativeAd;
-    if (ad == null && !_isAdLoaded) {
+    NativeAd? ads = _nativeAd;
+    if (ads == null && !_isAdLoaded) {
       return const SizedBox(
         height: 1,
         width: 1,
       );
     }
+    _logger.logInfo('ad: $ads, isAdLoaded: $isAdLoaded');
     return Container(
       decoration: BoxDecoration(
         borderRadius: borderRadius ?? BorderRadius.zero,
@@ -154,7 +158,7 @@ class AdmobNativeAd extends AdsBase {
           height: height,
           child: Stack(
             children: [
-              if (ad != null && isAdLoaded) AdWidget(ad: ad),
+              if (ads != null && isAdLoaded) AdWidget(ad: ads),
               if (_isAdLoading) LoadingAds(height: height ?? 0),
             ],
           ),
