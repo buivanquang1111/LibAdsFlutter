@@ -54,7 +54,13 @@ class AdmobInterstitialAd extends AdsBase {
   @override
   Future<void> load() async {
     if (_isAdLoaded) return;
-    if(listId.isEmpty) return;
+    if(listId.isEmpty) {
+      AdmobAds.instance.onAdFailedToLoadMethod(
+          adNetwork, adUnitType, null, 'list empty');
+      onAdFailedToLoad?.call(
+          adNetwork, adUnitType, null, 'list empty');
+      return;
+    }
     _isAdLoading = true;
     await InterstitialAd.load(
       adUnitId: listId[0],
