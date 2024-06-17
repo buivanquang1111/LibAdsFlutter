@@ -54,7 +54,7 @@ class AdmobAppOpenAd extends AdsBase {
     if (listId.isEmpty) return Future.value();
     _isAdLoading = true;
     return AppOpenAd.load(
-      adUnitId: listId[0],
+      adUnitId: listId.isNotEmpty ? listId[0] : '',
       request: adRequest,
       adLoadCallback: AppOpenAdLoadCallback(
         onAdLoaded: (AppOpenAd ad) {
@@ -83,10 +83,10 @@ class AdmobAppOpenAd extends AdsBase {
           onAdLoaded?.call(adNetwork, adUnitType, ad);
         },
         onAdFailedToLoad: (LoadAdError error) {
-          if(listId.length > 1){
+          if (listId.length > 1) {
             listId.removeAt(0);
             load();
-          }else {
+          } else {
             _appOpenAd = null;
             _isAdLoading = false;
             _isAdLoadedFailed = true;

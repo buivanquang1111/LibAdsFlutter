@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:amazic_ads_flutter/admob_ads_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class InterstitialAds extends StatefulWidget {
   final AdNetwork adNetwork;
@@ -171,6 +172,7 @@ class _InterstitialAdsState extends State<InterstitialAds>
         widget.onAdClicked?.call(adNetwork, adUnitType, data);
       },
       onAdDismissed: (adNetwork, adUnitType, data) {
+        Fluttertoast.showToast(msg: 'onAdDismissed');
         if (widget.onAdShowed == null) {
           _closeAd();
         }
@@ -178,22 +180,26 @@ class _InterstitialAdsState extends State<InterstitialAds>
         AdmobAds.instance.setFullscreenAdShowing(false);
       },
       onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
+        Fluttertoast.showToast(msg: 'onAdFailedToLoad');
         _closeAd();
         widget.onAdFailedToLoad
             ?.call(adNetwork, adUnitType, data, errorMessage);
         AdmobAds.instance.setFullscreenAdShowing(false);
       },
       onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
+        Fluttertoast.showToast(msg: 'onAdFailedToShow');
         _closeAd();
         widget.onAdFailedToShow
             ?.call(adNetwork, adUnitType, data, errorMessage);
         AdmobAds.instance.setFullscreenAdShowing(false);
       },
       onAdLoaded: (adNetwork, adUnitType, data) {
+        Fluttertoast.showToast(msg: 'onAdFailedToShow');
         widget.onAdLoaded?.call(adNetwork, adUnitType, data);
         _showAd();
       },
       onAdShowed: (adNetwork, adUnitType, data) {
+        Fluttertoast.showToast(msg: 'onAdFailedToShow');
         if (widget.onAdShowed != null) {
           _closeAd();
           widget.onAdShowed!.call(adNetwork, adUnitType, data);

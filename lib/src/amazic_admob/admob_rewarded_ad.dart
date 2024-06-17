@@ -54,10 +54,9 @@ class AdmobRewardedAd extends AdsBase {
   @override
   Future<void> load() async {
     if (_isAdLoaded) return;
-    if(listId.isEmpty) return;
     _isAdLoading = true;
     await RewardedAd.load(
-      adUnitId: listId[0],
+      adUnitId: listId.isNotEmpty ? listId[0] : '',
       request: adRequest,
       rewardedAdLoadCallback: RewardedAdLoadCallback(
         onAdLoaded: (RewardedAd ad) {
@@ -85,10 +84,10 @@ class AdmobRewardedAd extends AdsBase {
           onAdLoaded?.call(adNetwork, adUnitType, ad);
         },
         onAdFailedToLoad: (LoadAdError error) {
-          if(listId.length > 1){
+          if (listId.length > 1) {
             listId.removeAt(0);
             load();
-          }else {
+          } else {
             _rewardedAd = null;
             _isAdLoaded = false;
             _isAdLoadedFailed = true;

@@ -75,7 +75,7 @@ class LanguageScreenState extends State<LanguageScreen> {
                           () {
                             AdmobAds.instance.showInterstitialAd(
                               listId: NetworkRequest.instance
-                                  .getListIDByName('inter_intro'),
+                                  .getListIDByName('inter_intro12'),
                               config: true,
                               onDisabled: () {
                                 controller.foSave();

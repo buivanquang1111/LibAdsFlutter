@@ -58,11 +58,9 @@ class AdmobBannerAd extends AdsBase {
   Future<void> load() async {
     if (_isAdLoaded) return;
 
-    if(listId.isEmpty) return;
-
     _bannerAd = BannerAd(
       size: adSize,
-      adUnitId: listId[0],
+      adUnitId: listId.isNotEmpty ? listId[0] : '',
       listener: BannerAdListener(
         onAdLoaded: (Ad ad) {
           _bannerAd = ad as BannerAd?;
@@ -72,10 +70,10 @@ class AdmobBannerAd extends AdsBase {
           onAdLoaded?.call(adNetwork, adUnitType, ad);
         },
         onAdFailedToLoad: (Ad ad, LoadAdError error) {
-          if(listId.length > 1){
+          if (listId.length > 1) {
             listId.removeAt(0);
             load();
-          }else {
+          } else {
             _bannerAd = null;
             _isAdLoaded = false;
             _isAdLoading = false;

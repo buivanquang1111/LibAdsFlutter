@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import '../../admob_ads_flutter.dart';
@@ -53,20 +54,15 @@ class AdmobInterstitialAd extends AdsBase {
 
   @override
   Future<void> load() async {
+    Fluttertoast.showToast(msg: '1.load');
     if (_isAdLoaded) return;
-    if(listId.isEmpty) {
-      AdmobAds.instance.onAdFailedToLoadMethod(
-          adNetwork, adUnitType, null, 'list empty');
-      onAdFailedToLoad?.call(
-          adNetwork, adUnitType, null, 'list empty');
-      return;
-    }
     _isAdLoading = true;
     await InterstitialAd.load(
-      adUnitId: listId[0],
+      adUnitId: listId.isNotEmpty ? listId[0] : '',
       request: adRequest,
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (InterstitialAd ad) {
+          Fluttertoast.showToast(msg: '3.onAdLoaded');
           _interstitialAd = ad;
           _interstitialAd?.onPaidEvent = (ad, revenue, type, currencyCode) {
             AdmobAds.instance.onPaidEventMethod(
@@ -91,10 +87,13 @@ class AdmobInterstitialAd extends AdsBase {
           onAdLoaded?.call(adNetwork, adUnitType, ad);
         },
         onAdFailedToLoad: (LoadAdError error) {
-          if(listId.length > 1){
+          Fluttertoast.showToast(msg: '4.onAdFailedToLoad');
+          if (listId.length > 1) {
+            Fluttertoast.showToast(msg: '5.onAdFailedToLoad - removeAt');
             listId.removeAt(0);
             load();
-          }else {
+          } else {
+            Fluttertoast.showToast(msg: '6.onAdFailedToLoad');
             _interstitialAd = null;
             _isAdLoaded = false;
             _isAdLoading = false;

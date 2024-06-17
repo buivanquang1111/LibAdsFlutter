@@ -56,9 +56,8 @@ class AdmobNativeAd extends AdsBase {
   @override
   Future<void> load() async {
     if (_isAdLoaded) return;
-    if(listId.isEmpty) return;
     _nativeAd = NativeAd(
-      adUnitId: listId[0],
+      adUnitId: listId.isNotEmpty ? listId[0] : '',
       factoryId: factoryId,
       request: adRequest,
       listener: NativeAdListener(
@@ -71,10 +70,10 @@ class AdmobNativeAd extends AdsBase {
           onAdLoaded?.call(adNetwork, adUnitType, ad);
         },
         onAdFailedToLoad: (Ad ad, LoadAdError error) {
-          if(listId.length > 1){
+          if (listId.length > 1) {
             listId.removeAt(0);
             load();
-          }else {
+          } else {
             _nativeAd = null;
             _isAdLoaded = false;
             _isAdLoading = false;
