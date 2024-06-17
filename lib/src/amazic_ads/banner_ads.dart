@@ -21,6 +21,7 @@ class BannerAds extends StatefulWidget {
   final bool config;
   final bool reloadOnClick;
   final bool reloadResume;
+  final bool onSplashScreen;
 
   final String visibilityDetectorKey;
   final ValueNotifier<bool>? visibilityController;
@@ -46,6 +47,7 @@ class BannerAds extends StatefulWidget {
     this.visibilityController,
     this.shouldReload = true,
     this.reloadResume = true,
+    this.onSplashScreen = false,
     Key? key,
   }) : super(key: key);
 
@@ -190,7 +192,7 @@ class _BannerAdsState extends State<BannerAds> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.resumed:
-        if(widget.reloadResume){
+        if(widget.reloadResume && widget.onSplashScreen == false){
           _prepareAd();
         }
 
