@@ -20,6 +20,7 @@ class BannerAds extends StatefulWidget {
   final EasyAdOnPaidEvent? onPaidEvent;
   final bool config;
   final bool reloadOnClick;
+  final bool reloadResume;
 
   final String visibilityDetectorKey;
   final ValueNotifier<bool>? visibilityController;
@@ -44,6 +45,7 @@ class BannerAds extends StatefulWidget {
     required this.visibilityDetectorKey,
     this.visibilityController,
     this.shouldReload = true,
+    this.reloadResume = true,
     Key? key,
   }) : super(key: key);
 
@@ -188,10 +190,14 @@ class _BannerAdsState extends State<BannerAds> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.resumed:
-        if (isClicked) {
-          isClicked = false;
+        if(widget.reloadResume){
           _prepareAd();
         }
+
+        // if (isClicked) {
+        //   isClicked = false;
+        //   _prepareAd();
+        // }
 
         break;
       // case AppLifecycleState.paused:
