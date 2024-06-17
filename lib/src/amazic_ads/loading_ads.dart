@@ -12,11 +12,17 @@ class LoadingAds extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Shimmer.fromColors(
-        period: const Duration(milliseconds: 500),
-        baseColor: Colors.grey[300]!,
-        highlightColor: Colors.white,
-        child: ContentPlaceholder(height),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          color: Colors.white,
+        ),
+        child: Shimmer.fromColors(
+          period: const Duration(milliseconds: 500),
+          baseColor: Colors.grey[300]!,
+          highlightColor: Colors.white,
+          child: ContentPlaceholder(height),
+        ),
       ),
     );
   }

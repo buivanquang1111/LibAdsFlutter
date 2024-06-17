@@ -6,6 +6,7 @@ import '../../admob_ads_flutter.dart';
 import '../admob_ads.dart';
 import '../enums/ad_network.dart';
 import '../enums/ad_unit_type.dart';
+import '../utils/amazic_logger.dart';
 
 class AdmobInterstitialAd extends AdsBase {
   final AdRequest adRequest;
@@ -28,6 +29,7 @@ class AdmobInterstitialAd extends AdsBase {
   bool _isAdLoading = false;
   bool _isAdLoadedFailed = false;
 
+  final AmazicLogger _logger = AmazicLogger();
   @override
   AdNetwork get adNetwork => AdNetwork.admob;
 
@@ -54,7 +56,7 @@ class AdmobInterstitialAd extends AdsBase {
 
   @override
   Future<void> load() async {
-    Fluttertoast.showToast(msg: '1.load');
+    _logger.logInfo('1.load inter');
     if (_isAdLoaded) return;
     _isAdLoading = true;
     await InterstitialAd.load(
@@ -62,7 +64,7 @@ class AdmobInterstitialAd extends AdsBase {
       request: adRequest,
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (InterstitialAd ad) {
-          Fluttertoast.showToast(msg: '3.onAdLoaded');
+          _logger.logInfo('2.load inter onAdLoaded');
           _interstitialAd = ad;
           _interstitialAd?.onPaidEvent = (ad, revenue, type, currencyCode) {
             AdmobAds.instance.onPaidEventMethod(
@@ -87,13 +89,13 @@ class AdmobInterstitialAd extends AdsBase {
           onAdLoaded?.call(adNetwork, adUnitType, ad);
         },
         onAdFailedToLoad: (LoadAdError error) {
-          Fluttertoast.showToast(msg: '4.onAdFailedToLoad');
+          _logger.logInfo('3.load inter onAdFailedToLoad');
           if (listId.length > 1) {
-            Fluttertoast.showToast(msg: '5.onAdFailedToLoad - removeAt');
+            _logger.logInfo('4.load inter onAdFailedToLoad removeAt 0');
             listId.removeAt(0);
             load();
           } else {
-            Fluttertoast.showToast(msg: '6.onAdFailedToLoad');
+            _logger.logInfo('5.load inter onAdFailedToLoadMethod');
             _interstitialAd = null;
             _isAdLoaded = false;
             _isAdLoading = false;
