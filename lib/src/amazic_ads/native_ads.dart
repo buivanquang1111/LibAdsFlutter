@@ -179,6 +179,7 @@ class _NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
       case AppLifecycleState.resumed:
         if(widget.reloadResume){
           _prepareAd();
+          widget.setReloadNative(false);
         }
         // if (isClicked) {
         //   isClicked = false;
