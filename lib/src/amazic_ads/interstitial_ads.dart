@@ -4,6 +4,8 @@ import 'package:amazic_ads_flutter/admob_ads_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+import '../utils/amazic_logger.dart';
+
 class InterstitialAds extends StatefulWidget {
   final AdNetwork adNetwork;
   final List<String> listId;
@@ -69,6 +71,7 @@ class InterstitialAds extends StatefulWidget {
 class _InterstitialAdsState extends State<InterstitialAds>
     with WidgetsBindingObserver {
   late final AdsBase? _interstitialAd;
+  final AmazicLogger _logger = AmazicLogger();
 
   Future<void> _showAd() => Future.delayed(
         const Duration(seconds: 1),
@@ -172,7 +175,7 @@ class _InterstitialAdsState extends State<InterstitialAds>
         widget.onAdClicked?.call(adNetwork, adUnitType, data);
       },
       onAdDismissed: (adNetwork, adUnitType, data) {
-        Fluttertoast.showToast(msg: 'onAdDismissed');
+        _logger.logInfo('onAdDismissed');
         if (widget.onAdShowed == null) {
           _closeAd();
         }
@@ -180,26 +183,26 @@ class _InterstitialAdsState extends State<InterstitialAds>
         AdmobAds.instance.setFullscreenAdShowing(false);
       },
       onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
-        Fluttertoast.showToast(msg: 'onAdFailedToLoad');
+        _logger.logInfo('onAdFailedToLoad');
         _closeAd();
         widget.onAdFailedToLoad
             ?.call(adNetwork, adUnitType, data, errorMessage);
         AdmobAds.instance.setFullscreenAdShowing(false);
       },
       onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
-        Fluttertoast.showToast(msg: 'onAdFailedToShow');
+        _logger.logInfo('onAdFailedToShow');
         _closeAd();
         widget.onAdFailedToShow
             ?.call(adNetwork, adUnitType, data, errorMessage);
         AdmobAds.instance.setFullscreenAdShowing(false);
       },
       onAdLoaded: (adNetwork, adUnitType, data) {
-        Fluttertoast.showToast(msg: 'onAdFailedToShow');
+        _logger.logInfo('onAdLoaded');
         widget.onAdLoaded?.call(adNetwork, adUnitType, data);
         _showAd();
       },
       onAdShowed: (adNetwork, adUnitType, data) {
-        Fluttertoast.showToast(msg: 'onAdFailedToShow');
+        _logger.logInfo('onAdShowed');
         if (widget.onAdShowed != null) {
           _closeAd();
           widget.onAdShowed!.call(adNetwork, adUnitType, data);
