@@ -30,12 +30,12 @@ class NativeAds extends StatefulWidget {
   final bool config;
 
   final bool reloadOnClick;
-  final bool reloadResume;
+  bool reloadResume;
 
   final String visibilityDetectorKey;
   final ValueNotifier<bool>? visibilityController;
 
-  const NativeAds({
+  NativeAds({
     this.adNetwork = AdNetwork.admob,
     required this.factoryId,
     required this.listId,
@@ -57,12 +57,16 @@ class NativeAds extends StatefulWidget {
     required this.visibilityDetectorKey,
     this.visibilityController,
     this.reloadOnClick = false,
-    this.reloadResume = true,
+    this.reloadResume = false,
     Key? key,
   }) : super(key: key);
 
   @override
   State<NativeAds> createState() => _NativeAdsState();
+
+  void setReloadNative(bool reload){
+    reloadResume = reload;
+  }
 }
 
 class _NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
