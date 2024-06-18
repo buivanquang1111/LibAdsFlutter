@@ -5,8 +5,9 @@ class AdjustConfigFlutter{
   AdjustConfigFlutter._instance();
   static final AdjustConfigFlutter instance = AdjustConfigFlutter._instance();
 
-  void setupAdjust({required String adjustToken, bool? isDebug = true }){
-    AdjustConfig config = AdjustConfig(adjustToken, isDebug == true ?  AdjustEnvironment.sandbox : AdjustEnvironment.production);
+  void setupAdjust({required String adjustToken}){
+    // AdjustConfig config = AdjustConfig(adjustToken, isDebug == true ?  AdjustEnvironment.sandbox : AdjustEnvironment.production);
+    AdjustConfig config = AdjustConfig(adjustToken, AdjustEnvironment.production);
     config.logLevel = AdjustLogLevel.verbose;
     config.defaultTracker = adjustToken;
     Adjust.start(config);

@@ -229,9 +229,7 @@ class _NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
                       replacement: SizedBox(
                         height: ConsentManager.ins.canRequestAds ? widget.height : 1,
                         width: MediaQuery.sizeOf(context).width,
-                        child: Container(
-                          color: Colors.amberAccent,
-                        ),
+                        child: Container(),
                       ),
                       child: _nativeAd?.show(
                             height: widget.height,
@@ -244,9 +242,7 @@ class _NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
                           SizedBox(
                             height: 1,
                             width: MediaQuery.sizeOf(context).width,
-                            child: Container(
-                              color: Colors.deepOrange,
-                            ),
+                            child: Container(),
                           ),
                     ),
                     if (isLoading)
