@@ -30,6 +30,7 @@ class NativeAds extends StatefulWidget {
   final bool config;
 
   final bool reloadOnClick;
+  final bool reloadResume;
 
   final String visibilityDetectorKey;
   final ValueNotifier<bool>? visibilityController;
@@ -56,6 +57,7 @@ class NativeAds extends StatefulWidget {
     required this.visibilityDetectorKey,
     this.visibilityController,
     this.reloadOnClick = false,
+    this.reloadResume = true,
     Key? key,
   }) : super(key: key);
 
@@ -171,10 +173,13 @@ class _NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.resumed:
-        if (isClicked) {
-          isClicked = false;
+        if(widget.reloadResume){
           _prepareAd();
         }
+        // if (isClicked) {
+        //   isClicked = false;
+        //   _prepareAd();
+        // }
 
         break;
       default:
