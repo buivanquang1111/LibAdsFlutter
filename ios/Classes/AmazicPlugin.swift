@@ -15,8 +15,10 @@ public class AmazicPlugin: NSObject, FlutterPlugin {
     case "hasConsentForPurposeOne":
        result(true)
     case "showLoadingAd":
+        break;
        //result(true)
     case "hideLoadingAd":
+        break;
       //result(true)
     default:
       result(FlutterMethodNotImplemented)
