@@ -12,6 +12,12 @@ public class AmazicPlugin: NSObject, FlutterPlugin {
     switch call.method {
     case "getPlatformVersion":
       result("iOS " + UIDevice.current.systemVersion)
+    case "hasConsentForPurposeOne":
+       result(true)
+    case "showLoadingAd":
+       //result(true)
+    case "hideLoadingAd":
+      //result(true)
     default:
       result(FlutterMethodNotImplemented)
     }
