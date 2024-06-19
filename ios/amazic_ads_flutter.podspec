@@ -3,7 +3,7 @@
 # Run `pod lib lint easy_ads_flutter.podspec` to validate before publishing.
 #
 Pod::Spec.new do |s|
-  s.name             = 'easy_ads_flutter'
+  s.name             = 'amazic_ads_flutter'
   s.version          = '0.0.1'
   s.summary          = 'A new Flutter project.'
   s.description      = <<-DESC
