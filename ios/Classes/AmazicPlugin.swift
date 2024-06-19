@@ -1,10 +1,10 @@
 import Flutter
 import UIKit
 
-public class EasyAd_2Plugin: NSObject, FlutterPlugin {
+public class AmazicPlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "easy_ads_flutter", binaryMessenger: registrar.messenger())
-    let instance = EasyAd_2Plugin()
+    let instance = AmazicPlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
   }
 

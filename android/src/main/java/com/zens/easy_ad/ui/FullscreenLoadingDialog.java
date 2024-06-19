@@ -16,7 +16,7 @@ import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
 import com.google.android.material.progressindicator.CircularProgressIndicator;
-import com.zens.easy_ad.EasyAdPlugin;
+import com.zens.easy_ad.AmazicPlugin;
 import com.zens.easy_ad.R;
 
 public class FullscreenLoadingDialog extends Dialog implements LifecycleObserver {
@@ -52,7 +52,7 @@ public class FullscreenLoadingDialog extends Dialog implements LifecycleObserver
         super.onStart();
         Log.d(TAG, "onStart");
         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
-        EasyAdPlugin.loadingChannel.setMethodCallHandler((call, result) -> {
+        AmazicPlugin.loadingChannel.setMethodCallHandler((call, result) -> {
             switch (call.method) {
                 case "handleShowAd":
                     showAd();
@@ -74,13 +74,13 @@ public class FullscreenLoadingDialog extends Dialog implements LifecycleObserver
         super.onStop();
         Log.d(TAG, "onStop");
         ProcessLifecycleOwner.get().getLifecycle().removeObserver(this);
-        EasyAdPlugin.loadingChannel.setMethodCallHandler(null);
+        AmazicPlugin.loadingChannel.setMethodCallHandler(null);
     }
 
     void showAd() {
         new Handler().postDelayed(() -> {
             if (isResume) {
-                EasyAdPlugin.loadingChannel.invokeMethod("showAd", null);
+                AmazicPlugin.loadingChannel.invokeMethod("showAd", null);
             } else {
                 adFailedToShow = true;
             }

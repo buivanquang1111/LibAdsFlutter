@@ -28,7 +28,7 @@ import java.util.Objects;
 /**
  * EasyAd_2Plugin
  */
-public class EasyAdPlugin
+public class AmazicPlugin
         implements FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware {
 
     private MethodChannel channel;
@@ -36,7 +36,7 @@ public class EasyAdPlugin
     private Context context;
     private Activity mActivity;
 
-    static final String TAG = "EasyAdPlugin";
+    static final String TAG = "AmazicPlugin";
 
     @Override
     public void onAttachedToEngine(
