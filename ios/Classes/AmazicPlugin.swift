@@ -6,9 +6,6 @@ public class AmazicPlugin: NSObject, FlutterPlugin {
     let channel = FlutterMethodChannel(name: "easy_ads_flutter", binaryMessenger: registrar.messenger())
     let instance = AmazicPlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
-
-    let channelLoading = FlutterMethodChannel(name: "loadingChannel", binaryMessenger: registrar.messenger())
-    registrar.addMethodCallDelegate(instance, channel: channelLoading)
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {

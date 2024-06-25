@@ -496,7 +496,7 @@ class AdmobAds {
     LoadingChannel.setMethodCallHandler(appOpen.show);
     AdmobAds.instance.setFullscreenAdShowing(true);
 
-    AdPlatform.instance.showLoadingAd(getPrimaryColor());
+    // AdPlatform.instance.showLoadingAd(getPrimaryColor());
     appOpen.load();
   }
 
@@ -590,7 +590,7 @@ class AdmobAds {
     LoadingChannel.setMethodCallHandler(interstitialAd.show);
     AdmobAds.instance.setFullscreenAdShowing(true);
 
-    AdPlatform.instance.showLoadingAd(getPrimaryColor());
+    // AdPlatform.instance.showLoadingAd(getPrimaryColor());
     interstitialAd.load();
   }
 
@@ -670,7 +670,7 @@ class AdmobAds {
     LoadingChannel.setMethodCallHandler(rewardAd.show);
     AdmobAds.instance.setFullscreenAdShowing(true);
 
-    AdPlatform.instance.showLoadingAd(getPrimaryColor());
+    // AdPlatform.instance.showLoadingAd(getPrimaryColor());
     rewardAd.load();
   }
 
