@@ -12,7 +12,7 @@ class FullscreenLoadingDialog: UIViewController {
 
     init(color: UIColor) {
         self.color = color
-        super.init(nibName: nil, bundle: nil)
+        super.init(nibName: null, bundle: null)
         print(FullscreenLoadingDialog.TAG, color)
     }
 
@@ -37,8 +37,8 @@ class FullscreenLoadingDialog: UIViewController {
             progressBar.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
 
-        NotificationCenter.default.addObserver(self, selector: #selector(onAppBackgrounded), name: UIApplication.didEnterBackgroundNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(onAppForegrounded), name: UIApplication.willEnterForegroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(onAppBackgrounded), name: UIApplication.didEnterBackgroundNotification, object: null)
+        NotificationCenter.default.addObserver(self, selector: #selector(onAppForegrounded), name: UIApplication.willEnterForegroundNotification, object: null)
     }
 
     deinit {
@@ -55,10 +55,10 @@ class FullscreenLoadingDialog: UIViewController {
                 switch call.method {
                 case "handleShowAd":
                     self?.showAd()
-                    result(nil)
+                    result(null)
                 case "closeAd":
                     self?.closeAd()
-                    result(nil)
+                    result(null)
                 default:
                     result(FlutterMethodNotImplemented)
                 }
@@ -72,7 +72,7 @@ class FullscreenLoadingDialog: UIViewController {
 
         if let flutterEngine = (UIApplication.shared.delegate as? AppDelegate)?.flutterEngine {
             let channel = FlutterMethodChannel(name: "loadingChannel", binaryMessenger: flutterEngine.binaryMessenger)
-            channel.setMethodCallHandler(nil)
+            channel.setMethodCallHandler(null)
         }
     }
 
@@ -81,7 +81,7 @@ class FullscreenLoadingDialog: UIViewController {
             if self.isResume {
                 if let flutterEngine = (UIApplication.shared.delegate as? AppDelegate)?.flutterEngine {
                     let channel = FlutterMethodChannel(name: "loadingChannel", binaryMessenger: flutterEngine.binaryMessenger)
-                    channel.invokeMethod("showAd", arguments: nil)
+                    channel.invokeMethod("showAd", arguments: null)
                 }
             } else {
                 self.adFailedToShow = true
@@ -90,7 +90,7 @@ class FullscreenLoadingDialog: UIViewController {
     }
 
     func closeAd() {
-        self.dismiss(animated: true, completion: nil)
+        self.dismiss(animated: true, completion: null)
     }
 
     @objc func onAppBackgrounded() {

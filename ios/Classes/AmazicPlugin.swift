@@ -12,13 +12,13 @@ import Flutter
 
 
       public static func register(with registrar: FlutterPluginRegistrar) {
-          if channel == nil {
+          if channel == null {
               channel = FlutterMethodChannel(name: "easy_ads_flutter", binaryMessenger: registrar.messenger())
               let instance = AmazicPlugin()
               registrar.addMethodCallDelegate(instance, channel: channel!)
           }
 
-          if loadingChannel == nil {
+          if loadingChannel == null {
               loadingChannel = FlutterMethodChannel(name: "loadingChannel", binaryMessenger: registrar.messenger())
           }
       }
@@ -47,22 +47,22 @@ import Flutter
               let hasConsentForPurposeOne = purposeOneString == "1"
               result(hasConsentForPurposeOne)
           } else {
-              result(nil)
+              result(null)
           }
       }
 
       private func showOverlayLoading(color: UIColor) {
-          if dialog == nil {
+          if dialog == null {
               dialog = FullscreenLoadingDialog(color: color)
               dialog?.modalPresentationStyle = .overFullScreen
-              mActivity.present(dialog!, animated: true, completion: nil)
+              mActivity.present(dialog!, animated: true, completion: null)
           }
       }
 
       private func hideOverlayLoading() {
-          if dialog != nil {
-              dialog?.dismiss(animated: true, completion: nil)
-              dialog = nil
+          if dialog != null {
+              dialog?.dismiss(animated: true, completion: null)
+              dialog = null
           }
       }
   }
