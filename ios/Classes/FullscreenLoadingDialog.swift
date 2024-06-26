@@ -49,9 +49,8 @@ class FullscreenLoadingDialog: UIViewController {
         super.viewWillAppear(animated)
         print(FullscreenLoadingDialog.TAG, "onStart")
 
-        if let flutterEngine = (UIApplication.shared.delegate as? AppDelegate)?.flutterEngine {
-            let channel = FlutterMethodChannel(name: "loadingChannel", binaryMessenger: flutterEngine.binaryMessenger)
-            channel.setMethodCallHandler { [weak self] (call, result) in
+
+            AmazicPlugin.loadingChannel.setMethodCallHandler { [weak self] (call, result) in
                 switch call.method {
                 case "handleShowAd":
                     self?.showAd()
@@ -63,26 +62,22 @@ class FullscreenLoadingDialog: UIViewController {
                     result(FlutterMethodNotImplemented)
                 }
             }
-        }
+
     }
 
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         print(FullscreenLoadingDialog.TAG, "onStop")
 
-        if let flutterEngine = (UIApplication.shared.delegate as? AppDelegate)?.flutterEngine {
-            let channel = FlutterMethodChannel(name: "loadingChannel", binaryMessenger: flutterEngine.binaryMessenger)
-            channel.setMethodCallHandler(nil)
-        }
+        AmazicPlugin.loadingChannel.setMethodCallHandler(null)
     }
 
     func showAd() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
             if self.isResume {
-                if let flutterEngine = (UIApplication.shared.delegate as? AppDelegate)?.flutterEngine {
-                    let channel = FlutterMethodChannel(name: "loadingChannel", binaryMessenger: flutterEngine.binaryMessenger)
-                    channel.invokeMethod("showAd", arguments: nil)
-                }
+
+                    AmazicPlugin.loadingChannel.invokeMethod("showAd", arguments: nil)
+
             } else {
                 self.adFailedToShow = true
             }
