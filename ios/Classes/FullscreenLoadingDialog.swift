@@ -47,37 +47,34 @@ class FullscreenLoadingDialog: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        print(FullscreenLoadingDialog.TAG, "onStart")
-
-
-            AmazicPlugin.loadingChannel.setMethodCallHandler { [weak self] (call, result) in
-                switch call.method {
-                case "handleShowAd":
-                    self?.showAd()
-                    result(nil)
-                case "closeAd":
-                    self?.closeAd()
-                    result(nil)
-                default:
-                    result(FlutterMethodNotImplemented)
-                }
+        print(FullscreenLoadingDialog.TAG, "viewWillAppear")
+        AmazicPlugin.loadingChannel?.setMethodCallHandler { [weak self] (call, result) in
+            switch call.method {
+            case "handleShowAd":
+                print("FullscreenLoadingDialog", "handle show ad")
+                self?.showAd()
+                result(nil)
+            case "closeAd":
+                print("FullscreenLoadingDialog", "handle closeAd")
+                self?.closeAd()
+                result(nil)
+            default:
+                result(FlutterMethodNotImplemented)
             }
-
+        }
     }
 
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        print(FullscreenLoadingDialog.TAG, "onStop")
-
-        AmazicPlugin.loadingChannel.setMethodCallHandler(null)
-    }
+//    override func viewDidDisappear(_ animated: Bool) {
+//        super.viewDidDisappear(animated)
+//        print(FullscreenLoadingDialog.TAG, "viewDidDisappear")
+//        AmazicPlugin.loadingChannel?.setMethodCallHandler(nil)
+//    }
 
     func showAd() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
             if self.isResume {
-
-                    AmazicPlugin.loadingChannel.invokeMethod("showAd", arguments: nil)
-
+                print("FullscreenLoadingDialog", "invokeMethod show ad")
+                AmazicPlugin.loadingChannel?.invokeMethod("showAd", arguments: nil)
             } else {
                 self.adFailedToShow = true
             }
@@ -85,7 +82,8 @@ class FullscreenLoadingDialog: UIViewController {
     }
 
     func closeAd() {
-        self.dismiss(animated: true, completion: nil)
+        // self.dismiss(animated: true, completion: nil)
+        UIApplication.shared.windows.last { $0.isKeyWindow }?.rootViewController?.dismiss(animated: true, completion: nil)
     }
 
     @objc func onAppBackgrounded() {

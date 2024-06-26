@@ -1,6 +1,7 @@
 // ignore_for_file: constant_identifier_names
 
 import 'dart:async';
+import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -465,6 +466,9 @@ class AdmobAds {
       onAdDismissed: (adNetwork, adUnitType, data) {
         onAdDismissed?.call(adNetwork, adUnitType, data);
         AdmobAds.instance.setFullscreenAdShowing(false);
+        if (Platform.isIOS) {
+          LoadingChannel.closeAd();
+        }
       },
       onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
         LoadingChannel.closeAd();
@@ -481,9 +485,11 @@ class AdmobAds {
         LoadingChannel.handleShowAd();
       },
       onAdShowed: (adNetwork, adUnitType, data) {
-        Future.delayed(const Duration(seconds: 1), () {
-          LoadingChannel.closeAd();
-        });
+        if (Platform.isAndroid) {
+          Future.delayed(const Duration(seconds: 1), () {
+            LoadingChannel.closeAd();
+          });
+        }
         onAdShowed?.call(adNetwork, adUnitType, data);
       },
       onPaidEvent: onPaidEvent,
@@ -560,6 +566,9 @@ class AdmobAds {
         if(isShowAdsSplash == false) _lastTimeDismissInter = DateTime.now().millisecondsSinceEpoch;
         onAdDismissed?.call(adNetwork, adUnitType, data);
         AdmobAds.instance.setFullscreenAdShowing(false);
+        if (Platform.isIOS) {
+          LoadingChannel.closeAd();
+        }
       },
       onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
         LoadingChannel.closeAd();
@@ -576,9 +585,11 @@ class AdmobAds {
         LoadingChannel.handleShowAd();
       },
       onAdShowed: (adNetwork, adUnitType, data) {
-        Future.delayed(const Duration(seconds: 1), () {
-          LoadingChannel.closeAd();
-        });
+        if (Platform.isAndroid) {
+          Future.delayed(const Duration(seconds: 1), () {
+            LoadingChannel.closeAd();
+          });
+        }
         onAdShowed?.call(adNetwork, adUnitType, data);
       },
       onPaidEvent: onPaidEvent,
@@ -639,6 +650,9 @@ class AdmobAds {
       onAdDismissed: (adNetwork, adUnitType, data) {
         onAdDismissed?.call(adNetwork, adUnitType, data);
         AdmobAds.instance.setFullscreenAdShowing(false);
+        if (Platform.isIOS) {
+          LoadingChannel.closeAd();
+        }
       },
       onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
         LoadingChannel.closeAd();
@@ -655,9 +669,11 @@ class AdmobAds {
         LoadingChannel.handleShowAd();
       },
       onAdShowed: (adNetwork, adUnitType, data) {
-        Future.delayed(const Duration(seconds: 1), () {
-          LoadingChannel.closeAd();
-        });
+        if (Platform.isAndroid) {
+          Future.delayed(const Duration(seconds: 1), () {
+            LoadingChannel.closeAd();
+          });
+        }
         onAdShowed?.call(adNetwork, adUnitType, data);
       },
       onPaidEvent: onPaidEvent,
