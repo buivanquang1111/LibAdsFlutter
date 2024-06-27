@@ -1,5 +1,6 @@
 import 'dart:collection';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
@@ -28,8 +29,11 @@ class NetworkRequest {
     /// https://language-master.top/api/getidv2/ca-app-pub-4973559944609228~2346710863+com.example.lib
     var url = linkServer != null && appId != null && packageName != null
         ? Uri.parse('$linkServer/api/getidv2/$appId+$packageName')
-        : Uri.parse(
-            'https://language-master.top/api/getidv2/ca-app-pub-4973559944609228~2346710863');
+        : (Platform.isAndroid
+            ? Uri.parse(
+                'https://language-master.top/api/getidv2/ca-app-pub-4973559944609228~2346710863')
+            : Uri.parse(
+                'https://language-master.top/api/getidv2/ca-app-pub-4973559944609228~2346710863+ios'));
     try {
       var response = await http.get(url);
       if (response.statusCode == 200) {
