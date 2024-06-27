@@ -88,14 +88,53 @@ class AdsSplash {
     final int rateInter;
     final int rateOpen;
 
-    rateOpen = int.tryParse(rate.split('_')[0]) ?? 30;
-    rateInter = int.tryParse(rate.split('_')[1]) ?? 70;
+    if(isValidFormat(rate)) {
+      rateOpen = int.tryParse(rate.split('_')[0]) ?? 30;
+      rateInter = int.tryParse(rate.split('_')[1]) ?? 70;
+      print('rateOpen: $rateOpen');
+      print('rateInter: $rateInter');
 
-    if (rateInter >= 0 && rateOpen >= 0 && (rateInter + rateOpen) == 100) {
-      bool isShowOpenSplash = Random().nextInt(100) + 1 < rateOpen;
-      setState(isShowOpenSplash ? StateAdSplash.open : StateAdSplash.inter);
-    } else {
+      if (rateInter >= 0 && rateOpen >= 0 && (rateInter + rateOpen) == 100) {
+        bool isShowOpenSplash = Random().nextInt(100) + 1 < rateOpen;
+        setState(isShowOpenSplash ? StateAdSplash.open : StateAdSplash.inter);
+      } else {
+        setState(StateAdSplash.noAds);
+      }
+    }else{
       setState(StateAdSplash.noAds);
+    }
+  }
+
+  bool isValidFormat(String input) {
+    // Kiểm tra độ dài chuỗi phải ít nhất là 5 ký tự (ví dụ: "x_yy")
+    if (input.length < 5) {
+      return false;
+    }
+
+    // Tách chuỗi thành mảng các phần tử bởi dấu "_"
+    List<String> parts = input.split('_');
+
+    // Kiểm tra xem có đúng hai phần tử được tách ra hay không
+    if (parts.length != 2) {
+      return false;
+    }
+
+    // Chuyển đổi từng phần tử thành số
+    int firstNumber;
+    int secondNumber;
+    try {
+      firstNumber = int.parse(parts[0]);
+      secondNumber = int.parse(parts[1]);
+    } catch (e) {
+      // Nếu có lỗi khi chuyển đổi thành số, trả về false
+      return false;
+    }
+
+    // Kiểm tra điều kiện: số trước "_" cộng với số sau "_" bằng 100
+    if (firstNumber + secondNumber == 100) {
+      return true;
+    } else {
+      return false;
     }
   }
 

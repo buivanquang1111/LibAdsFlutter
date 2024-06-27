@@ -169,10 +169,10 @@ class SplashState extends State<SplashScreen> {
       listOpenId: NetworkRequest.instance.getListIDByName('open_splash'),
       listInterId: NetworkRequest.instance.getListIDByName('inter_splash'),
       onAdShowed: (adNetwork, adUnitType, data) {
-        handleNavigate();
       },
       onAdDismissed: (adNetwork, adUnitType, data) {
         AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
+        handleNavigate();
       },
       onDisabled: () {
         AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);

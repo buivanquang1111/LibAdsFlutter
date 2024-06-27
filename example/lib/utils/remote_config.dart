@@ -39,7 +39,7 @@ enum RemoteConfigKey {
       case remote_update:
         return '''{"name": "Test_native_intro","desc": "Test_native_intro","date": "28/03/2024","apply": 1}''';
       case rate_aoa_inter_splash:
-        return '0_100';
+        return '100';
       case interval_between_interstitial:
         return 20;
       case interval_from_start:

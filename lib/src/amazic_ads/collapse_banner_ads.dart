@@ -340,7 +340,9 @@ class CollapseBannerAdsState extends State<CollapseBannerAds> with WidgetsBindin
     _timer = Timer.periodic(
       Duration(seconds: widget.refreshRateSec),
       (timer) {
-        _prepareAd();
+        if(AdmobAds.instance.isFullscreenAdShowing == false) {
+          _prepareAd();
+        }
       },
     );
   }

@@ -75,7 +75,7 @@ class LanguageScreenState extends State<LanguageScreen> {
                           () {
                             AdmobAds.instance.showInterstitialAd(
                               listId: NetworkRequest.instance
-                                  .getListIDByName('inter_intro12'),
+                                  .getListIDByName('inter_intro'),
                               config: true,
                               onDisabled: () {
                                 controller.foSave();
@@ -155,19 +155,7 @@ class LanguageScreenState extends State<LanguageScreen> {
           ),
           !widget.isFromSetting
               ?
-               NativeAds(
-                  factoryId: 'native_language',
-                  listId: NetworkRequest.instance
-                      .getListIDByName('native_language'),
-                  height: adIdManager.largeNativeAdHeight,
-                  color: GlobalColors.lightGray,
-                  border: null,
-                  padding: null,
-                  config: RemoteConfig
-                      .configs[RemoteConfigKey.native_language.name],
-                  visibilityDetectorKey: 'native-lang',
-                )
-              :CollapseBannerAds(
+          CollapseBannerAds(
               key: key,
               type: AdsBannerType.collapsible_bottom,
               listId: NetworkRequest.instance
@@ -175,7 +163,19 @@ class LanguageScreenState extends State<LanguageScreen> {
               refreshRateSec: 10,
               cbFetchIntervalSec: 5,
               config: RemoteConfig.configs[RemoteConfigKey.banner_all.name],
-              visibilityDetectorKey: 'banner-lang'),
+              visibilityDetectorKey: 'banner-lang')
+          :NativeAds(
+            factoryId: 'native_language',
+            listId: NetworkRequest.instance
+                .getListIDByName('native_language'),
+            height: adIdManager.largeNativeAdHeight,
+            color: GlobalColors.lightGray,
+            border: null,
+            padding: null,
+            config: RemoteConfig
+                .configs[RemoteConfigKey.native_language.name],
+            visibilityDetectorKey: 'native-lang',
+          ),
         ],
       ),
     );
