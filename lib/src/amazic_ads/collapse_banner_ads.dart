@@ -31,8 +31,9 @@ class CollapseBannerAds extends StatefulWidget {
   final EasyAdEarnedReward? onEarnedReward;
   final EasyAdOnPaidEvent? onPaidEvent;
   final bool config;
+  bool hideReloadWhenResume;
 
-  const CollapseBannerAds({
+  CollapseBannerAds({
     this.adNetwork = AdNetwork.admob,
     required this.listId,
     required this.type,
@@ -50,6 +51,7 @@ class CollapseBannerAds extends StatefulWidget {
     this.onEarnedReward,
     this.onPaidEvent,
     required this.config,
+    this.hideReloadWhenResume = true,
     Key? key,
   }) : super(key: key);
 
@@ -291,6 +293,7 @@ class CollapseBannerAdsState extends State<CollapseBannerAds> with WidgetsBindin
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
+      print('check state: resume');
       if (isClicked) {
         isClicked = false;
         _prepareAd();
@@ -298,6 +301,7 @@ class CollapseBannerAdsState extends State<CollapseBannerAds> with WidgetsBindin
         onResume();
       }
     } else if (state == AppLifecycleState.inactive || state == AppLifecycleState.paused) {
+      print('check state: inactive');
       onPause();
     }
     super.didChangeAppLifecycleState(state);

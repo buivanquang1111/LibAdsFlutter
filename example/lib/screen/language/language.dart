@@ -38,15 +38,39 @@ class LanguageScreen extends StatefulWidget {
   State<StatefulWidget> createState() => LanguageScreenState();
 }
 
-class LanguageScreenState extends State<LanguageScreen> {
+class LanguageScreenState extends State<LanguageScreen> with WidgetsBindingObserver {
   final controller = Get.find<LanguageController>();
   final key = GlobalKey<CollapseBannerAdsState>();
 
   @override
   void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    print('appLifeState: initState');
+
     EventLog.logScreenView("LanguageScreen", "LanguageScreen");
     EventLog.logEvent("language_fo_open", null);
     super.initState();
+  }
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print('appLifeState: didChangeAppLifecycleState');
+    if(state == AppLifecycleState.resumed){
+      print('appLifeState: resumed');
+    }else if(state == AppLifecycleState.paused){
+      print('appLifeState: paused');
+    }else if( state == AppLifecycleState.inactive){
+      print('appLifeState: inactive');
+    }else if (state == AppLifecycleState.hidden){
+      print('appLifeState: hide');
+    }else if(state == AppLifecycleState.detached){
+      print('appLifeState: detached');
+    }
+    super.didChangeAppLifecycleState(state);
   }
 
   @override
@@ -68,8 +92,8 @@ class LanguageScreenState extends State<LanguageScreen> {
               actions: [
                 IconButton(
                   onPressed: () {
-                    // key.currentState?.closeCollapse().then(
-                    //   (value) {
+                    key.currentState?.closeCollapse().then(
+                      (value) {
                         Timer(
                           const Duration(milliseconds: 800),
                           () {
@@ -91,8 +115,8 @@ class LanguageScreenState extends State<LanguageScreen> {
                               onAdDismissed: (adNetwork, adUnitType, data) {
                                 controller.foSave();
                               },
-                          //   );
-                          // },
+                            );
+                          },
                         );
                       },
                     );
@@ -153,8 +177,8 @@ class LanguageScreenState extends State<LanguageScreen> {
               itemCount: controller.listLanguage.length,
             ),
           ),
-          !widget.isFromSetting
-              ?
+          // !widget.isFromSetting
+          //     ?
           CollapseBannerAds(
               key: key,
               type: AdsBannerType.collapsible_bottom,
@@ -163,19 +187,19 @@ class LanguageScreenState extends State<LanguageScreen> {
               refreshRateSec: 10,
               cbFetchIntervalSec: 5,
               config: RemoteConfig.configs[RemoteConfigKey.banner_all.name],
-              visibilityDetectorKey: 'banner-lang')
-          :NativeAds(
-            factoryId: 'native_language',
-            listId: NetworkRequest.instance
-                .getListIDByName('native_language'),
-            height: adIdManager.largeNativeAdHeight,
-            color: GlobalColors.lightGray,
-            border: null,
-            padding: null,
-            config: RemoteConfig
-                .configs[RemoteConfigKey.native_language.name],
-            visibilityDetectorKey: 'native-lang',
-          ),
+              visibilityDetectorKey: 'collapse_banner_lang')
+          // :NativeAds(
+          //   factoryId: 'native_language',
+          //   listId: NetworkRequest.instance
+          //       .getListIDByName('native_language'),
+          //   height: adIdManager.largeNativeAdHeight,
+          //   color: GlobalColors.lightGray,
+          //   border: null,
+          //   padding: null,
+          //   config: RemoteConfig
+          //       .configs[RemoteConfigKey.native_language.name],
+          //   visibilityDetectorKey: 'native-lang',
+          // ),
         ],
       ),
     );

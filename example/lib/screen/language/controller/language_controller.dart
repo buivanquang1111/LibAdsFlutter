@@ -61,7 +61,7 @@ class LanguageController extends GetxController implements GetxService {
     EventLog.logEvent("language_fo_save_click",
         {"language_fo_save_click": currentLanguage.value});
     pushCurrentLangOnTop();
-    Get.offAll(const OnboardScreen1());
+    Get.to(const OnboardScreen1());
   }
 
   void back() {
