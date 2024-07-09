@@ -293,16 +293,18 @@ class CollapseBannerAdsState extends State<CollapseBannerAds> with WidgetsBindin
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      print('check state: resume');
+      print('check state: 1.resume $_isDestroy');
       if (isClicked) {
         isClicked = false;
         _prepareAd();
       } else {
         onResume();
       }
+      print('check state: 2.resume $_isDestroy');
     } else if (state == AppLifecycleState.inactive || state == AppLifecycleState.paused) {
-      print('check state: inactive');
+      print('check state: 1.inactive $_isDestroy');
       onPause();
+      print('check state: 2.inactive $_isDestroy');
     }
     super.didChangeAppLifecycleState(state);
   }
