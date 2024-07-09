@@ -282,6 +282,7 @@ class CollapseBannerAdsState extends State<CollapseBannerAds> with WidgetsBindin
     WidgetsBinding.instance.removeObserver(this);
     closeCollapse();
     onDestroyed();
+    print('check state: 2.dispose $_isDestroy');
 
     super.dispose();
   }
@@ -332,6 +333,7 @@ class CollapseBannerAdsState extends State<CollapseBannerAds> with WidgetsBindin
   }
 
   void onDestroyed() {
+    print('check state: 1.dispose $_isDestroy');
     _isDestroy = true;
     _stopTimer();
   }
