@@ -300,24 +300,27 @@ class CollapseBannerAdsState extends State<CollapseBannerAds> with WidgetsBindin
       } else {
         onResume();
       }
-      print('check state: 2.resume $_isDestroy');
+      print('check state: end.resume $_isDestroy');
     } else if (state == AppLifecycleState.inactive || state == AppLifecycleState.paused) {
       print('check state: 1.inactive $_isDestroy');
       onPause();
-      print('check state: 2.inactive $_isDestroy');
+      print('check state: end.inactive $_isDestroy');
     }
     super.didChangeAppLifecycleState(state);
   }
 
   void onResume() {
     _isPaused = false;
+    print('check state: 2.resume $_isDestroy');
     if (!_isDestroy) {
+      print('check state: 3.resume $_isDestroy');
       _startTimer();
     }
   }
 
   void onPause() {
     _isPaused = true;
+    print('check state: 2.inactive $_isDestroy');
     _stopTimer();
   }
 
@@ -339,6 +342,7 @@ class CollapseBannerAdsState extends State<CollapseBannerAds> with WidgetsBindin
   }
 
   void _startTimer() {
+    print('check state: 4.resume $_isDestroy');
     if (widget.refreshRateSec == 0) {
       return;
     }
@@ -347,6 +351,7 @@ class CollapseBannerAdsState extends State<CollapseBannerAds> with WidgetsBindin
       Duration(seconds: widget.refreshRateSec),
       (timer) {
         if(AdmobAds.instance.isFullscreenAdShowing == false) {
+          print('check state: 5.resume $_isDestroy');
           _prepareAd();
         }
       },
