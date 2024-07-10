@@ -31,7 +31,7 @@ class CollapseBannerAds extends StatefulWidget {
   final EasyAdEarnedReward? onEarnedReward;
   final EasyAdOnPaidEvent? onPaidEvent;
   final bool config;
-  bool hideReloadWhenResume;
+  bool hideReloadWhenScreenChange;
 
   CollapseBannerAds({
     this.adNetwork = AdNetwork.admob,
@@ -51,9 +51,13 @@ class CollapseBannerAds extends StatefulWidget {
     this.onEarnedReward,
     this.onPaidEvent,
     required this.config,
-    this.hideReloadWhenResume = true,
+    this.hideReloadWhenScreenChange = false,
     Key? key,
   }) : super(key: key);
+
+  void setHideReloadWhenScreenChange(bool value){
+    hideReloadWhenScreenChange = value;
+  }
 
   @override
   State<CollapseBannerAds> createState() => CollapseBannerAdsState();
@@ -353,7 +357,7 @@ class CollapseBannerAdsState extends State<CollapseBannerAds> with WidgetsBindin
     _timer = Timer.periodic(
       Duration(seconds: widget.refreshRateSec),
       (timer) {
-        if(AdmobAds.instance.isFullscreenAdShowing == false) {
+        if(AdmobAds.instance.isFullscreenAdShowing == false || widget.hideReloadWhenScreenChange == false) {
           print('check state: 5.resume $_isDestroy');
           _prepareAd();
         }
