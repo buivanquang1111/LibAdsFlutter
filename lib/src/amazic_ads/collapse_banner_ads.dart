@@ -357,7 +357,7 @@ class CollapseBannerAdsState extends State<CollapseBannerAds> with WidgetsBindin
     _timer = Timer.periodic(
       Duration(seconds: widget.refreshRateSec),
       (timer) {
-        if(AdmobAds.instance.isFullscreenAdShowing == false || widget.hideReloadWhenScreenChange == false) {
+        if(widget.hideReloadWhenScreenChange == false) {
           print('check state: 5.resume $_isDestroy');
           _prepareAd();
         }
