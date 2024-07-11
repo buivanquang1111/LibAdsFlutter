@@ -171,6 +171,7 @@ class CollapseBannerAdsState extends State<CollapseBannerAds> with WidgetsBindin
       type: type,
       onAdLoaded: (adNetwork, adUnitType, data) {
         if (!_isDestroy && !_isPaused) {
+          print('startTimer: onAdLoaded');
           _startTimer();
         }
         widget.onAdLoaded?.call(adNetwork, adUnitType, data);
@@ -180,6 +181,7 @@ class CollapseBannerAdsState extends State<CollapseBannerAds> with WidgetsBindin
       },
       onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
         if (!_isDestroy && !_isPaused) {
+          print('startTimer: onAdFailedToLoad');
           _startTimer();
         }
         widget.onAdFailedToLoad?.call(adNetwork, adUnitType, data, errorMessage);
@@ -305,16 +307,9 @@ class CollapseBannerAdsState extends State<CollapseBannerAds> with WidgetsBindin
       } else {
         onResume();
       }
-    } else if (state == AppLifecycleState.inactive) {
+    } else if (state == AppLifecycleState.inactive || state == AppLifecycleState.paused) {
       print('check state: 1.inactive $_isDestroy');
       onPause();
-    }else if(state == AppLifecycleState.paused){
-      print('check state: 1.paused $_isDestroy');
-      onPause();
-    }else if(state == AppLifecycleState.detached){
-      print('check state: 1.detached $_isDestroy');
-    }else if(state == AppLifecycleState.hidden){
-      print('check state: 1.hidden $_isDestroy');
     }
     super.didChangeAppLifecycleState(state);
   }
@@ -322,6 +317,7 @@ class CollapseBannerAdsState extends State<CollapseBannerAds> with WidgetsBindin
   void onResume() {
     _isPaused = false;
     if (!_isDestroy) {
+      print('startTimer: onResume');
       _startTimer();
     }
   }
@@ -334,6 +330,7 @@ class CollapseBannerAdsState extends State<CollapseBannerAds> with WidgetsBindin
   void onVisible() {
     _isDestroy = false;
     if (!_isPaused) {
+      print('startTimer: onVisible');
       _startTimer();
     }
   }
@@ -350,14 +347,17 @@ class CollapseBannerAdsState extends State<CollapseBannerAds> with WidgetsBindin
   }
 
   void _startTimer() {
+    print('startTimer: 1.');
     if (widget.refreshRateSec == 0) {
       return;
     }
     _stopTimer();
+    print('startTimer: 2.');
     _timer = Timer.periodic(
       Duration(seconds: widget.refreshRateSec),
       (timer) {
         if(widget.hideReloadWhenScreenChange == false) {
+          print('startTimer: 3.');
           print('check state: 5.resume $_isDestroy');
           _prepareAd();
         }
