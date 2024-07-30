@@ -195,79 +195,82 @@ class _NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return VisibilityDetector(
-      key: Key(widget.visibilityDetectorKey),
-      onVisibilityChanged: (info) {
-        try {
-          if (info.visibleFraction < 0.1) {
-            if (visibilityController.value) {
-              visibilityController.value = false;
+    return Visibility(
+      visible: widget.config,
+      child: VisibilityDetector(
+        key: Key(widget.visibilityDetectorKey),
+        onVisibilityChanged: (info) {
+          try {
+            if (info.visibleFraction < 0.1) {
+              if (visibilityController.value) {
+                visibilityController.value = false;
+              }
+            } else {
+              if (!visibilityController.value) {
+                visibilityController.value = true;
+              }
             }
-          } else {
-            if (!visibilityController.value) {
-              visibilityController.value = true;
-            }
-          }
-          // ignore: empty_catches
-        } catch (e) {}
-      },
-      child: ValueListenableBuilder<bool>(
-        valueListenable: visibilityController,
-        builder: (_, isVisible, __) {
-          return ValueListenableBuilder(
-              valueListenable: _isLoading,
-              builder: (adsCtx, isLoading, adsChild) {
-                return Stack(
-                  children: [
-                    Visibility(
-                      visible: isVisible,
-                      maintainState: false,
-                      maintainAnimation: false,
-                      maintainSize: false,
-                      maintainSemantics: false,
-                      maintainInteractivity: false,
-                      replacement: SizedBox(
-                        height: ConsentManager.ins.canRequestAds ? widget.height : 1,
-                        width: MediaQuery.sizeOf(context).width,
-                        child: Container(),
-                      ),
-                      child: _nativeAd?.show(
-                            height: widget.height,
-                            borderRadius: widget.borderRadius,
-                            color: widget.color,
-                            border: widget.border,
-                            padding: widget.padding,
-                            margin: widget.margin,
-                          ) ??
-                          SizedBox(
-                            height: 1,
-                            width: MediaQuery.sizeOf(context).width,
-                            child: Container(),
-                          ),
-                    ),
-                    if (isLoading)
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: widget.borderRadius,
-                          border: widget.border,
-                          color: widget.color,
+            // ignore: empty_catches
+          } catch (e) {}
+        },
+        child: ValueListenableBuilder<bool>(
+          valueListenable: visibilityController,
+          builder: (_, isVisible, __) {
+            return ValueListenableBuilder(
+                valueListenable: _isLoading,
+                builder: (adsCtx, isLoading, adsChild) {
+                  return Stack(
+                    children: [
+                      Visibility(
+                        visible: isVisible,
+                        maintainState: false,
+                        maintainAnimation: false,
+                        maintainSize: false,
+                        maintainSemantics: false,
+                        maintainInteractivity: false,
+                        replacement: SizedBox(
+                          height: ConsentManager.ins.canRequestAds ? widget.height : 1,
+                          width: MediaQuery.sizeOf(context).width,
+                          child: Container(),
                         ),
-                        padding: widget.padding,
-                        margin: widget.margin,
-                        child: ClipRRect(
-                          borderRadius: widget.borderRadius,
-                          child: SizedBox(
-                            height: widget.height,
-                            child: LoadingAds(
+                        child: _nativeAd?.show(
                               height: widget.height,
+                              borderRadius: widget.borderRadius,
+                              color: widget.color,
+                              border: widget.border,
+                              padding: widget.padding,
+                              margin: widget.margin,
+                            ) ??
+                            SizedBox(
+                              height: 1,
+                              width: MediaQuery.sizeOf(context).width,
+                              child: Container(),
+                            ),
+                      ),
+                      if (isLoading)
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: widget.borderRadius,
+                            border: widget.border,
+                            color: widget.color,
+                          ),
+                          padding: widget.padding,
+                          margin: widget.margin,
+                          child: ClipRRect(
+                            borderRadius: widget.borderRadius,
+                            child: SizedBox(
+                              height: widget.height,
+                              child: LoadingAds(
+                                height: widget.height,
+                              ),
                             ),
                           ),
-                        ),
-                      )
-                  ],
-                );
-              });
-        },
+                        )
+                    ],
+                  );
+                });
+          },
+        ),
       ),
     );
   }
