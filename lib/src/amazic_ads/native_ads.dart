@@ -83,7 +83,7 @@ class _NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    visibilityController = widget.visibilityController ?? ValueNotifier(true);
+    visibilityController = widget.visibilityController ?? ValueNotifier(ConsentManager.ins.canRequestAds && widget.config);
     visibilityController.addListener(_listener);
   }
 

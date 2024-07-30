@@ -179,27 +179,26 @@ class LanguageScreenState extends State<LanguageScreen> with WidgetsBindingObser
           ),
           // !widget.isFromSetting
           //     ?
-          CollapseBannerAds(
-              key: key,
-              type: AdsBannerType.collapsible_bottom,
-              listId: NetworkRequest.instance
-                  .getListIDByName('collapse_banner'),
-              refreshRateSec: 10,
-              cbFetchIntervalSec: 5,
-              config: RemoteConfig.configs[RemoteConfigKey.banner_all.name],
-              visibilityDetectorKey: 'collapse_banner_lang')
-          // :NativeAds(
-          //   factoryId: 'native_language',
-          //   listId: NetworkRequest.instance
-          //       .getListIDByName('native_language'),
-          //   height: adIdManager.largeNativeAdHeight,
-          //   color: GlobalColors.lightGray,
-          //   border: null,
-          //   padding: null,
-          //   config: RemoteConfig
-          //       .configs[RemoteConfigKey.native_language.name],
-          //   visibilityDetectorKey: 'native-lang',
-          // ),
+          // CollapseBannerAds(
+          //     key: key,
+          //     type: AdsBannerType.collapsible_bottom,
+          //     listId: NetworkRequest.instance
+          //         .getListIDByName('collapse_banner'),
+          //     refreshRateSec: 10,
+          //     cbFetchIntervalSec: 5,
+          //     config: RemoteConfig.configs[RemoteConfigKey.banner_all.name],
+          //     visibilityDetectorKey: 'collapse_banner_lang')
+          NativeAds(
+            factoryId: 'native_language',
+            listId: NetworkRequest.instance
+                .getListIDByName('native_language'),
+            height: adIdManager.largeNativeAdHeight,
+            color: GlobalColors.lightGray,
+            border: null,
+            padding: null,
+            config: false,
+            visibilityDetectorKey: 'native-lang',
+          ),
         ],
       ),
     );
