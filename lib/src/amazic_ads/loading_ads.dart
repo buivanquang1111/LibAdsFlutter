@@ -37,61 +37,75 @@ class ContentPlaceholder extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            clipBehavior: Clip.hardEdge,
-            width: 50.0,
-            height: 50.0,
-            decoration: const BoxDecoration(
-              color: Colors.white,
+          if (height > 10000)
+            Expanded(
+              child: Container(
+                width: double.infinity,
+                height: height,
+                color: Colors.white,
+                margin: const EdgeInsets.only(bottom: 8.0),
+              ),
             ),
-          ),
-          const SizedBox(width: 12.0),
-          Expanded(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: double.infinity,
-                  height: 10.0,
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                clipBehavior: Clip.hardEdge,
+                width: 50.0,
+                height: 50.0,
+                decoration: const BoxDecoration(
                   color: Colors.white,
-                  margin: const EdgeInsets.only(bottom: 8.0),
                 ),
-                Container(
-                  width: double.infinity,
-                  height: 10.0,
-                  color: Colors.white,
-                  margin: const EdgeInsets.only(bottom: 8.0),
-                ),
-                if (height > 150)
-                  Container(
-                    width: 100.0,
-                    height: 10.0,
-                    color: Colors.white,
-                    margin: const EdgeInsets.only(bottom: 8.0),
-                  ),
-                if (height > 150)
-                  Container(
-                    width: double.infinity,
-                    height: 120,
-                    color: Colors.white,
-                    margin: const EdgeInsets.only(bottom: 8.0),
-                  ),
-                if (height > 100)
-                  Container(
-                    width: double.infinity,
-                    height: 50.0,
-                    decoration: BoxDecoration(
+              ),
+              const SizedBox(width: 12.0),
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      height: 10.0,
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
+                      margin: const EdgeInsets.only(bottom: 8.0),
                     ),
-                  ),
-              ],
-            ),
+                    Container(
+                      width: double.infinity,
+                      height: 10.0,
+                      color: Colors.white,
+                      margin: const EdgeInsets.only(bottom: 8.0),
+                    ),
+                    if (height > 150)
+                      Container(
+                        width: 100.0,
+                        height: 10.0,
+                        color: Colors.white,
+                        margin: const EdgeInsets.only(bottom: 8.0),
+                      ),
+                    if (height > 150)
+                      Container(
+                        width: double.infinity,
+                        height: 120,
+                        color: Colors.white,
+                        margin: const EdgeInsets.only(bottom: 8.0),
+                      ),
+                    if (height > 100)
+                      Container(
+                        width: double.infinity,
+                        height: 50.0,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ],
       ),
