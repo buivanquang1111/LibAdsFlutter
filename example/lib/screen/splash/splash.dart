@@ -47,9 +47,10 @@ class SplashState extends State<SplashScreen> {
   Future<void> initAdModule() async {
     AdmobAds.instance.setOpenAppTime(DateTime.now().millisecondsSinceEpoch);
     AdmobAds.instance.setTimeIntervalBetweenInter(RemoteConfig
-        .configs[RemoteConfigKey.interval_between_interstitial.name]*1000);
+            .configs[RemoteConfigKey.interval_between_interstitial.name] *
+        1000);
     AdmobAds.instance.setTimeIntervalInterFromStart(
-        RemoteConfig.configs[RemoteConfigKey.interval_from_start.name]*1000);
+        RemoteConfig.configs[RemoteConfigKey.interval_from_start.name] * 1000);
 
     NetworkRequest.instance.fetchAdsModel(
         linkServer: null,
@@ -90,6 +91,9 @@ class SplashState extends State<SplashScreen> {
                   //   }
                   // }
                   // initAndLoadAd();
+                  print(
+                      'listIdBanner: ${NetworkRequest.instance.getListIDByName('banner_splash').first}');
+                  // setState(() {});
                   showAdsSplash();
                 } else {
                   handleNavigate();
@@ -168,8 +172,7 @@ class SplashState extends State<SplashScreen> {
     AdsSplash.instance.showAdSplash(
       listOpenId: NetworkRequest.instance.getListIDByName('open_splash'),
       listInterId: NetworkRequest.instance.getListIDByName('inter_splash'),
-      onAdShowed: (adNetwork, adUnitType, data) {
-      },
+      onAdShowed: (adNetwork, adUnitType, data) {},
       onAdDismissed: (adNetwork, adUnitType, data) {
         AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
         handleNavigate();
@@ -228,10 +231,11 @@ class SplashState extends State<SplashScreen> {
                 Text(
                   L.descSplash.tr,
                   style: GlobalTextStyles.font14w400.copyWith(
-                    color: Colors.white,
+                    color: Colors.green,
                   ),
                 ),
-                SizedBox(height: 30.h)
+                SizedBox(height: 30.h),
+
               ],
             ),
           ],

@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:ui' as ui;
 
+import 'package:amazic_ads_flutter/src/utils/preferences_util.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:amazic_ads_flutter/src/utils/amazic_logger.dart';
 
@@ -136,6 +137,8 @@ class AdmobAds {
     Future<dynamic> Function(bool canRequestAds)? initMediationCallback,
     required Function(bool canRequestAds) onInitialized,
   }) async {
+    await PreferencesUtil.init();
+
     VisibilityDetectorController.instance.updateInterval = Duration.zero;
     if (enableLogger) _logger.enable(enableLogger);
 

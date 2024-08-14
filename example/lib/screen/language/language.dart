@@ -188,17 +188,32 @@ class LanguageScreenState extends State<LanguageScreen> with WidgetsBindingObser
           //     cbFetchIntervalSec: 5,
           //     config: RemoteConfig.configs[RemoteConfigKey.banner_all.name],
           //     visibilityDetectorKey: 'collapse_banner_lang')
-          NativeAds(
-            factoryId: 'native_language',
-            listId: NetworkRequest.instance
-                .getListIDByName('native_language'),
-            height: adIdManager.largeNativeAdHeight,
-            color: GlobalColors.lightGray,
-            border: null,
-            padding: null,
-            config: false,
-            visibilityDetectorKey: 'native-lang',
-          ),
+          // NativeAds(
+          //   factoryId: 'native_language',
+          //   listId: NetworkRequest.instance
+          //       .getListIDByName('native_language'),
+          //   height: adIdManager.largeNativeAdHeight,
+          //   color: GlobalColors.lightGray,
+          //   border: null,
+          //   padding: null,
+          //   config: true,
+          //   visibilityDetectorKey: 'native-lang',
+          // ),
+          BannerSplash(
+            listIdAds: NetworkRequest.instance
+                .getListIDByName('banner_splash'),
+            remoteConfig: true,
+            visibilityDetectorKey: 'banner-splash',
+            onNext: () {
+
+            },
+            onTestAdSuccess: () {
+              Fluttertoast.showToast(msg: 'Success');
+            },
+            onTestAdError: (p0) {
+              Fluttertoast.showToast(msg: 'Error $p0');
+              print('ErrorDetect: $p0');
+            },)
         ],
       ),
     );
