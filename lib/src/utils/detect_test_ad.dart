@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:amazic_ads_flutter/src/utils/preferences_util.dart';
-import 'package:google_ml_kit/google_ml_kit.dart';
+import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 
 class DetectTestAd {
   var testAd = 'Test Ad';
@@ -21,7 +21,7 @@ class DetectTestAd {
     try {
       // Load the image using Google ML Kit
       final inputImage = InputImage.fromFile(imageFile);
-      final textRecognizer = GoogleMlKit.vision.textRecognizer();
+      final textRecognizer = TextRecognizer(script: TextRecognitionScript.latin);
       final RecognizedText recognizedText = await textRecognizer.processImage(inputImage);
 
       // Extract recognized text
