@@ -121,6 +121,9 @@ class _BannerSplashState extends State<BannerSplash> {
         listId: widget.listIdAds,
         config: widget.remoteConfig,
         visibilityDetectorKey: widget.visibilityDetectorKey,
+        onAdDisabled: (adNetwork, adUnitType, data) {
+          widget.onNext();
+        },
         onAdDismissed: (adNetwork, adUnitType, data) {
           widget.onNext();
         },
