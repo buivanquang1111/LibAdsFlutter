@@ -204,6 +204,7 @@ class LanguageScreenState extends State<LanguageScreen> with WidgetsBindingObser
                 .getListIDByName('banner_splash'),
             remoteConfig: true,
             visibilityDetectorKey: 'banner-splash',
+            isDetectOrOrganic: false,
             onNext: () {
 
             },

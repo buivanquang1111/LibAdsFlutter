@@ -14,6 +14,8 @@ class BannerSplash extends StatefulWidget {
   final Function() onNext;
   final Function() onTestAdSuccess;
   final Function(String) onTestAdError;
+  final String bearToken;
+  final String appToken;
   final bool
       isDetectOrOrganic; //true - use Detect Test Ad, false - use Adjust Organic
 
@@ -25,7 +27,9 @@ class BannerSplash extends StatefulWidget {
       required this.onNext,
       required this.onTestAdSuccess,
       required this.onTestAdError,
-      this.isDetectOrOrganic = true});
+      this.isDetectOrOrganic = true,
+      this.bearToken = 'mpBYiG4WNndUpojp7pez',
+      this.appToken = ''});
 
   @override
   State<BannerSplash> createState() => _BannerSplashState();
@@ -80,8 +84,8 @@ class _BannerSplashState extends State<BannerSplash> {
           if (value != null) {
             CallOrganicAdjust.instance
                 .getOrganic(
-                    bearerToken: 'mpBYiG4WNndUpojp7pez',
-                    appToken: 'xz7hat0yjchs',
+                    bearerToken: widget.bearToken,
+                    appToken: widget.appToken,
                     advertisingId: value)
                 .then(
               (value) {
