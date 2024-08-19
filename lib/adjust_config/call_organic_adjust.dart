@@ -20,20 +20,25 @@ class CallOrganicAdjust {
       {required String bearerToken,
       required String appToken,
       required String advertisingId}) async {
-    final res = await get(
-        Uri.parse(
-            'https://api.adjust.com/device_service/api/v2/inspect_device?advertising_id=$advertisingId&app_token=$appToken'),
-        headers: {HttpHeaders.authorizationHeader: "Bearer $bearerToken"});
+    try {
+      final res = await get(
+          Uri.parse(
+              'https://api.adjust.com/device_service/api/v2/inspect_device?advertising_id=$advertisingId&app_token=$appToken'),
+          headers: {HttpHeaders.authorizationHeader: "Bearer $bearerToken"});
 
-    final data = jsonDecode(utf8.decode(res.bodyBytes));
+      final data = jsonDecode(utf8.decode(res.bodyBytes));
 
-    print('adjustJson: $data');
-    print('adjustJson: TrackerName - ${data['TrackerName']}');
+      print('adjustJson: $data');
+      print('adjustJson: TrackerName - ${data['TrackerName']}');
 
-    if(trackerName.toLowerCase() == data['TrackerName'].toString().toLowerCase()){
-      PreferencesUtil.setTestAd();
-      return true;
-    }else{
+      if (trackerName.toLowerCase() ==
+          data['TrackerName'].toString().toLowerCase()) {
+        PreferencesUtil.setTestAd();
+        return true;
+      } else {
+        return false;
+      }
+    }catch(e){
       return false;
     }
   }

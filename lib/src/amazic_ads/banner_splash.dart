@@ -38,42 +38,42 @@ class BannerSplash extends StatefulWidget {
 class _BannerSplashState extends State<BannerSplash> {
   ScreenshotController screenshotController = ScreenshotController();
 
-  void detectTestAd(double pixelRatio) {
-    print('Banner_Splash: Use Detect Test Ad');
-    if (!DetectTestAd.instance.isTestAd()) {
-      screenshotController
-          .capture(
-              pixelRatio: pixelRatio, delay: const Duration(milliseconds: 10))
-          .then((capturedImage) async {
-        if (capturedImage != null) {
-          final directory = await getApplicationDocumentsDirectory();
-          String fileName =
-              'banner_ads_splash_${DateTime.now().microsecondsSinceEpoch}';
-          final imageFile =
-              await File('${directory.path}/$fileName.png').create();
-          await imageFile.writeAsBytes(capturedImage);
-
-          DetectTestAd.instance.detectImageToText(
-            imageFile: imageFile,
-            onSuccess: () {
-              widget.onTestAdSuccess();
-              widget.onNext();
-            },
-            onError: (p0) {
-              widget.onTestAdError(p0);
-              widget.onNext();
-            },
-          );
-        }
-      }).catchError((onError) {
-        widget.onTestAdError(onError.toString());
-        widget.onNext();
-      });
-    } else {
-      widget.onTestAdSuccess();
-      widget.onNext();
-    }
-  }
+  // void detectTestAd(double pixelRatio) {
+  //   print('Banner_Splash: Use Detect Test Ad');
+  //   if (!DetectTestAd.instance.isTestAd()) {
+  //     screenshotController
+  //         .capture(
+  //             pixelRatio: pixelRatio, delay: const Duration(milliseconds: 10))
+  //         .then((capturedImage) async {
+  //       if (capturedImage != null) {
+  //         final directory = await getApplicationDocumentsDirectory();
+  //         String fileName =
+  //             'banner_ads_splash_${DateTime.now().microsecondsSinceEpoch}';
+  //         final imageFile =
+  //             await File('${directory.path}/$fileName.png').create();
+  //         await imageFile.writeAsBytes(capturedImage);
+  //
+  //         DetectTestAd.instance.detectImageToText(
+  //           imageFile: imageFile,
+  //           onSuccess: () {
+  //             widget.onTestAdSuccess();
+  //             widget.onNext();
+  //           },
+  //           onError: (p0) {
+  //             widget.onTestAdError(p0);
+  //             widget.onNext();
+  //           },
+  //         );
+  //       }
+  //     }).catchError((onError) {
+  //       widget.onTestAdError(onError.toString());
+  //       widget.onNext();
+  //     });
+  //   } else {
+  //     widget.onTestAdSuccess();
+  //     widget.onNext();
+  //   }
+  // }
 
   void callOrganicAdjust() {
     print('Banner_Splash: Use call Organic Adjust');
@@ -131,9 +131,10 @@ class _BannerSplashState extends State<BannerSplash> {
           widget.onNext();
         },
         onAdShowed: (adNetwork, adUnitType, data) {
-          widget.isDetectOrOrganic
-              ? detectTestAd(pixelRatio)
-              : callOrganicAdjust();
+          // widget.isDetectOrOrganic
+          //     ? detectTestAd(pixelRatio)
+          //     : callOrganicAdjust();
+          callOrganicAdjust();
         },
       ),
     );
