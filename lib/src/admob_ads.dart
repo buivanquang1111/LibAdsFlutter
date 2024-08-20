@@ -23,6 +23,7 @@ import 'amazic_admob/admob_interstitial_ad.dart';
 import 'amazic_admob/admob_native_ad.dart';
 import 'amazic_admob/admob_rewarded_ad.dart';
 import 'amazic_ads/splash_ad_with_interstitial_and_app_open.dart';
+
 part 'utils/ads_extension.dart';
 
 class AdmobAds {
@@ -34,6 +35,7 @@ class AdmobAds {
 
   /// Google admob's ad request
   AdRequest _adRequest = const AdRequest();
+
   // late final IAdIdManager adIdManager;
 
   /// True value when there is exist an Ad and false otherwise.
@@ -161,12 +163,12 @@ class AdmobAds {
         onPostExecute: () => onInitialized(ConsentManager.ins.canRequestAds));
 
     // if (manager.admobAdIds?.appId != null) {
-      this.admobConfiguration = admobConfiguration;
-      if (navigatorKey?.currentContext != null) {
-        admobAdSize =
-            await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
-                MediaQuery.sizeOf(navigatorKey!.currentContext!).width.toInt());
-      }
+    this.admobConfiguration = admobConfiguration;
+    if (navigatorKey?.currentContext != null) {
+      admobAdSize =
+          await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
+              MediaQuery.sizeOf(navigatorKey!.currentContext!).width.toInt());
+    }
     // }
 
     if (navigatorKey != null) {
@@ -234,8 +236,6 @@ class AdmobAds {
       //         ? TestAdsId.admobBannerCollapseId
       //         : TestAdsId.admobBannerId
       //     : adId;
-
-
 
       ad = AdmobBannerAd(
         listId: listId,
@@ -546,17 +546,21 @@ class AdmobAds {
 
     ///check nếu là show ads màn Splash thì k cần check interval_interstitial_from_start
     if (isShowAdsSplash == false &&
-        DateTime.now().millisecondsSinceEpoch - _openAppTime < _timeIntervalFromStart) {
-      _logger.logInfo('5. isShowAdsSplash: $isShowAdsSplash, timeMinus: ${DateTime.now().millisecondsSinceEpoch - _openAppTime}, _timeIntervalFromStart: $_timeIntervalFromStart');
+        DateTime.now().millisecondsSinceEpoch - _openAppTime <
+            _timeIntervalFromStart) {
+      _logger.logInfo(
+          '5. isShowAdsSplash: $isShowAdsSplash, timeMinus: ${DateTime.now().millisecondsSinceEpoch - _openAppTime}, _timeIntervalFromStart: $_timeIntervalFromStart');
 
       onDisabled?.call();
       return;
     }
 
     ///check timeinterval
-    if (isShowAdsSplash == false && DateTime.now().millisecondsSinceEpoch - _lastTimeDismissInter <=
-        _timeInterval) {
-      _logger.logInfo('6. isShowAdsSplash: $isShowAdsSplash, timeMinus: ${DateTime.now().millisecondsSinceEpoch - _lastTimeDismissInter}, _timeInterval: $_timeInterval');
+    if (isShowAdsSplash == false &&
+        DateTime.now().millisecondsSinceEpoch - _lastTimeDismissInter <=
+            _timeInterval) {
+      _logger.logInfo(
+          '6. isShowAdsSplash: $isShowAdsSplash, timeMinus: ${DateTime.now().millisecondsSinceEpoch - _lastTimeDismissInter}, _timeInterval: $_timeInterval');
       onDisabled?.call();
       return;
     }
@@ -566,7 +570,8 @@ class AdmobAds {
       listId: listId,
       onAdClicked: onAdClicked,
       onAdDismissed: (adNetwork, adUnitType, data) {
-        if(isShowAdsSplash == false) _lastTimeDismissInter = DateTime.now().millisecondsSinceEpoch;
+        if (isShowAdsSplash == false)
+          _lastTimeDismissInter = DateTime.now().millisecondsSinceEpoch;
         onAdDismissed?.call(adNetwork, adUnitType, data);
         AdmobAds.instance.setFullscreenAdShowing(false);
         if (Platform.isIOS) {
@@ -801,7 +806,8 @@ class AdmobAds {
   Future<bool> isDeviceOffline() async {
     final connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult != ConnectivityResult.wifi &&
-        connectivityResult != ConnectivityResult.mobile) {
+        connectivityResult != ConnectivityResult.mobile &&
+        connectivityResult != ConnectivityResult.vpn) {
       return true;
     }
     return false;
