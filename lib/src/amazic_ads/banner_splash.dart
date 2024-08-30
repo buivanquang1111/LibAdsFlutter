@@ -37,6 +37,7 @@ class BannerSplash extends StatefulWidget {
 
 class _BannerSplashState extends State<BannerSplash> {
   ScreenshotController screenshotController = ScreenshotController();
+  bool checkAdsShow = false;
 
   // void detectTestAd(double pixelRatio) {
   //   print('Banner_Splash: Use Detect Test Ad');
@@ -137,7 +138,10 @@ class _BannerSplashState extends State<BannerSplash> {
           // widget.isDetectOrOrganic
           //     ? detectTestAd(pixelRatio)
           //     : callOrganicAdjust();
-          callOrganicAdjust();
+          if(!checkAdsShow) {
+            callOrganicAdjust();
+            checkAdsShow = true;
+          }
         },
       ),
     );
