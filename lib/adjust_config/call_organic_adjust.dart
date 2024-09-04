@@ -13,7 +13,7 @@ class CallOrganicAdjust {
   static final CallOrganicAdjust instance = CallOrganicAdjust._instance();
 
   bool isTestAd() {
-    return PreferencesUtil.isTestAd();
+    return PreferencesUtilLib.isTestAd();
   }
 
   Future<bool> getOrganic(
