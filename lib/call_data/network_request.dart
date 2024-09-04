@@ -25,8 +25,8 @@ class NetworkRequest {
       String? appId,
       String? packageName,
       required Function() onResponse,
-      required Function onError}) async {
-    /// https://language-master.top/api/getidv2/ca-app-pub-4973559944609228~2346710863+com.example.lib
+      required Function(String) onError}) async {
+    /// http://language-master.top/api/getidv2/ca-app-pub-4973559944609228~2346710863+com.example.lib
     var url = linkServer != null && appId != null && packageName != null
         ? Uri.parse('$linkServer/api/getidv2/$appId+$packageName')
         : (Platform.isAndroid
@@ -53,14 +53,14 @@ class NetworkRequest {
 
         onResponse.call();
       } else if (response.statusCode == 404) {
-        onError.call();
+        onError.call('Not Found');
         throw Exception('Not Found');
       } else {
-        onError.call();
+        onError.call('Can\'t get ads id');
         throw Exception('Can\'t get ads id');
       }
     } catch (e) {
-      onError.call();
+      onError.call(e.toString());
     }
   }
 
