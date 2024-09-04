@@ -14,4 +14,11 @@ class PreferencesUtil{
   static bool isTestAd() {
     return _pref?.getBool("test_ad") ?? false;
   }
+
+  static Future<void> setOrganicAdjust() async{
+    await _pref?.setBool("organic_adjust", true);
+  }
+  static bool isOrganicAdjust(){
+    return _pref?.getBool("organic_adjust")?? false;
+  }
 }
