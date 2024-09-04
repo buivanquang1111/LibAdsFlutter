@@ -139,7 +139,7 @@ class AdmobAds {
     Future<dynamic> Function(bool canRequestAds)? initMediationCallback,
     required Function(bool canRequestAds) onInitialized,
   }) async {
-    await PreferencesUtil.init();
+    await PreferencesUtilLib.init();
 
     VisibilityDetectorController.instance.updateInterval = Duration.zero;
     if (enableLogger) _logger.enable(enableLogger);
