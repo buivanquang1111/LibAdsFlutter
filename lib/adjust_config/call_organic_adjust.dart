@@ -33,8 +33,8 @@ class CallOrganicAdjust {
 
       if (trackerName.toLowerCase() ==
           data['TrackerName'].toString().toLowerCase()) {
-        // PreferencesUtil.setTestAd();
-        PreferencesUtil.setOrganicAdjust();
+        // PreferencesUtilLib.setTestAd();
+        PreferencesUtilLib.setOrganicAdjust();
         return true;
       } else {
         return false;
