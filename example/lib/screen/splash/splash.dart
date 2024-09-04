@@ -104,7 +104,7 @@ class SplashState extends State<SplashScreen> {
             handleNavigate();
           }
         },
-        onError: () {});
+        onError: (e) {});
   }
 
   // void initAndLoadAd() {

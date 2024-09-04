@@ -176,10 +176,10 @@ class _InterstitialAdsState extends State<InterstitialAds>
       },
       onAdDismissed: (adNetwork, adUnitType, data) {
         _logger.logInfo('onAdDismissed');
+        widget.onAdDismissed?.call(adNetwork, adUnitType, data);
         if (widget.onAdShowed == null) {
           _closeAd();
         }
-        widget.onAdDismissed?.call(adNetwork, adUnitType, data);
         AdmobAds.instance.setFullscreenAdShowing(false);
       },
       onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {

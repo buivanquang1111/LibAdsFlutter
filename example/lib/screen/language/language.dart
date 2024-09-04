@@ -38,7 +38,8 @@ class LanguageScreen extends StatefulWidget {
   State<StatefulWidget> createState() => LanguageScreenState();
 }
 
-class LanguageScreenState extends State<LanguageScreen> with WidgetsBindingObserver {
+class LanguageScreenState extends State<LanguageScreen>
+    with WidgetsBindingObserver {
   final controller = Get.find<LanguageController>();
   final key = GlobalKey<CollapseBannerAdsState>();
 
@@ -51,23 +52,25 @@ class LanguageScreenState extends State<LanguageScreen> with WidgetsBindingObser
     EventLog.logEvent("language_fo_open", null);
     super.initState();
   }
+
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     print('appLifeState: didChangeAppLifecycleState');
-    if(state == AppLifecycleState.resumed){
+    if (state == AppLifecycleState.resumed) {
       print('appLifeState: resumed');
-    }else if(state == AppLifecycleState.paused){
+    } else if (state == AppLifecycleState.paused) {
       print('appLifeState: paused');
-    }else if( state == AppLifecycleState.inactive){
+    } else if (state == AppLifecycleState.inactive) {
       print('appLifeState: inactive');
-    }else if (state == AppLifecycleState.hidden){
+    } else if (state == AppLifecycleState.hidden) {
       print('appLifeState: hide');
-    }else if(state == AppLifecycleState.detached){
+    } else if (state == AppLifecycleState.detached) {
       print('appLifeState: detached');
     }
     super.didChangeAppLifecycleState(state);
@@ -92,34 +95,34 @@ class LanguageScreenState extends State<LanguageScreen> with WidgetsBindingObser
               actions: [
                 IconButton(
                   onPressed: () {
-                    key.currentState?.closeCollapse().then(
-                      (value) {
-                        Timer(
-                          const Duration(milliseconds: 800),
-                          () {
-                            AdmobAds.instance.showInterstitialAd(
-                              listId: NetworkRequest.instance
-                                  .getListIDByName('inter_intro'),
-                              config: true,
-                              onDisabled: () {
-                                controller.foSave();
-                              },
-                              onAdFailedToLoad:
-                                  (adNetwork, adUnitType, data, errorMessage) {
-                                controller.foSave();
-                              },
-                              onAdFailedToShow:
-                                  (adNetwork, adUnitType, data, errorMessage) {
-                                controller.foSave();
-                              },
-                              onAdDismissed: (adNetwork, adUnitType, data) {
-                                controller.foSave();
-                              },
-                            );
-                          },
-                        );
+                    // key.currentState?.closeCollapse().then(
+                    //   (value) {
+                    //     Timer(
+                    //       const Duration(milliseconds: 800),
+                    //       () {
+                    AdmobAds.instance.showInterstitialAd(
+                      listId: NetworkRequest.instance
+                          .getListIDByName('inter_intro'),
+                      config: true,
+                      onDisabled: () {
+                        controller.foSave();
+                      },
+                      onAdFailedToLoad:
+                          (adNetwork, adUnitType, data, errorMessage) {
+                        controller.foSave();
+                      },
+                      onAdFailedToShow:
+                          (adNetwork, adUnitType, data, errorMessage) {
+                        controller.foSave();
+                      },
+                      onAdDismissed: (adNetwork, adUnitType, data) {
+                        controller.foSave();
                       },
                     );
+                    // },
+                    //     );
+                    //   },
+                    // );
                   },
                   icon: const Icon(
                     Icons.done,
@@ -200,21 +203,19 @@ class LanguageScreenState extends State<LanguageScreen> with WidgetsBindingObser
           //   visibilityDetectorKey: 'native-lang',
           // ),
           BannerSplash(
-            listIdAds: NetworkRequest.instance
-                .getListIDByName('banner_splash'),
+            listIdAds: NetworkRequest.instance.getListIDByName('banner_splash'),
             remoteConfig: true,
             visibilityDetectorKey: 'banner-splash',
             isDetectOrOrganic: false,
-            onNext: () {
-
-            },
+            onNext: () {},
             onTestAdSuccess: () {
               Fluttertoast.showToast(msg: 'Success');
             },
             onTestAdError: (p0) {
               Fluttertoast.showToast(msg: 'Error $p0');
               print('ErrorDetect: $p0');
-            },)
+            },
+          )
         ],
       ),
     );
