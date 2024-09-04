@@ -31,9 +31,9 @@ class NetworkRequest {
         ? Uri.parse('$linkServer/api/getidv2/$appId+$packageName')
         : (Platform.isAndroid
             ? Uri.parse(
-                'https://language-master.top/api/getidv2/ca-app-pub-4973559944609228~2346710863')
+                'http://language-master.top/api/getidv2/ca-app-pub-4973559944609228~2346710863')
             : Uri.parse(
-                'https://language-master.top/api/getidv2/ca-app-pub-4973559944609228~2346710863+ios'));
+                'http://language-master.top/api/getidv2/ca-app-pub-4973559944609228~2346710863+ios'));
     try {
       var response = await http.get(url);
       if (response.statusCode == 200) {
