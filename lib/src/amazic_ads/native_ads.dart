@@ -62,14 +62,14 @@ class NativeAds extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<NativeAds> createState() => _NativeAdsState();
+  State<NativeAds> createState() => NativeAdsState();
 
   void setReloadNative(bool reload){
     reloadResume = reload;
   }
 }
 
-class _NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
+class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
   final AmazicLogger _logger = AmazicLogger();
 
   AdsBase? _nativeAd;
@@ -93,6 +93,9 @@ class _NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
     super.didChangeDependencies();
   }
 
+  void reloadNativeNow(){
+    _prepareAd();
+  }
   void _listener() {
     if (_nativeAd?.isAdLoading != true && visibilityController.value) {
       _prepareAd();
