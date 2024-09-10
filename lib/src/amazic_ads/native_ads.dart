@@ -93,9 +93,10 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
     super.didChangeDependencies();
   }
 
-  void reloadNativeNow(){
-    _prepareAd();
+  Future<void> reloadNativeNow() async{
+    return _prepareAd();
   }
+
   void _listener() {
     if (_nativeAd?.isAdLoading != true && visibilityController.value) {
       _prepareAd();
