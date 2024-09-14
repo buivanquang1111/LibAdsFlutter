@@ -29,11 +29,13 @@ class NetworkRequest {
     /// http://language-master.top/api/getidv2/ca-app-pub-4973559944609228~2346710863+com.example.lib
     var url = linkServer != null && appId != null && packageName != null
         ? Uri.parse('$linkServer/api/getidv2/$appId+$packageName')
-        : (Platform.isAndroid
-            ? Uri.parse(
-                'http://language-master.top/api/getidv2/ca-app-pub-4973559944609228~2346710863')
-            : Uri.parse(
-                'http://language-master.top/api/getidv2/ca-app-pub-4973559944609228~2346710863+ios'));
+        : Uri.parse(
+            'http://language-master.top/api/getidv2/ca-app-pub-4973559944609228~2346710863');
+    // : (Platform.isAndroid
+    //     ? Uri.parse(
+    //         'http://language-master.top/api/getidv2/ca-app-pub-4973559944609228~2346710863')
+    //     : Uri.parse(
+    //         'http://language-master.top/api/getidv2/ca-app-pub-4973559944609228~2346710863+ios'));
     try {
       var response = await http.get(url);
       if (response.statusCode == 200) {
