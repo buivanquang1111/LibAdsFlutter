@@ -12,7 +12,7 @@ class AppLifecycleReactor {
   bool _onSplashScreen = true;
   bool _isExcludeScreen = false;
   bool config;
-  bool _isDisplayAppOpenResume = false;
+  bool _isDisplayAppOpenResume = true;
 
   AppLifecycleReactor({
     required this.navigatorKey,
