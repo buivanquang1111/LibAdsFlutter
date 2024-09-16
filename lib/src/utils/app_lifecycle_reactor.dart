@@ -44,7 +44,7 @@ class AppLifecycleReactor {
 
     if (navigatorKey.currentContext == null) return;
 
-    if(_isDisplayAppOpenResume) return;
+    if(!_isDisplayAppOpenResume) return;
 
     // Show AppOpenAd when back to foreground but do not show on excluded screens
     if (appState == AppState.foreground) {
