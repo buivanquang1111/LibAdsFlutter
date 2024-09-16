@@ -12,6 +12,7 @@ class AppLifecycleReactor {
   bool _onSplashScreen = true;
   bool _isExcludeScreen = false;
   bool config;
+  bool _isDisplayAppOpenResume = false;
 
   AppLifecycleReactor({
     required this.navigatorKey,
@@ -33,11 +34,17 @@ class AppLifecycleReactor {
     _isExcludeScreen = value;
   }
 
+  void setDisplayAppOpenResume(bool value){
+    _isDisplayAppOpenResume = value;
+  }
+
   void _onAppStateChanged(AppState appState) async {
     if (_onSplashScreen) return;
     if (!config) return;
 
     if (navigatorKey.currentContext == null) return;
+
+    if(_isDisplayAppOpenResume) return;
 
     // Show AppOpenAd when back to foreground but do not show on excluded screens
     if (appState == AppState.foreground) {
