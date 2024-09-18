@@ -95,6 +95,7 @@ class _SplashAdWithInterstitialAndAppOpenState
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     AdmobAds.instance.setFullscreenAdShowing(true);
+    print('check_full_screen_ads_show: init_Splash_And_Open - ${AdmobAds.instance.isFullscreenAdShowing}');
 
     ConsentManager.ins.handleRequestUmp(
       onPostExecute: () {
@@ -106,6 +107,7 @@ class _SplashAdWithInterstitialAndAppOpenState
           }
           widget.onFailedToLoad?.call();
           AdmobAds.instance.setFullscreenAdShowing(false);
+          print('check_full_screen_ads_show: onPostExecute_Splash_And_Open - ${AdmobAds.instance.isFullscreenAdShowing}');
         }
       },
     );
@@ -173,6 +175,7 @@ class _SplashAdWithInterstitialAndAppOpenState
         widget.onAdInterstitialDismissed?.call(adNetwork, adUnitType, data);
         widget.onDismissed?.call(AdUnitType.interstitial);
         AdmobAds.instance.setFullscreenAdShowing(false);
+        print('check_full_screen_ads_show: inter_onDismiss_Splash_And_Open - ${AdmobAds.instance.isFullscreenAdShowing}');
       },
       onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
         widget.onAdInterstitialFailedToLoad?.call(adNetwork, adUnitType, data, errorMessage);
@@ -182,6 +185,7 @@ class _SplashAdWithInterstitialAndAppOpenState
         widget.onAdInterstitialFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);
         widget.onFailedToShow?.call(AdUnitType.interstitial);
         AdmobAds.instance.setFullscreenAdShowing(false);
+        print('check_full_screen_ads_show: inter_onAdFailedToShow_Splash_And_Open - ${AdmobAds.instance.isFullscreenAdShowing}');
       },
       onAdLoaded: (adNetwork, adUnitType, data) {
         widget.onAdInterstitialLoaded?.call(adNetwork, adUnitType, data);
@@ -228,6 +232,7 @@ class _SplashAdWithInterstitialAndAppOpenState
         widget.onAdAppOpenDismissed?.call(adNetwork, adUnitType, data);
         widget.onDismissed?.call(AdUnitType.appOpen);
         AdmobAds.instance.setFullscreenAdShowing(false);
+        print('check_full_screen_ads_show: open_onDismiss_Splash_And_Open - ${AdmobAds.instance.isFullscreenAdShowing}');
       },
       onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
         widget.onAdAppOpenFailedToLoad?.call(adNetwork, adUnitType, data, errorMessage);
@@ -237,6 +242,7 @@ class _SplashAdWithInterstitialAndAppOpenState
         widget.onAdAppOpenFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);
         widget.onFailedToShow?.call(AdUnitType.appOpen);
         AdmobAds.instance.setFullscreenAdShowing(false);
+        print('check_full_screen_ads_show: open_OnDismiss_Splash_And_Open - ${AdmobAds.instance.isFullscreenAdShowing}');
       },
       onAdLoaded: (adNetwork, adUnitType, data) {
         widget.onAdAppOpenLoaded?.call(adNetwork, adUnitType, data);
@@ -298,6 +304,7 @@ class _SplashAdWithInterstitialAndAppOpenState
         Navigator.of(context).pop();
         widget.onFailedToLoad?.call();
         AdmobAds.instance.setFullscreenAdShowing(false);
+        print('check_full_screen_ads_show: end_Splash_And_Open - ${AdmobAds.instance.isFullscreenAdShowing}');
         return;
       }
 

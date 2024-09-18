@@ -55,6 +55,7 @@ class _RewardAdsState extends State<RewardAds>
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     AdmobAds.instance.setFullscreenAdShowing(true);
+    print('check_full_screen_ads_show: init_Reward_Ads - ${AdmobAds.instance.isFullscreenAdShowing}');
 
     ConsentManager.ins.handleRequestUmp(
       onPostExecute: () {
@@ -67,6 +68,7 @@ class _RewardAdsState extends State<RewardAds>
           widget.onAdFailedToLoad
               ?.call(widget.adNetwork, AdUnitType.rewarded, null, "");
           AdmobAds.instance.setFullscreenAdShowing(false);
+          print('check_full_screen_ads_show: onPostExecute_Reward_Ads - ${AdmobAds.instance.isFullscreenAdShowing}');
         }
       },
     );
@@ -134,18 +136,21 @@ class _RewardAdsState extends State<RewardAds>
         }
         widget.onAdDismissed?.call(adNetwork, adUnitType, data);
         AdmobAds.instance.setFullscreenAdShowing(false);
+        print('check_full_screen_ads_show: onAdDismiss_Reward_Ads - ${AdmobAds.instance.isFullscreenAdShowing}');
       },
       onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
         Navigator.of(context).pop();
         widget.onAdFailedToLoad
             ?.call(adNetwork, adUnitType, data, errorMessage);
         AdmobAds.instance.setFullscreenAdShowing(false);
+        print('check_full_screen_ads_show: onAdFailedToLoad_Reward_Ads - ${AdmobAds.instance.isFullscreenAdShowing}');
       },
       onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
         Navigator.of(context).pop();
         widget.onAdFailedToShow
             ?.call(adNetwork, adUnitType, data, errorMessage);
         AdmobAds.instance.setFullscreenAdShowing(false);
+        print('check_full_screen_ads_show: onAdFailedToShow_Reward_Ads - ${AdmobAds.instance.isFullscreenAdShowing}');
       },
       onAdLoaded: (adNetwork, adUnitType, data) {
         widget.onAdLoaded?.call(adNetwork, adUnitType, data);

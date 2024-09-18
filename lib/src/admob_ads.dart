@@ -469,6 +469,7 @@ class AdmobAds {
       onAdDismissed: (adNetwork, adUnitType, data) {
         onAdDismissed?.call(adNetwork, adUnitType, data);
         AdmobAds.instance.setFullscreenAdShowing(false);
+        print('check_full_screen_ads_show: ondismiss_App_Open - $isFullscreenAdShowing');
         if (Platform.isIOS) {
           LoadingChannel.closeAd();
         }
@@ -477,11 +478,13 @@ class AdmobAds {
         LoadingChannel.closeAd();
         onAdFailedToLoad?.call(adNetwork, adUnitType, data, errorMessage);
         AdmobAds.instance.setFullscreenAdShowing(false);
+        print('check_full_screen_ads_show: onAdFailedToLoad_App_Open - $isFullscreenAdShowing');
       },
       onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
         LoadingChannel.closeAd();
         onAdFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);
         AdmobAds.instance.setFullscreenAdShowing(false);
+        print('check_full_screen_ads_show: onAdFailedToShow_App_Open - $isFullscreenAdShowing');
       },
       onAdLoaded: (adNetwork, adUnitType, data) {
         onAdLoaded?.call(adNetwork, adUnitType, data);
@@ -504,6 +507,7 @@ class AdmobAds {
 
     LoadingChannel.setMethodCallHandler(appOpen.show);
     AdmobAds.instance.setFullscreenAdShowing(true);
+    print('check_full_screen_ads_show: end_App_Open - $isFullscreenAdShowing');
 
     AdPlatform.instance.showLoadingAd(getPrimaryColor());
     appOpen.load();
@@ -574,6 +578,7 @@ class AdmobAds {
           _lastTimeDismissInter = DateTime.now().millisecondsSinceEpoch;
         onAdDismissed?.call(adNetwork, adUnitType, data);
         AdmobAds.instance.setFullscreenAdShowing(false);
+        print('check_full_screen_ads_show: onAdDismiss_Inter - $isFullscreenAdShowing');
         if (Platform.isIOS) {
           LoadingChannel.closeAd();
         }
@@ -582,11 +587,13 @@ class AdmobAds {
         LoadingChannel.closeAd();
         onAdFailedToLoad?.call(adNetwork, adUnitType, data, errorMessage);
         AdmobAds.instance.setFullscreenAdShowing(false);
+        print('check_full_screen_ads_show: onAdFailedToLoad_Inter - $isFullscreenAdShowing');
       },
       onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
         LoadingChannel.closeAd();
         onAdFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);
         AdmobAds.instance.setFullscreenAdShowing(false);
+        print('check_full_screen_ads_show: onAdFailedToShow_Inter - $isFullscreenAdShowing');
       },
       onAdLoaded: (adNetwork, adUnitType, data) {
         onAdLoaded?.call(adNetwork, adUnitType, data);
@@ -608,6 +615,7 @@ class AdmobAds {
 
     LoadingChannel.setMethodCallHandler(interstitialAd.show);
     AdmobAds.instance.setFullscreenAdShowing(true);
+    print('check_full_screen_ads_show: end_Inter - $isFullscreenAdShowing');
 
     AdPlatform.instance.showLoadingAd(getPrimaryColor());
     interstitialAd.load();
@@ -658,6 +666,7 @@ class AdmobAds {
       onAdDismissed: (adNetwork, adUnitType, data) {
         onAdDismissed?.call(adNetwork, adUnitType, data);
         AdmobAds.instance.setFullscreenAdShowing(false);
+        print('check_full_screen_ads_show: onAdDismiss_Reward - $isFullscreenAdShowing');
         if (Platform.isIOS) {
           LoadingChannel.closeAd();
         }
@@ -666,11 +675,13 @@ class AdmobAds {
         LoadingChannel.closeAd();
         onAdFailedToLoad?.call(adNetwork, adUnitType, data, errorMessage);
         AdmobAds.instance.setFullscreenAdShowing(false);
+        print('check_full_screen_ads_show: onAdFailedToLoad_Reward - $isFullscreenAdShowing');
       },
       onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
         LoadingChannel.closeAd();
         onAdFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);
         AdmobAds.instance.setFullscreenAdShowing(false);
+        print('check_full_screen_ads_show: onAdFailedToShow_Reward - $isFullscreenAdShowing');
       },
       onAdLoaded: (adNetwork, adUnitType, data) {
         onAdLoaded?.call(adNetwork, adUnitType, data);
@@ -693,6 +704,7 @@ class AdmobAds {
 
     LoadingChannel.setMethodCallHandler(rewardAd.show);
     AdmobAds.instance.setFullscreenAdShowing(true);
+    print('check_full_screen_ads_show: end_Reward - $isFullscreenAdShowing');
 
     AdPlatform.instance.showLoadingAd(getPrimaryColor());
     rewardAd.load();

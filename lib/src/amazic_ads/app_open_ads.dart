@@ -99,6 +99,7 @@ class _AppOpenAdsState extends State<AppOpenAds> with WidgetsBindingObserver {
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     AdmobAds.instance.setFullscreenAdShowing(true);
+    print('check_full_screen_ads_show: init_App_Open_Ads - ${AdmobAds.instance.isFullscreenAdShowing}');
     ConsentManager.ins.handleRequestUmp(
       onPostExecute: () {
         if (ConsentManager.ins.canRequestAds) {
@@ -109,6 +110,7 @@ class _AppOpenAdsState extends State<AppOpenAds> with WidgetsBindingObserver {
           }
           widget.onAdFailedToLoad?.call(widget.adNetwork, AdUnitType.appOpen, null, "");
           AdmobAds.instance.setFullscreenAdShowing(false);
+          print('check_full_screen_ads_show: onPostExecute_UMP_App_Open_Ads - ${AdmobAds.instance.isFullscreenAdShowing}');
         }
       },
     );
@@ -150,6 +152,7 @@ class _AppOpenAdsState extends State<AppOpenAds> with WidgetsBindingObserver {
         }
         widget.onAdDismissed?.call(adNetwork, adUnitType, data);
         AdmobAds.instance.setFullscreenAdShowing(false);
+        print('check_full_screen_ads_show: onAdDismiss_App_Open_Ads - ${AdmobAds.instance.isFullscreenAdShowing}');
       },
       onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
         widget.onAdFailedToLoad?.call(adNetwork, adUnitType, data, errorMessage);
@@ -157,6 +160,7 @@ class _AppOpenAdsState extends State<AppOpenAds> with WidgetsBindingObserver {
           _closeAd();
         }
         AdmobAds.instance.setFullscreenAdShowing(false);
+        print('check_full_screen_ads_show: onAdFailedToLoad_App_Open_Ads - ${AdmobAds.instance.isFullscreenAdShowing}');
       },
       onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
         widget.onAdFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);
@@ -164,6 +168,7 @@ class _AppOpenAdsState extends State<AppOpenAds> with WidgetsBindingObserver {
           _closeAd();
         }
         AdmobAds.instance.setFullscreenAdShowing(false);
+        print('check_full_screen_ads_show: onAdFailedToShow_App_Open_Ads - ${AdmobAds.instance.isFullscreenAdShowing}');
       },
       onAdShowed: (adNetwork, adUnitType, data) {
         if (widget.onAdShowed != null) {

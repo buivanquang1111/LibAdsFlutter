@@ -100,6 +100,7 @@ class _InterstitialAdsState extends State<InterstitialAds>
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     AdmobAds.instance.setFullscreenAdShowing(true);
+    print('check_full_screen_ads_show: init_Inter_Ads - ${AdmobAds.instance.isFullscreenAdShowing}');
     ConsentManager.ins.handleRequestUmp(
       onPostExecute: () {
         if (ConsentManager.ins.canRequestAds) {
@@ -111,6 +112,7 @@ class _InterstitialAdsState extends State<InterstitialAds>
           widget.onAdFailedToLoad
               ?.call(widget.adNetwork, AdUnitType.appOpen, null, "");
           AdmobAds.instance.setFullscreenAdShowing(false);
+          print('check_full_screen_ads_show: onPostExecute_Inter_Ads - ${AdmobAds.instance.isFullscreenAdShowing}');
         }
       },
     );
@@ -181,6 +183,7 @@ class _InterstitialAdsState extends State<InterstitialAds>
         }
         widget.onAdDismissed?.call(adNetwork, adUnitType, data);
         AdmobAds.instance.setFullscreenAdShowing(false);
+        print('check_full_screen_ads_show: onAdDismiss_Inter_Ads - ${AdmobAds.instance.isFullscreenAdShowing}');
       },
       onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
         _logger.logInfo('onAdFailedToLoad');
@@ -188,6 +191,7 @@ class _InterstitialAdsState extends State<InterstitialAds>
         widget.onAdFailedToLoad
             ?.call(adNetwork, adUnitType, data, errorMessage);
         AdmobAds.instance.setFullscreenAdShowing(false);
+        print('check_full_screen_ads_show: onAdFailedToLoad_Inter_Ads - ${AdmobAds.instance.isFullscreenAdShowing}');
       },
       onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
         _logger.logInfo('onAdFailedToShow');
@@ -195,6 +199,7 @@ class _InterstitialAdsState extends State<InterstitialAds>
         widget.onAdFailedToShow
             ?.call(adNetwork, adUnitType, data, errorMessage);
         AdmobAds.instance.setFullscreenAdShowing(false);
+        print('check_full_screen_ads_show: onAdFailedToShow_Inter_Ads - ${AdmobAds.instance.isFullscreenAdShowing}');
       },
       onAdLoaded: (adNetwork, adUnitType, data) {
         _logger.logInfo('onAdLoaded');
