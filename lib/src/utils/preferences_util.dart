@@ -1,6 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-class PreferencesUtilLib{
+class PreferencesUtilLib {
   static SharedPreferences? _pref;
 
   static Future<void> init() async {
@@ -15,10 +15,11 @@ class PreferencesUtilLib{
     return _pref?.getBool("test_ad") ?? false;
   }
 
-  static Future<void> setOrganicAdjust() async{
+  static Future<void> setOrganicAdjust() async {
     await _pref?.setBool("organic_adjust", true);
   }
-  static bool isOrganicAdjust(){
-    return _pref?.getBool("organic_adjust")?? false;
+
+  static bool isOrganicAdjust() {
+    return _pref?.getBool("organic_adjust") ?? false;
   }
 }

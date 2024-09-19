@@ -22,6 +22,7 @@ class CallOrganicAdjust {
       required Function() onNextAction,
       required String appToken,
       String bearToken = 'mpBYiG4WNndUpojp7pez'}) async {
+    await PreferencesUtilLib.init();
     if (!CallOrganicAdjust.instance.isOrganic()) {
       CallOrganicAdjust.instance.getAdvertisingId().then(
         (value) {
@@ -73,7 +74,8 @@ class CallOrganicAdjust {
 
       print('adjustJson: $data');
       print('adjustJson: TrackerName - ${data['TrackerName']}');
-      print('adjustJson: 1.${trackerName.toLowerCase()} , 2.${data['TrackerName'].toString().toLowerCase()}');
+      print(
+          'adjustJson: 1.${trackerName.toLowerCase()} , 2.${data['TrackerName'].toString().toLowerCase()}');
       if (trackerName.toLowerCase() ==
           data['TrackerName'].toString().toLowerCase()) {
         print('adjustJson: compare - true');
