@@ -1,33 +1,26 @@
-import 'dart:io';
-
 import 'package:amazic_ads_flutter/adjust_config/call_organic_adjust.dart';
 import 'package:amazic_ads_flutter/admob_ads_flutter.dart';
-import 'package:amazic_ads_flutter/src/utils/detect_test_ad.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
 
 class BannerSplash extends StatefulWidget {
   final List<String> listIdAds;
   final bool remoteConfig;
   final String visibilityDetectorKey;
-  final Function() onNext;
-  final Function() onTestAdSuccess;
-  final Function(String) onTestAdError;
+  final Function()? onNext;
+  final Function()? onTestAdSuccess;
+  final Function(String)? onTestAdError;
   final String bearToken;
   final String appToken;
-  final bool
-      isDetectOrOrganic; //true - use Detect Test Ad, false - use Adjust Organic
 
   const BannerSplash(
       {super.key,
       required this.listIdAds,
       required this.remoteConfig,
       required this.visibilityDetectorKey,
-      required this.onNext,
-      required this.onTestAdSuccess,
-      required this.onTestAdError,
-      this.isDetectOrOrganic = true,
+      this.onNext,
+      this.onTestAdSuccess,
+      this.onTestAdError,
       this.bearToken = 'mpBYiG4WNndUpojp7pez',
       this.appToken = ''});
 
@@ -91,23 +84,31 @@ class _BannerSplashState extends State<BannerSplash> {
                 .then(
               (value) {
                 if (value) {
-                  widget.onTestAdSuccess();
-                  widget.onNext();
+                  if (widget.onTestAdSuccess != null && widget.onNext != null) {
+                    widget.onTestAdSuccess!();
+                    widget.onNext!();
+                  }
                 } else {
-                  widget.onTestAdError('not organic');
-                  widget.onNext();
+                  if (widget.onTestAdError != null && widget.onNext != null) {
+                    widget.onTestAdError!('not organic');
+                    widget.onNext!();
+                  }
                 }
               },
             );
           } else {
-            widget.onTestAdError('can not get advertisingId');
-            widget.onNext();
+            if (widget.onTestAdError != null && widget.onNext != null) {
+              widget.onTestAdError!('can not get advertisingId');
+              widget.onNext!();
+            }
           }
         },
       );
     } else {
-      widget.onTestAdSuccess();
-      widget.onNext();
+      if (widget.onTestAdSuccess != null && widget.onNext != null) {
+        widget.onTestAdSuccess!();
+        widget.onNext!();
+      }
     }
   }
 
@@ -123,24 +124,33 @@ class _BannerSplashState extends State<BannerSplash> {
         config: widget.remoteConfig,
         visibilityDetectorKey: widget.visibilityDetectorKey,
         onAdDisabled: (adNetwork, adUnitType, data) {
-          widget.onNext();
+          if (widget.onNext != null) {
+            widget.onNext!();
+          }
         },
         onAdDismissed: (adNetwork, adUnitType, data) {
-          widget.onNext();
+          if (widget.onNext != null) {
+            widget.onNext!();
+          }
         },
         onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
-          widget.onNext();
+          if (widget.onNext != null) {
+            widget.onNext!();
+          }
         },
         onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
-          widget.onNext();
+          if (widget.onNext != null) {
+            widget.onNext!();
+          }
         },
         onAdShowed: (adNetwork, adUnitType, data) {
-          // widget.isDetectOrOrganic
-          //     ? detectTestAd(pixelRatio)
-          //     : callOrganicAdjust();
-          if(!checkAdsShow) {
-            callOrganicAdjust();
-            checkAdsShow = true;
+          if (!checkAdsShow) {
+            if (widget.onTestAdSuccess != null &&
+                widget.onTestAdError != null &&
+                widget.onNext != null) {
+              callOrganicAdjust();
+              checkAdsShow = true;
+            }
           }
         },
       ),

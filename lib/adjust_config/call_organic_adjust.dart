@@ -16,6 +16,45 @@ class CallOrganicAdjust {
     return PreferencesUtilLib.isTestAd();
   }
 
+  Future<void> initOrganicAdjust(
+      {required Function() onOrganic,
+      required Function(String) onError,
+      required Function() onNextAction,
+      required String appToken,
+      String bearToken = 'mpBYiG4WNndUpojp7pez'}) async {
+    if (!CallOrganicAdjust.instance.isTestAd()) {
+      CallOrganicAdjust.instance.getAdvertisingId().then(
+        (value) {
+          print('advertisingId: $value');
+          if (value != null) {
+            CallOrganicAdjust.instance
+                .getOrganic(
+                    bearerToken: bearToken,
+                    appToken: appToken,
+                    advertisingId: value)
+                .then(
+              (value) {
+                if (value) {
+                  onOrganic();
+                  onNextAction();
+                } else {
+                  onError('not organic');
+                  onNextAction();
+                }
+              },
+            );
+          } else {
+            onError('can not get advertisingId');
+            onNextAction();
+          }
+        },
+      );
+    } else {
+      onOrganic();
+      onNextAction();
+    }
+  }
+
   Future<bool> getOrganic(
       {required String bearerToken,
       required String appToken,
@@ -39,7 +78,7 @@ class CallOrganicAdjust {
       } else {
         return false;
       }
-    }catch(e){
+    } catch (e) {
       return false;
     }
   }
