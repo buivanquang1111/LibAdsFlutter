@@ -71,7 +71,7 @@ class _BannerSplashState extends State<BannerSplash> {
 
   void callOrganicAdjust() {
     print('Banner_Splash: Use call Organic Adjust');
-    if (!CallOrganicAdjust.instance.isTestAd()) {
+    if (!CallOrganicAdjust.instance.isOrganic()) {
       CallOrganicAdjust.instance.getAdvertisingId().then(
         (value) {
           print('advertisingId: $value');
