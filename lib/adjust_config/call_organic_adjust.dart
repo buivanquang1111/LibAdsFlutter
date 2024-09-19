@@ -35,21 +35,25 @@ class CallOrganicAdjust {
                 .then(
               (value) {
                 if (value) {
+                  print('adjustJson: 1. first have organic - true');
                   onOrganic();
                   onNextAction();
                 } else {
+                  print('adjustJson: 2. first not organic - false');
                   onError('not organic');
                   onNextAction();
                 }
               },
             );
           } else {
+            print('adjustJson: 3. can not get advertisingId - false');
             onError('can not get advertisingId');
             onNextAction();
           }
         },
       );
     } else {
+      print('adjustJson: 4. have organic - true');
       onOrganic();
       onNextAction();
     }
@@ -69,16 +73,18 @@ class CallOrganicAdjust {
 
       print('adjustJson: $data');
       print('adjustJson: TrackerName - ${data['TrackerName']}');
-
+      print('adjustJson: 1.${trackerName.toLowerCase()} , 2.${data['TrackerName'].toString().toLowerCase()}');
       if (trackerName.toLowerCase() ==
           data['TrackerName'].toString().toLowerCase()) {
-        // PreferencesUtilLib.setTestAd();
+        print('adjustJson: compare - true');
         PreferencesUtilLib.setOrganicAdjust();
         return true;
       } else {
+        print('adjustJson: 1. compare -false');
         return false;
       }
     } catch (e) {
+      print('adjustJson: 2.false');
       return false;
     }
   }
