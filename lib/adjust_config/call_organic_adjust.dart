@@ -78,7 +78,7 @@ class CallOrganicAdjust {
           data['TrackerName'].toString().toLowerCase()) {
         print('adjustJson: compare - true');
         print('adjustJson: before - ${PreferencesUtilLib.isOrganicAdjust()}');
-        PreferencesUtilLib.setOrganicAdjust();
+        await PreferencesUtilLib.setOrganicAdjust();
         print('adjustJson: after - ${PreferencesUtilLib.isOrganicAdjust()}');
         return true;
       } else {
