@@ -12,8 +12,8 @@ class CallOrganicAdjust {
 
   static final CallOrganicAdjust instance = CallOrganicAdjust._instance();
 
-  bool isTestAd() {
-    return PreferencesUtilLib.isTestAd();
+  bool isOrganic() {
+    return PreferencesUtilLib.isOrganicAdjust();
   }
 
   Future<void> initOrganicAdjust(
@@ -22,7 +22,7 @@ class CallOrganicAdjust {
       required Function() onNextAction,
       required String appToken,
       String bearToken = 'mpBYiG4WNndUpojp7pez'}) async {
-    if (!CallOrganicAdjust.instance.isTestAd()) {
+    if (!CallOrganicAdjust.instance.isOrganic()) {
       CallOrganicAdjust.instance.getAdvertisingId().then(
         (value) {
           print('advertisingId: $value');
