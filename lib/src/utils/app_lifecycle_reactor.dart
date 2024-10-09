@@ -8,22 +8,24 @@ class AppLifecycleReactor {
   final GlobalKey<NavigatorState> navigatorKey;
   final List<String> listId;
   final AdNetwork adNetwork;
+  final Widget? child;
 
   bool _onSplashScreen = true;
   bool _isExcludeScreen = false;
   bool config;
   bool _isDisplayAppOpenResume = true;
 
-  AppLifecycleReactor({
-    required this.navigatorKey,
-    required this.listId,
-    this.config = true,
-    required this.adNetwork,
-  });
+  AppLifecycleReactor(
+      {required this.navigatorKey,
+      required this.listId,
+      this.config = true,
+      required this.adNetwork,
+      this.child});
 
   void listenToAppStateChanges() {
     AppStateEventNotifier.startListening();
-    AppStateEventNotifier.appStateStream.forEach((state) => _onAppStateChanged(state));
+    AppStateEventNotifier.appStateStream
+        .forEach((state) => _onAppStateChanged(state));
   }
 
   void setOnSplashScreen(bool value) {
@@ -34,8 +36,15 @@ class AppLifecycleReactor {
     _isExcludeScreen = value;
   }
 
-  void setDisplayAppOpenResume(bool value){
+  void setDisplayAppOpenResume(bool value) {
     _isDisplayAppOpenResume = value;
+  }
+
+  void showAppOpenAds() {
+    AdmobAds.instance.showAppOpen(
+      listId: listId,
+      config: true,
+    );
   }
 
   void _onAppStateChanged(AppState appState) async {
@@ -44,7 +53,7 @@ class AppLifecycleReactor {
 
     if (navigatorKey.currentContext == null) return;
 
-    if(!_isDisplayAppOpenResume) return;
+    if (!_isDisplayAppOpenResume) return;
 
     // Show AppOpenAd when back to foreground but do not show on excluded screens
     if (appState == AppState.foreground) {
@@ -62,20 +71,20 @@ class AppLifecycleReactor {
           return;
         }
 
-        // final String id = AdmobAds.instance.isDevMode ? TestAdsId.admobOpenResume : adId!;
         if (listId.isNotEmpty != true) return;
-        AdmobAds.instance.showAppOpen(
-          listId: listId,
-          config: true,
-        );
 
-        // navigatorKey.currentState?.push(
-        //   AppOpenAds.getRoute(
-        //     context: navigatorKey.currentContext!,
-        //     adId: id,
-        //     adNetwork: adNetwork,
-        //   ),
-        // );
+        if (child != null) {
+          showDialog(
+            barrierDismissible: false,
+            context: navigatorKey.currentContext!,
+            builder: (context) {
+              return child!;
+            },
+          );
+          return;
+        }
+
+        showAppOpenAds();
       } else {
         _isExcludeScreen = false;
       }

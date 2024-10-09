@@ -34,6 +34,7 @@ class NativeAds extends StatefulWidget {
 
   final String visibilityDetectorKey;
   final ValueNotifier<bool>? visibilityController;
+  final int refreshRateSec; //reload ads with time
 
   NativeAds({
     this.adNetwork = AdNetwork.admob,
@@ -58,13 +59,14 @@ class NativeAds extends StatefulWidget {
     this.visibilityController,
     this.reloadOnClick = false,
     this.reloadResume = false,
+    this.refreshRateSec = 0,
     Key? key,
   }) : super(key: key);
 
   @override
   State<NativeAds> createState() => NativeAdsState();
 
-  void setReloadNative(bool reload){
+  void setReloadNative(bool reload) {
     reloadResume = reload;
   }
 }
@@ -78,6 +80,7 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
   int loadFailedCount = 0;
   static const int maxFailedTimes = 3;
   final ValueNotifier<bool> _isLoading = ValueNotifier(false);
+  Timer? _timer;
 
   @override
   void initState() {
@@ -93,7 +96,7 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
     super.didChangeDependencies();
   }
 
-  Future<void> reloadNativeNow() async{
+  Future<void> reloadNativeNow() async {
     return _prepareAd();
   }
 
@@ -107,6 +110,7 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
       if (ConsentManager.ins.canRequestAds && !_isLoading.value) {
         _isLoading.value = true;
       }
+      _stopTimer();
     }
   }
 
@@ -171,6 +175,7 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
     visibilityController.removeListener(_listener);
     visibilityController.dispose();
     _isLoading.dispose();
+    _stopTimer();
 
     super.dispose();
   }
@@ -181,9 +186,11 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.resumed:
-        if(widget.reloadResume){
+        if (widget.reloadResume) {
           _prepareAd();
           widget.setReloadNative(false);
+        }else if(state == AppLifecycleState.inactive || state == AppLifecycleState.paused){
+          _stopTimer();
         }
         // if (isClicked) {
         //   isClicked = false;
@@ -233,7 +240,9 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
                         maintainSemantics: false,
                         maintainInteractivity: false,
                         replacement: SizedBox(
-                          height: ConsentManager.ins.canRequestAds ? widget.height : 1,
+                          height: ConsentManager.ins.canRequestAds
+                              ? widget.height
+                              : 1,
                           width: MediaQuery.sizeOf(context).width,
                           child: Container(),
                         ),
@@ -308,15 +317,18 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
       onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
         _isLoading.value = false;
         loadFailedCount++;
-        widget.onAdFailedToLoad?.call(adNetwork, adUnitType, data, errorMessage);
+        widget.onAdFailedToLoad
+            ?.call(adNetwork, adUnitType, data, errorMessage);
         _logger.logInfo('native ad: onAdFailedToLoad');
         if (mounted) {
           setState(() {});
         }
+        _startTimerReload();
       },
       onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
         _isLoading.value = false;
-        widget.onAdFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);
+        widget.onAdFailedToShow
+            ?.call(adNetwork, adUnitType, data, errorMessage);
         _logger.logInfo('native ad: onAdFailedToShow');
         if (mounted) {
           setState(() {});
@@ -331,6 +343,7 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
         if (mounted) {
           setState(() {});
         }
+        _startTimerReload();
       },
       onAdShowed: (adNetwork, adUnitType, data) {
         widget.onAdShowed?.call(adNetwork, adUnitType, data);
@@ -368,5 +381,23 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
     if (mounted) {
       setState(() {});
     }
+  }
+
+  void _stopTimer() {
+    _timer?.cancel();
+    _timer = null;
+  }
+
+  void _startTimerReload() {
+    if (widget.refreshRateSec == 0) {
+      return;
+    }
+    _stopTimer();
+    _timer = Timer.periodic(
+      Duration(seconds: widget.refreshRateSec),
+      (timer) {
+        _prepareAd();
+      },
+    );
   }
 }

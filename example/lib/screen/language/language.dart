@@ -206,7 +206,6 @@ class LanguageScreenState extends State<LanguageScreen>
             listIdAds: NetworkRequest.instance.getListIDByName('banner_splash'),
             remoteConfig: true,
             visibilityDetectorKey: 'banner-splash',
-            isDetectOrOrganic: false,
             onNext: () {},
             onTestAdSuccess: () {
               Fluttertoast.showToast(msg: 'Success');

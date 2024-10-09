@@ -1,4 +1,4 @@
-package com.zens.easy_ad.ui;
+package com.amazic.ad.ui;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -16,8 +16,8 @@ import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
 import com.google.android.material.progressindicator.CircularProgressIndicator;
-import com.zens.easy_ad.AmazicPlugin;
-import com.zens.easy_ad.R;
+import com.amazic.ad.AmazicPlugin;
+import com.amazic.ad.R;
 
 public class FullscreenLoadingDialog extends Dialog implements LifecycleObserver {
     static final String TAG = "FullscreenLoadingDialog";

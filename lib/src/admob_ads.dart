@@ -134,6 +134,7 @@ class AdmobAds {
     required List<String> listResumeId,
     required bool adResumeConfig,
     AdNetwork adResumeNetwork = AdNetwork.admob,
+    Widget? child,
 
     ///init mediation callback
     Future<dynamic> Function(bool canRequestAds)? initMediationCallback,
@@ -178,6 +179,7 @@ class AdmobAds {
         listId: listResumeId,
         config: adResumeConfig,
         adNetwork: adResumeNetwork,
+        child: child
       );
       appLifecycleReactor!.listenToAppStateChanges();
     }

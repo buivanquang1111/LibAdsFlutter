@@ -38,7 +38,7 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.zens.easy_ad
+        package: com.amazic.ad
         pluginClass: AmazicPlugin
       ios:
         pluginClass: AmazicPlugin

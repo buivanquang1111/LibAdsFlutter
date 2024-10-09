@@ -1,4 +1,4 @@
-package com.zens.easy_ad;
+package com.amazic.ad;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,7 +11,7 @@ import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 
-import com.zens.easy_ad.ui.FullscreenLoadingDialog;
+import com.amazic.ad.ui.FullscreenLoadingDialog;
 
 import io.flutter.FlutterInjector;
 import io.flutter.embedding.android.FlutterActivity;

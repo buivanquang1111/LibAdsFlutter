@@ -5,6 +5,8 @@ PODS:
   - adjust_sdk (4.38.1):
     - Adjust (= 4.38.2)
     - Flutter
+  - advertising_id (0.0.1):
+    - Flutter
   - amazic_ads_flutter (0.0.1):
     - Flutter
   - connectivity_plus (0.0.1):
@@ -23,6 +25,9 @@ PODS:
     - Google-Mobile-Ads-SDK (~> 11.2.0)
     - webview_flutter_wkwebview
   - GoogleUserMessagingPlatform (2.5.0)
+  - path_provider_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
   - ReachabilitySwift (5.2.3)
   - shared_preferences_foundation (0.0.1):
     - Flutter
@@ -33,12 +38,14 @@ PODS:
 
 DEPENDENCIES:
   - adjust_sdk (from `.symlinks/plugins/adjust_sdk/ios`)
+  - advertising_id (from `.symlinks/plugins/advertising_id/ios`)
   - amazic_ads_flutter (from `.symlinks/plugins/amazic_ads_flutter/ios`)
   - connectivity_plus (from `.symlinks/plugins/connectivity_plus/ios`)
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - Flutter (from `Flutter`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - google_mobile_ads (from `.symlinks/plugins/google_mobile_ads/ios`)
+  - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - webview_flutter_wkwebview (from `.symlinks/plugins/webview_flutter_wkwebview/ios`)
 
@@ -53,6 +60,8 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   adjust_sdk:
     :path: ".symlinks/plugins/adjust_sdk/ios"
+  advertising_id:
+    :path: ".symlinks/plugins/advertising_id/ios"
   amazic_ads_flutter:
     :path: ".symlinks/plugins/amazic_ads_flutter/ios"
   connectivity_plus:
@@ -65,6 +74,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/fluttertoast/ios"
   google_mobile_ads:
     :path: ".symlinks/plugins/google_mobile_ads/ios"
+  path_provider_foundation:
+    :path: ".symlinks/plugins/path_provider_foundation/darwin"
   shared_preferences_foundation:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
   webview_flutter_wkwebview:
@@ -73,6 +84,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Adjust: 5a0f813fe079212bed61404d1f635cc330068b4a
   adjust_sdk: e2b8a3f4115b4bb61594a2941dea942c51afa0d6
+  advertising_id: 31c738918c2e04d86d80c293357e61e06e87df74
   amazic_ads_flutter: 1eece62ef66b371b6ab9c7e74e29e3573b9e692d
   connectivity_plus: bf0076dd84a130856aa636df1c71ccaff908fa1d
   device_info_plus: 97af1d7e84681a90d0693e63169a5d50e0839a0d
@@ -81,6 +93,7 @@ SPEC CHECKSUMS:
   Google-Mobile-Ads-SDK: 5a6d005a6cb5b5e8f4c7b69ca05cdea79c181139
   google_mobile_ads: 9379c80fdfa9988fb0e105a407890ff8deb3cf86
   GoogleUserMessagingPlatform: 6b4f48a370e77ce121d034c908cc6ee4fdafaf13
+  path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   ReachabilitySwift: 7f151ff156cea1481a8411701195ac6a984f4979
   shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
   Toast: 1f5ea13423a1e6674c4abdac5be53587ae481c4e
