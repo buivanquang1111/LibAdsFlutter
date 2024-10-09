@@ -40,10 +40,13 @@ class AppLifecycleReactor {
     _isDisplayAppOpenResume = value;
   }
 
-  void showAppOpenAds() {
-    AdmobAds.instance.showAppOpen(
-      listId: listId,
-      config: true,
+  void showScreenWelCome() {
+    showDialog(
+      barrierDismissible: false,
+      context: navigatorKey.currentContext!,
+      builder: (context) {
+        return child!;
+      },
     );
   }
 
@@ -73,18 +76,30 @@ class AppLifecycleReactor {
 
         if (listId.isNotEmpty != true) return;
 
-        if (child != null) {
-          showDialog(
-            barrierDismissible: false,
-            context: navigatorKey.currentContext!,
-            builder: (context) {
-              return child!;
-            },
-          );
-          return;
-        }
-
-        showAppOpenAds();
+        AdmobAds.instance.showAppOpen(
+          listId: listId,
+          config: true,
+          onAdDismissed: (adNetwork, adUnitType, data) {
+            if (child != null) {
+              showScreenWelCome();
+            }
+          },
+          onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
+            if (child != null) {
+              showScreenWelCome();
+            }
+          },
+          onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
+            if (child != null) {
+              showScreenWelCome();
+            }
+          },
+          onDisabled: () {
+            if (child != null) {
+              showScreenWelCome();
+            }
+          },
+        );
       } else {
         _isExcludeScreen = false;
       }
