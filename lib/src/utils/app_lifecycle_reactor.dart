@@ -49,15 +49,14 @@ class AppLifecycleReactor {
   }
 
   void showScreenWelCome() {
+    setShowScreenWellCome(true);
     showDialog(
       barrierDismissible: false,
       context: navigatorKey.currentContext!,
       builder: (context) {
         return child!;
       },
-    ).then((value) {
-      setShowScreenWellCome(true);
-    },);
+    );
   }
 
   void _onAppStateChanged(AppState appState) async {
