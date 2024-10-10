@@ -145,11 +145,9 @@ class _BannerSplashState extends State<BannerSplash> {
         },
         onAdShowed: (adNetwork, adUnitType, data) {
           if (!checkAdsShow) {
-            if (widget.onTestAdSuccess != null &&
-                widget.onTestAdError != null &&
-                widget.onNext != null) {
-              callOrganicAdjust();
+            if (widget.onNext != null) {
               checkAdsShow = true;
+              widget.onNext!();
             }
           }
         },
