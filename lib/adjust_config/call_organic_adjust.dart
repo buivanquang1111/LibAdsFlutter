@@ -69,7 +69,7 @@ class CallOrganicAdjust {
           Uri.parse(
               'https://api.adjust.com/device_service/api/v2/inspect_device?advertising_id=$advertisingId&app_token=$appToken'),
           headers: {HttpHeaders.authorizationHeader: "Bearer $bearerToken"});
-
+      print('adjustJson: res- $res');
       final data = jsonDecode(utf8.decode(res.bodyBytes));
 
       print('adjustJson: $data');
