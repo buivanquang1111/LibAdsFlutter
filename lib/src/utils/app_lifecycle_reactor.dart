@@ -14,13 +14,13 @@ class AppLifecycleReactor {
   bool _isExcludeScreen = false;
   bool config;
   bool _isDisplayAppOpenResume = true;
+  bool _isShowScreenWellCome = false;
 
-  AppLifecycleReactor(
-      {required this.navigatorKey,
-      required this.listId,
-      this.config = true,
-      required this.adNetwork,
-      this.child});
+  AppLifecycleReactor({required this.navigatorKey,
+    required this.listId,
+    this.config = true,
+    required this.adNetwork,
+    this.child});
 
   void listenToAppStateChanges() {
     AppStateEventNotifier.startListening();
@@ -40,6 +40,14 @@ class AppLifecycleReactor {
     _isDisplayAppOpenResume = value;
   }
 
+  void setShowScreenWellCome(bool value){
+    _isShowScreenWellCome = value;
+  }
+
+  bool isShowScreenWellCome(){
+    return _isShowScreenWellCome;
+  }
+
   void showScreenWelCome() {
     showDialog(
       barrierDismissible: false,
@@ -47,12 +55,21 @@ class AppLifecycleReactor {
       builder: (context) {
         return child!;
       },
-    );
+    ).then((value) {
+      setShowScreenWellCome(true);
+    },);
   }
 
   void _onAppStateChanged(AppState appState) async {
     if (_onSplashScreen) return;
-    if (!config) return;
+    if (!config) {
+      if (child != null) {
+        if(!_isShowScreenWellCome) {
+          showScreenWelCome();
+        }
+      }
+      return;
+    }
 
     if (navigatorKey.currentContext == null) return;
 
@@ -81,22 +98,30 @@ class AppLifecycleReactor {
           config: true,
           onAdDismissed: (adNetwork, adUnitType, data) {
             if (child != null) {
-              showScreenWelCome();
+              if(!_isShowScreenWellCome) {
+                showScreenWelCome();
+              }
             }
           },
           onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
             if (child != null) {
-              showScreenWelCome();
+              if(!_isShowScreenWellCome) {
+                showScreenWelCome();
+              }
             }
           },
           onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
             if (child != null) {
-              showScreenWelCome();
+              if(!_isShowScreenWellCome) {
+                showScreenWelCome();
+              }
             }
           },
           onDisabled: () {
             if (child != null) {
-              showScreenWelCome();
+              if(!_isShowScreenWellCome) {
+                showScreenWelCome();
+              }
             }
           },
         );
