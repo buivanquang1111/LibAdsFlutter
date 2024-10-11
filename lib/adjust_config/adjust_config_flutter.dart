@@ -152,6 +152,7 @@ class AdjustConfigFlutter{
     //
     config.defaultTracker = adjustToken;
     Adjust.start(config);
+    print('[Adjust]: start ');
   }
 
   void trackRevenue(AdEvent event) {
