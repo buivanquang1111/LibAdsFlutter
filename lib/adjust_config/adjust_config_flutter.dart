@@ -15,8 +15,7 @@ class AdjustConfigFlutter{
 
   void setupAdjust({required String adjustToken}){
     // AdjustConfig config = AdjustConfig(adjustToken, isDebug == true ?  AdjustEnvironment.sandbox : AdjustEnvironment.production);
-    // AdjustConfig config = AdjustConfig(adjustToken, AdjustEnvironment.production);
-    AdjustConfig config = AdjustConfig(adjustToken, AdjustEnvironment.sandbox);
+    AdjustConfig config = AdjustConfig(adjustToken, AdjustEnvironment.production);
     config.logLevel = AdjustLogLevel.verbose;
 
     //
