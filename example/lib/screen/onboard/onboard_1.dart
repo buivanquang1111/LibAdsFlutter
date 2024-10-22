@@ -3,6 +3,7 @@ import 'package:example/config/global_colors.dart';
 import 'package:example/config/global_txt_style.dart';
 import 'package:example/main.dart';
 import 'package:example/screen/onboard/controller/onboard_controller.dart';
+import 'package:example/screen/onboard/widgets/keep_alive_ads.dart';
 import 'package:example/screen/splash/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -20,6 +21,13 @@ class OnboardScreen1 extends StatefulWidget {
 
 class OnBoardState1 extends State<OnboardScreen1> {
   final controller = Get.put(OnboardController());
+  bool isShowAd = true;
+
+  void toggleAd() {
+    setState(() {
+      isShowAd = !isShowAd;
+    });
+  }
 
   @override
   void initState() {
@@ -32,7 +40,14 @@ class OnBoardState1 extends State<OnboardScreen1> {
       return Scaffold(
         body: Column(
           children: [
-            SizedBox(height: 40.h),
+            SizedBox(height: 20.h),
+            ElevatedButton(
+              onPressed: () {
+                toggleAd();
+              },
+              child: Text(isShowAd ? 'Hide Ad' : 'Show Ad'),
+            ),
+            SizedBox(height: 20.h),
             SizedBox(
               height: 435.h,
               child: PageView.builder(
@@ -77,26 +92,11 @@ class OnBoardState1 extends State<OnboardScreen1> {
                 ],
               ),
             ),
-            SizedBox(
-              height: adIdManager.smallNativeAdHeight,
-              // child: introAdCtrl != null
-              //     ? EasyPreloadNativeAd(
-              //         controller: introAdCtrl!,
-              //         factoryId: adIdManager.nativeIntroFactory,
-              //         height: adIdManager.smallNativeAdHeight,
-              //         color: GlobalColors.lightGray,
-              //       )
-              //     : null,
-              child: NativeAds(
-                factoryId: adIdManager.nativeIntroFactory,
-                listId: NetworkRequest.instance.getListIDByName('native_intro'),
-                height: adIdManager.mediumNativeAdHeight,
-                color: GlobalColors.lightGray,
-                border: null,
-                padding: null,
-                config: RemoteConfig
-                    .configs[RemoteConfigKey.native_intro.name],
-                visibilityDetectorKey: 'native-intro',
+            Obx(
+              () => Visibility(
+                maintainSize: false,
+                visible: controller.index.value == 2,
+                child: const KeepAliveAds(),
               ),
             ),
           ],

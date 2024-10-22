@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import '../../admob_ads_flutter.dart';
@@ -88,6 +87,7 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     visibilityController = widget.visibilityController ?? ValueNotifier(true);
     visibilityController.addListener(_listener);
+    _prepareAd();
   }
 
   @override
@@ -115,6 +115,7 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
   }
 
   Future<void> _prepareAd() async {
+    print("debug-libraries: _prepareAd");
     if (loadFailedCount == maxFailedTimes) {
       if (_isLoading.value) {
         _isLoading.value = false;
@@ -187,6 +188,7 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
     switch (state) {
       case AppLifecycleState.resumed:
         if (widget.reloadResume) {
+          print("debug-libraries: widget.reloadResume");
           _prepareAd();
           widget.setReloadNative(false);
         }else if(state == AppLifecycleState.inactive || state == AppLifecycleState.paused){
@@ -396,6 +398,7 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
     _timer = Timer.periodic(
       Duration(seconds: widget.refreshRateSec),
       (timer) {
+        print("debug-libraries: _startTimerReload");
         _prepareAd();
       },
     );

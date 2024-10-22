@@ -147,10 +147,9 @@ packages:
   google_mobile_ads:
     dependency: "direct main"
     description:
-      name: google_mobile_ads
-      sha256: e2d18992d30b2be77cb6976b931112fc3c4612feffb5eb7a8b036bd7a64934da
-      url: "https://pub.dev"
-    source: hosted
+      path: "packages/google_mobile_ads"
+      relative: true
+    source: path
     version: "5.1.0"
   http:
     dependency: "direct main"
