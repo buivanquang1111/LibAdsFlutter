@@ -27,7 +27,8 @@ dependencies:
   screenshot: ^3.0.0
   path_provider: ^2.1.4
   advertising_id: ^2.6.0
-#  google_mlkit_text_recognition: ^0.13.0
+  in_app_purchase: ^3.2.0
+  in_app_purchase_storekit: ^0.3.18+1
 
 dev_dependencies:
   flutter_test:
