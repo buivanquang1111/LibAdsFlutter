@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:amazic_ads_flutter/admob_ads_flutter.dart';
-import 'package:amazic_ads_flutter/src/amazic_ads/loading_ad.dart';
+import 'package:amazic_ads_flutter/src/amazic_ads/loading_ads.dart';
 import 'package:flutter/material.dart';
 
 class PreloadNativeController {
@@ -397,7 +397,7 @@ class _EasyPreloadNativeAdState extends State<EasyPreloadNativeAd> {
               child: Container(
                 color: widget.color,
                 height: widget.height,
-                child: EasyLoadingAd(height: widget.height),
+                child: LoadingAds(height: widget.height),
               ),
             ),
           );
