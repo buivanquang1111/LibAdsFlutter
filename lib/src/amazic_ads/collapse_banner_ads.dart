@@ -55,7 +55,7 @@ class CollapseBannerAds extends StatefulWidget {
     Key? key,
   }) : super(key: key);
 
-  void setHideReloadWhenScreenChange(bool value){
+  void setHideReloadWhenScreenChange(bool value) {
     hideReloadWhenScreenChange = value;
   }
 
@@ -63,7 +63,8 @@ class CollapseBannerAds extends StatefulWidget {
   State<CollapseBannerAds> createState() => CollapseBannerAdsState();
 }
 
-class CollapseBannerAdsState extends State<CollapseBannerAds> with WidgetsBindingObserver {
+class CollapseBannerAdsState extends State<CollapseBannerAds>
+    with WidgetsBindingObserver {
   AdsBase? _bannerAd;
 
   Timer? _timer;
@@ -154,10 +155,12 @@ class CollapseBannerAdsState extends State<CollapseBannerAds> with WidgetsBindin
     }
 
     AdsBannerType type = widget.type;
-    if (type == AdsBannerType.collapsible_bottom || type == AdsBannerType.collapsible_top) {
+    if (type == AdsBannerType.collapsible_bottom ||
+        type == AdsBannerType.collapsible_top) {
       /// Check if need request collapsible
       bool shouldRequestCollapsible =
-          DateTime.now().difference(_lastCBRequestTime).inSeconds >= widget.cbFetchIntervalSec;
+          DateTime.now().difference(_lastCBRequestTime).inSeconds >=
+              widget.cbFetchIntervalSec;
       if (shouldRequestCollapsible) {
         _lastCBRequestTime = DateTime.now();
       } else {
@@ -184,7 +187,8 @@ class CollapseBannerAdsState extends State<CollapseBannerAds> with WidgetsBindin
           print('startTimer: onAdFailedToLoad');
           _startTimer();
         }
-        widget.onAdFailedToLoad?.call(adNetwork, adUnitType, data, errorMessage);
+        widget.onAdFailedToLoad
+            ?.call(adNetwork, adUnitType, data, errorMessage);
         if (mounted) {
           setState(() {});
         }
@@ -203,7 +207,8 @@ class CollapseBannerAdsState extends State<CollapseBannerAds> with WidgetsBindin
         }
       },
       onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
-        widget.onAdFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);
+        widget.onAdFailedToShow
+            ?.call(adNetwork, adUnitType, data, errorMessage);
         if (mounted) {
           setState(() {});
         }
@@ -251,7 +256,8 @@ class CollapseBannerAdsState extends State<CollapseBannerAds> with WidgetsBindin
     super.initState();
     WidgetsBinding.instance.addObserver(this);
 
-    _lastCBRequestTime = DateTime.now().subtract(Duration(seconds: widget.cbFetchIntervalSec + 1));
+    _lastCBRequestTime = DateTime.now()
+        .subtract(Duration(seconds: widget.cbFetchIntervalSec + 1));
     visibilityController = widget.visibilityController ?? ValueNotifier(true);
     visibilityController.addListener(_listener);
   }
@@ -261,6 +267,7 @@ class CollapseBannerAdsState extends State<CollapseBannerAds> with WidgetsBindin
   void _listener() {
     if (_bannerAd?.isAdLoading != true && visibilityController.value) {
       _prepareAd();
+      print('check_reload_collapse --- _listener');
       return;
     }
 
@@ -280,11 +287,12 @@ class CollapseBannerAdsState extends State<CollapseBannerAds> with WidgetsBindin
   @override
   void didChangeDependencies() {
     _prepareAd();
+    print('check_reload_collapse --- didChangeDependencies');
     super.didChangeDependencies();
   }
 
   @override
-  void dispose(){
+  void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     closeCollapse();
     onDestroyed();
@@ -293,7 +301,7 @@ class CollapseBannerAdsState extends State<CollapseBannerAds> with WidgetsBindin
     super.dispose();
   }
 
-  Future<void> closeCollapse() async{
+  Future<void> closeCollapse() async {
     return _bannerAd?.dispose();
   }
 
@@ -304,10 +312,12 @@ class CollapseBannerAdsState extends State<CollapseBannerAds> with WidgetsBindin
       if (isClicked) {
         isClicked = false;
         _prepareAd();
+        print('check_reload_collapse --- didChangeAppLifecycleState isClick');
       } else {
         onResume();
       }
-    } else if (state == AppLifecycleState.inactive || state == AppLifecycleState.paused) {
+    } else if (state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.paused) {
       print('check state: 1.inactive $_isDestroy');
       onPause();
     }
@@ -356,10 +366,12 @@ class CollapseBannerAdsState extends State<CollapseBannerAds> with WidgetsBindin
     _timer = Timer.periodic(
       Duration(seconds: widget.refreshRateSec),
       (timer) {
-        if(widget.hideReloadWhenScreenChange == false) {
+        if (widget.hideReloadWhenScreenChange == false) {
           print('startTimer: 3.');
           print('check state: 5.resume $_isDestroy');
           _prepareAd();
+          print(
+              'check_reload_collapse --- _startTimer hideReloadWhenScreenChange: ${widget.hideReloadWhenScreenChange}');
         }
       },
     );
