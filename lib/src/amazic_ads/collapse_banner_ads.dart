@@ -84,10 +84,12 @@ class CollapseBannerAdsState extends State<CollapseBannerAds>
           if (info.visibleFraction < 0.1) {
             if (visibilityController.value) {
               visibilityController.value = false;
+              print('check_reload_collapse --- info.visibleFraction < 0.1 , value = ${visibilityController.value}');
             }
           } else {
             if (!visibilityController.value) {
               visibilityController.value = true;
+              print('check_reload_collapse --- info.visibleFraction > 0.1 , value = ${visibilityController.value}');
             }
           }
         } catch (e) {
@@ -248,6 +250,7 @@ class CollapseBannerAdsState extends State<CollapseBannerAds>
     }
     if (!visibilityController.value) {
       visibilityController.value = true;
+      print('check_reload_collapse --- _initAd , value = ${visibilityController.value}');
     }
   }
 
