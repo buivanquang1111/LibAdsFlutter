@@ -175,12 +175,11 @@ class AdmobAds {
     if (navigatorKey != null) {
       this.navigatorKey = navigatorKey;
       appLifecycleReactor = AppLifecycleReactor(
-        navigatorKey: navigatorKey,
-        listId: listResumeId,
-        config: adResumeConfig,
-        adNetwork: adResumeNetwork,
-        child: child
-      );
+          navigatorKey: navigatorKey,
+          listId: listResumeId,
+          config: adResumeConfig,
+          adNetwork: adResumeNetwork,
+          child: child);
       appLifecycleReactor!.listenToAppStateChanges();
     }
   }
@@ -447,6 +446,7 @@ class AdmobAds {
     EasyAdFailedCallback? onAdFailedToShow,
     EasyAdCallback? onAdDismissed,
     EasyAdOnPaidEvent? onPaidEvent,
+    Function? onDismissCollapse,
   }) async {
     if (!isEnabled || !config) {
       onDisabled?.call();
@@ -469,25 +469,37 @@ class AdmobAds {
       adNetwork: adNetwork,
       listId: listId,
       onAdClicked: onAdClicked,
-      onAdDismissed: (adNetwork, adUnitType, data) {
+      onAdDismissed: (adNetwork, adUnitType, data) async {
         onAdDismissed?.call(adNetwork, adUnitType, data);
         AdmobAds.instance.setFullscreenAdShowing(false);
-        print('check_full_screen_ads_show: ondismiss_App_Open - $isFullscreenAdShowing');
+        print(
+            'check_full_screen_ads_show: ondismiss_App_Open - $isFullscreenAdShowing');
         if (Platform.isIOS) {
+          if (onDismissCollapse != null) {
+            await onDismissCollapse();
+          }
           LoadingChannel.closeAd();
         }
       },
-      onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
+      onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) async {
+        if (onDismissCollapse != null) {
+          await onDismissCollapse();
+        }
         LoadingChannel.closeAd();
         onAdFailedToLoad?.call(adNetwork, adUnitType, data, errorMessage);
         AdmobAds.instance.setFullscreenAdShowing(false);
-        print('check_full_screen_ads_show: onAdFailedToLoad_App_Open - $isFullscreenAdShowing');
+        print(
+            'check_full_screen_ads_show: onAdFailedToLoad_App_Open - $isFullscreenAdShowing');
       },
-      onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
+      onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) async {
+        if (onDismissCollapse != null) {
+          await onDismissCollapse();
+        }
         LoadingChannel.closeAd();
         onAdFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);
         AdmobAds.instance.setFullscreenAdShowing(false);
-        print('check_full_screen_ads_show: onAdFailedToShow_App_Open - $isFullscreenAdShowing');
+        print(
+            'check_full_screen_ads_show: onAdFailedToShow_App_Open - $isFullscreenAdShowing');
       },
       onAdLoaded: (adNetwork, adUnitType, data) {
         onAdLoaded?.call(adNetwork, adUnitType, data);
@@ -495,7 +507,10 @@ class AdmobAds {
       },
       onAdShowed: (adNetwork, adUnitType, data) {
         if (Platform.isAndroid) {
-          Future.delayed(const Duration(seconds: 1), () {
+          Future.delayed(const Duration(seconds: 1), () async {
+            if (onDismissCollapse != null) {
+              await onDismissCollapse();
+            }
             LoadingChannel.closeAd();
           });
         }
@@ -581,7 +596,8 @@ class AdmobAds {
           _lastTimeDismissInter = DateTime.now().millisecondsSinceEpoch;
         onAdDismissed?.call(adNetwork, adUnitType, data);
         AdmobAds.instance.setFullscreenAdShowing(false);
-        print('check_full_screen_ads_show: onAdDismiss_Inter - $isFullscreenAdShowing');
+        print(
+            'check_full_screen_ads_show: onAdDismiss_Inter - $isFullscreenAdShowing');
         if (Platform.isIOS) {
           LoadingChannel.closeAd();
         }
@@ -590,13 +606,15 @@ class AdmobAds {
         LoadingChannel.closeAd();
         onAdFailedToLoad?.call(adNetwork, adUnitType, data, errorMessage);
         AdmobAds.instance.setFullscreenAdShowing(false);
-        print('check_full_screen_ads_show: onAdFailedToLoad_Inter - $isFullscreenAdShowing');
+        print(
+            'check_full_screen_ads_show: onAdFailedToLoad_Inter - $isFullscreenAdShowing');
       },
       onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
         LoadingChannel.closeAd();
         onAdFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);
         AdmobAds.instance.setFullscreenAdShowing(false);
-        print('check_full_screen_ads_show: onAdFailedToShow_Inter - $isFullscreenAdShowing');
+        print(
+            'check_full_screen_ads_show: onAdFailedToShow_Inter - $isFullscreenAdShowing');
       },
       onAdLoaded: (adNetwork, adUnitType, data) {
         onAdLoaded?.call(adNetwork, adUnitType, data);
@@ -669,7 +687,8 @@ class AdmobAds {
       onAdDismissed: (adNetwork, adUnitType, data) {
         onAdDismissed?.call(adNetwork, adUnitType, data);
         AdmobAds.instance.setFullscreenAdShowing(false);
-        print('check_full_screen_ads_show: onAdDismiss_Reward - $isFullscreenAdShowing');
+        print(
+            'check_full_screen_ads_show: onAdDismiss_Reward - $isFullscreenAdShowing');
         if (Platform.isIOS) {
           LoadingChannel.closeAd();
         }
@@ -678,13 +697,15 @@ class AdmobAds {
         LoadingChannel.closeAd();
         onAdFailedToLoad?.call(adNetwork, adUnitType, data, errorMessage);
         AdmobAds.instance.setFullscreenAdShowing(false);
-        print('check_full_screen_ads_show: onAdFailedToLoad_Reward - $isFullscreenAdShowing');
+        print(
+            'check_full_screen_ads_show: onAdFailedToLoad_Reward - $isFullscreenAdShowing');
       },
       onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
         LoadingChannel.closeAd();
         onAdFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);
         AdmobAds.instance.setFullscreenAdShowing(false);
-        print('check_full_screen_ads_show: onAdFailedToShow_Reward - $isFullscreenAdShowing');
+        print(
+            'check_full_screen_ads_show: onAdFailedToShow_Reward - $isFullscreenAdShowing');
       },
       onAdLoaded: (adNetwork, adUnitType, data) {
         onAdLoaded?.call(adNetwork, adUnitType, data);

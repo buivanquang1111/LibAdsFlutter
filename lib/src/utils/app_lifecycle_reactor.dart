@@ -15,17 +15,24 @@ class AppLifecycleReactor {
   bool config;
   bool _isDisplayAppOpenResume = true;
   bool _isShowScreenWellCome = false;
+  Function()? _onDismissCollapse;
 
-  AppLifecycleReactor({required this.navigatorKey,
-    required this.listId,
-    this.config = true,
-    required this.adNetwork,
-    this.child});
+  AppLifecycleReactor(
+      {required this.navigatorKey,
+      required this.listId,
+      this.config = true,
+      required this.adNetwork,
+      this.child});
 
   void listenToAppStateChanges() {
     AppStateEventNotifier.startListening();
     AppStateEventNotifier.appStateStream
         .forEach((state) => _onAppStateChanged(state));
+  }
+
+  void setDismissCollapseWhenResume(
+      {required Function()? onDismissCollapseWhenResume}) {
+    _onDismissCollapse = onDismissCollapseWhenResume;
   }
 
   void setOnSplashScreen(bool value) {
@@ -40,11 +47,11 @@ class AppLifecycleReactor {
     _isDisplayAppOpenResume = value;
   }
 
-  void setShowScreenWellCome(bool value){
+  void setShowScreenWellCome(bool value) {
     _isShowScreenWellCome = value;
   }
 
-  bool isShowScreenWellCome(){
+  bool isShowScreenWellCome() {
     return _isShowScreenWellCome;
   }
 
@@ -63,7 +70,7 @@ class AppLifecycleReactor {
     if (_onSplashScreen) return;
     if (!config) {
       if (child != null) {
-        if(!_isShowScreenWellCome) {
+        if (!_isShowScreenWellCome) {
           showScreenWelCome();
         }
       }
@@ -93,37 +100,41 @@ class AppLifecycleReactor {
         if (listId.isNotEmpty != true) return;
 
         AdmobAds.instance.showAppOpen(
-          listId: listId,
-          config: true,
-          onAdDismissed: (adNetwork, adUnitType, data) {
-            if (child != null) {
-              if(!_isShowScreenWellCome) {
-                showScreenWelCome();
+            listId: listId,
+            config: true,
+            onAdDismissed: (adNetwork, adUnitType, data) {
+              if (child != null) {
+                if (!_isShowScreenWellCome) {
+                  showScreenWelCome();
+                }
               }
-            }
-          },
-          onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
-            if (child != null) {
-              if(!_isShowScreenWellCome) {
-                showScreenWelCome();
+            },
+            onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
+              if (child != null) {
+                if (!_isShowScreenWellCome) {
+                  showScreenWelCome();
+                }
               }
-            }
-          },
-          onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
-            if (child != null) {
-              if(!_isShowScreenWellCome) {
-                showScreenWelCome();
+            },
+            onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
+              if (child != null) {
+                if (!_isShowScreenWellCome) {
+                  showScreenWelCome();
+                }
               }
-            }
-          },
-          onDisabled: () {
-            if (child != null) {
-              if(!_isShowScreenWellCome) {
-                showScreenWelCome();
+            },
+            onDisabled: () {
+              if (child != null) {
+                if (!_isShowScreenWellCome) {
+                  showScreenWelCome();
+                }
               }
-            }
-          },
-        );
+            },
+            onDismissCollapse: () {
+              if (_onDismissCollapse != null) {
+                _onDismissCollapse!();
+              }
+            });
       } else {
         _isExcludeScreen = false;
       }
