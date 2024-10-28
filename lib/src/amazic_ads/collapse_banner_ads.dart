@@ -265,7 +265,7 @@ class CollapseBannerAdsState extends State<CollapseBannerAds>
   late final ValueNotifier<bool> visibilityController;
 
   void _listener() {
-    if (_bannerAd?.isAdLoading != true && visibilityController.value) {
+    if (_bannerAd?.isAdLoading != true && visibilityController.value && !widget.hideReloadWhenScreenChange) {
       _prepareAd();
       print('check_reload_collapse --- _listener');
       return;
