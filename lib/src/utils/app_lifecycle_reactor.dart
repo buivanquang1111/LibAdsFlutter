@@ -16,6 +16,7 @@ class AppLifecycleReactor {
   bool _isDisplayAppOpenResume = true;
   bool _isShowScreenWellCome = false;
   Function()? _onDismissCollapse;
+  Function()? _onReloadCollapse;
 
   AppLifecycleReactor(
       {required this.navigatorKey,
@@ -30,9 +31,12 @@ class AppLifecycleReactor {
         .forEach((state) => _onAppStateChanged(state));
   }
 
-  void setDismissCollapseWhenResume(
-      {required Function()? onDismissCollapseWhenResume}) {
+  void setDismissCollapseWhenResume({
+    required Function()? onDismissCollapseWhenResume,
+    required Function()? onReloadCollapseWhenTurnOffWelCome,
+  }) {
     _onDismissCollapse = onDismissCollapseWhenResume;
+    _onReloadCollapse = onReloadCollapseWhenTurnOffWelCome;
   }
 
   void setOnSplashScreen(bool value) {
@@ -62,6 +66,12 @@ class AppLifecycleReactor {
       context: navigatorKey.currentContext!,
       builder: (context) {
         return child!;
+      },
+    ).then(
+      (value) {
+        if (_onReloadCollapse != null) {
+          _onReloadCollapse!();
+        }
       },
     );
   }

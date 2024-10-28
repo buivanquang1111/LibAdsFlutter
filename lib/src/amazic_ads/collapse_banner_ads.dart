@@ -305,6 +305,10 @@ class CollapseBannerAdsState extends State<CollapseBannerAds>
     return _bannerAd?.dispose();
   }
 
+  Future<void> reloadCollapseBanner() async{
+    return _prepareAd();
+  }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
