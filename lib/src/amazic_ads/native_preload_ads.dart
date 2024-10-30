@@ -33,7 +33,7 @@ class _NativePreloadAdsState extends State<NativePreloadAds> {
 
   @override
   Widget build(BuildContext context) {
-    print('load_native: lib --- ${widget.preloadedAd}');
+    print('load_native: lib --- ${widget.preloadedAd} --- ${widget.preloadedAd != null}');
     return Visibility(
         visible: widget.config,
         child: widget.preloadedAd != null
