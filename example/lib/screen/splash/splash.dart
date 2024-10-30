@@ -21,6 +21,7 @@ import 'package:example/utils/event_log.dart';
 import 'package:example/utils/remote_config.dart';
 
 PreloadNativeController? introAdCtrl;
+AdsBase? preloadAds;
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -91,6 +92,20 @@ class SplashState extends State<SplashScreen> {
                     if (introAdCtrl != null) {
                       introAdCtrl!.load();
                     }
+
+                    AdmobAds.instance
+                        .loadNativeAds(
+                      config: true,
+                      adNetwork: AdNetwork.admob,
+                      factoryId: adIdManager.nativeIntroFactory,
+                      listId: NetworkRequest.instance
+                          .getListIDByName('native_intro'),
+                    )
+                        .then(
+                      (ad) {
+                        preloadAds = ad;
+                      },
+                    );
                   }
                   // initAndLoadAd();
                   print(
@@ -237,7 +252,6 @@ class SplashState extends State<SplashScreen> {
                   ),
                 ),
                 SizedBox(height: 30.h),
-
               ],
             ),
           ],

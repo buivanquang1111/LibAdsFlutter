@@ -29,3 +29,5 @@ export 'package:amazic_ads_flutter/call_data/network_request.dart';
 export 'package:amazic_ads_flutter/src/utils/preferences_util.dart';
 export 'package:amazic_ads_flutter/src/amazic_admob/admob_preload_native_ad.dart';
 export 'package:amazic_ads_flutter/src/amazic_ads/preload_native_ad.dart';
+export 'package:amazic_ads_flutter/src/amazic_ads/native_preload_ads.dart';
+

@@ -96,7 +96,12 @@ class OnBoardState1 extends State<OnboardScreen1> {
               () => Visibility(
                 maintainSize: false,
                 visible: controller.index.value == 2,
-                child: const KeepAliveAds(),
+                // child: const KeepAliveAds(),
+                child: NativePreloadAds(
+                  config: true,
+                  preloadedAd: preloadAds,
+                  height: adIdManager.smallNativeAdHeight,
+                ),
               ),
             ),
           ],

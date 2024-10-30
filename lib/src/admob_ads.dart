@@ -255,6 +255,52 @@ class AdmobAds {
     return ad;
   }
 
+  //load ads trước
+  Future<AdsBase?> loadNativeAds({
+    required AdNetwork adNetwork,
+    required String factoryId,
+    required List<String> listId,
+    required bool config,
+    EasyAdCallback? onAdLoaded,
+    EasyAdCallback? onAdShowed,
+    EasyAdCallback? onAdClicked,
+    EasyAdFailedCallback? onAdFailedToLoad,
+    EasyAdFailedCallback? onAdFailedToShow,
+    EasyAdCallback? onAdDismissed,
+    EasyAdEarnedReward? onEarnedReward,
+    EasyAdOnPaidEvent? onPaidEvent,
+  }) async {
+    if(!AdmobAds.instance.isEnabled){
+      return null;
+    }
+    if(await AdmobAds.instance.isDeviceOffline()){
+      return null;
+    }
+    if(!config){
+      return null;
+    }
+    if (!ConsentManager.ins.canRequestAds) {
+      return null;
+    }
+
+    AdsBase? ad = AdmobAds.instance.createNative(
+      adNetwork: adNetwork,
+      factoryId: factoryId,
+      listId: listId,
+      onAdLoaded: onAdLoaded,
+      onAdShowed: onAdShowed,
+      onAdClicked: onAdClicked,
+      onAdFailedToLoad: onAdFailedToLoad,
+      onAdFailedToShow: onAdFailedToShow,
+      onAdDismissed: onAdDismissed,
+      onEarnedReward: onEarnedReward,
+      onPaidEvent: onPaidEvent,
+    );
+    await ad?.load();
+    return ad;
+  }
+  //end
+
   AdsBase? createNative({
     required AdNetwork adNetwork,
     required String factoryId,
