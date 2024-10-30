@@ -79,29 +79,29 @@ class ContentPlaceholder extends StatelessWidget {
                       color: Colors.white,
                       margin: const EdgeInsets.only(bottom: 8.0),
                     ),
-                    // if (height > 150)
-                    //   Container(
-                    //     width: 100.0,
-                    //     height: 10.0,
-                    //     color: Colors.white,
-                    //     margin: const EdgeInsets.only(bottom: 8.0),
-                    //   ),
-                    // if (height > 150)
-                    //   Container(
-                    //     width: double.infinity,
-                    //     height: 120,
-                    //     color: Colors.white,
-                    //     margin: const EdgeInsets.only(bottom: 8.0),
-                    //   ),
-                    // if (height > 100)
-                    //   Container(
-                    //     width: double.infinity,
-                    //     height: 50.0,
-                    //     decoration: BoxDecoration(
-                    //       color: Colors.white,
-                    //       borderRadius: BorderRadius.circular(12),
-                    //     ),
-                    //   ),
+                    if (height > 150)
+                      Container(
+                        width: 100.0,
+                        height: 10.0,
+                        color: Colors.white,
+                        margin: const EdgeInsets.only(bottom: 8.0),
+                      ),
+                    if (height > 150)
+                      Container(
+                        width: double.infinity,
+                        height: 120,
+                        color: Colors.white,
+                        margin: const EdgeInsets.only(bottom: 8.0),
+                      ),
+                    if (height > 100)
+                      Container(
+                        width: double.infinity,
+                        height: 50.0,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
                   ],
                 ),
               ),
