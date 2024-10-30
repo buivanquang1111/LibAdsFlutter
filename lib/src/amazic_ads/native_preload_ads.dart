@@ -30,21 +30,14 @@ class NativePreloadAds extends StatefulWidget {
 }
 
 class _NativePreloadAdsState extends State<NativePreloadAds> {
-  AdsBase? _nativeAd;
-
-  @override
-  void initState() {
-    super.initState();
-    _nativeAd = widget.preloadedAd;
-  }
 
   @override
   Widget build(BuildContext context) {
-    print('load_native: lib --- $_nativeAd');
+    print('load_native: lib --- ${widget.preloadedAd}');
     return Visibility(
         visible: widget.config,
-        child: _nativeAd != null
-            ? _nativeAd?.show(
+        child: widget.preloadedAd != null
+            ? widget.preloadedAd?.show(
                 height: widget.height,
                 borderRadius: widget.borderRadius,
                 color: widget.color,
