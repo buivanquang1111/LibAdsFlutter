@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:amazic_ads_flutter/admob_ads_flutter.dart';
 import 'package:example/config/global_colors.dart';
 import 'package:example/config/global_txt_style.dart';
@@ -32,6 +34,26 @@ class OnBoardState1 extends State<OnboardScreen1> {
   @override
   void initState() {
     super.initState();
+
+    AdmobAds.instance
+        .loadNativeAds(
+      config: true,
+      adNetwork: AdNetwork.admob,
+      factoryId: adIdManager.nativeIntroFactory,
+      listId: NetworkRequest.instance.getListIDByName('native_intro'),
+      onAdLoaded: (adNetwork, adUnitType, data) {
+        setState(() {});
+      },
+      onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
+        setState(() {});
+      },
+    )
+        .then(
+      (ad) {
+        preloadAds = ad;
+        print('check_show_native. 2');
+      },
+    );
   }
 
   @override
@@ -92,16 +114,15 @@ class OnBoardState1 extends State<OnboardScreen1> {
                 ],
               ),
             ),
-            Obx(
-              () => Visibility(
-                maintainSize: false,
-                visible: controller.index.value == 2,
-                // child: const KeepAliveAds(),
-                child: NativePreloadAds(
-                  config: true,
-                  preloadedAd: preloadAds,
-                  height: adIdManager.smallNativeAdHeight,
-                ),
+            Visibility(
+              maintainSize: false,
+              // visible: controller.index.value == 2,
+              visible: true,
+              // child: const KeepAliveAds(),
+              child: NativePreloadAds(
+                config: true,
+                preloadedAd: preloadAds,
+                height: adIdManager.smallNativeAdHeight,
               ),
             ),
           ],

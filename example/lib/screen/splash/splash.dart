@@ -92,20 +92,6 @@ class SplashState extends State<SplashScreen> {
                     if (introAdCtrl != null) {
                       introAdCtrl!.load();
                     }
-
-                    AdmobAds.instance
-                        .loadNativeAds(
-                      config: true,
-                      adNetwork: AdNetwork.admob,
-                      factoryId: adIdManager.nativeIntroFactory,
-                      listId: NetworkRequest.instance
-                          .getListIDByName('native_intro'),
-                    )
-                        .then(
-                      (ad) {
-                        preloadAds = ad;
-                      },
-                    );
                   }
                   // initAndLoadAd();
                   print(

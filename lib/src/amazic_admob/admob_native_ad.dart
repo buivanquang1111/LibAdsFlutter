@@ -68,6 +68,7 @@ class AdmobNativeAd extends AdsBase {
           _isAdLoadedFailed = false;
           AdmobAds.instance.onAdLoadedMethod(adNetwork, adUnitType, ad);
           onAdLoaded?.call(adNetwork, adUnitType, ad);
+          print('check_show_native: onAdLoaded');
         },
         onAdFailedToLoad: (Ad ad, LoadAdError error) {
           if (listId.length > 1) {
@@ -82,6 +83,7 @@ class AdmobNativeAd extends AdsBase {
                 adNetwork, adUnitType, ad, error.toString());
             onAdFailedToLoad?.call(adNetwork, adUnitType, ad, error.toString());
             ad.dispose();
+            print('check_show_native: onAdFailedToLoad');
           }
         },
         onAdClicked: (ad) {
@@ -117,6 +119,7 @@ class AdmobNativeAd extends AdsBase {
     );
     _nativeAd?.load();
     _isAdLoading = true;
+    print('check_show_native: xong');
   }
 
   @override
@@ -128,6 +131,7 @@ class AdmobNativeAd extends AdsBase {
     EdgeInsetsGeometry? padding,
     EdgeInsetsGeometry? margin,
   }) {
+
     if (!AdmobAds.instance.isEnabled) {
       return const SizedBox(
         height: 1,
@@ -141,6 +145,7 @@ class AdmobNativeAd extends AdsBase {
         width: 1,
       );
     }
+    print('check_show_native: 3. ad: $ads, isAdLoaded: $isAdLoaded , _isAdLoading: $_isAdLoading');
     _logger.logInfo('ad: $ads, isAdLoaded: $isAdLoaded');
     return Container(
       decoration: BoxDecoration(
