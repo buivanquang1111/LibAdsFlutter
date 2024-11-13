@@ -20,7 +20,7 @@ class NetworkRequest {
     return listAds;
   }
 
-  void fetchAdsModel(
+  Future<void> fetchAdsModel(
       {String? linkServer,
       String? appId,
       String? packageName,
