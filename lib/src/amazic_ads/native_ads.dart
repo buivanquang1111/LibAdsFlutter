@@ -87,21 +87,25 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     visibilityController = widget.visibilityController ?? ValueNotifier(true);
     visibilityController.addListener(_listener);
+    print('check_native: _prepareAd --- initState');
     _prepareAd();
   }
 
   @override
   void didChangeDependencies() {
-    _prepareAd();
+    // print('check_native: _prepareAd --- didChangeDependencies');
+    // _prepareAd();
     super.didChangeDependencies();
   }
 
   Future<void> reloadNativeNow() async {
+    print('check_native: _prepareAd --- reloadNativeNow');
     return _prepareAd();
   }
 
   void _listener() {
     if (_nativeAd?.isAdLoading != true && visibilityController.value) {
+      print('check_native: _prepareAd --- _listener');
       _prepareAd();
     }
     if (!visibilityController.value) {
@@ -189,6 +193,7 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
       case AppLifecycleState.resumed:
         if (widget.reloadResume) {
           print("debug-libraries: widget.reloadResume");
+          print('check_native: _prepareAd --- didChangeAppLifecycleState - resume');
           _prepareAd();
           widget.setReloadNative(false);
         }else if(state == AppLifecycleState.inactive || state == AppLifecycleState.paused){
@@ -399,6 +404,7 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
       Duration(seconds: widget.refreshRateSec),
       (timer) {
         print("debug-libraries: _startTimerReload");
+        print('check_native: _prepareAd --- _startTimerReload');
         _prepareAd();
       },
     );

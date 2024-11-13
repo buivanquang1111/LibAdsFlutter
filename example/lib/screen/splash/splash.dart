@@ -20,7 +20,7 @@ import 'package:example/utils/connectivity.dart';
 import 'package:example/utils/event_log.dart';
 import 'package:example/utils/remote_config.dart';
 
-PreloadNativeController? introAdCtrl;
+// PreloadNativeController? introAdCtrl;
 AdsBase? preloadAds;
 
 class SplashScreen extends StatefulWidget {
@@ -80,19 +80,19 @@ class SplashState extends State<SplashScreen> {
               },
               onInitialized: (bool canRequestAds) {
                 if (canRequestAds) {
-                  if (RemoteConfig.configs[RemoteConfigKey.native_intro.name]) {
-                    introAdCtrl = PreloadNativeController(
-                      autoReloadOnFinish: false,
-                      nativeNormalId: NetworkRequest.instance
-                          .getListIDByName('native_intro')
-                          .first,
-                      nativeMediumId: null,
-                      nativeHighId: null,
-                    );
-                    if (introAdCtrl != null) {
-                      introAdCtrl!.load();
-                    }
-                  }
+                  // if (RemoteConfig.configs[RemoteConfigKey.native_intro.name]) {
+                  //   introAdCtrl = PreloadNativeController(
+                  //     autoReloadOnFinish: false,
+                  //     nativeNormalId: NetworkRequest.instance
+                  //         .getListIDByName('native_intro')
+                  //         .first,
+                  //     nativeMediumId: null,
+                  //     nativeHighId: null,
+                  //   );
+                  //   if (introAdCtrl != null) {
+                  //     introAdCtrl!.load();
+                  //   }
+                  // }
                   // initAndLoadAd();
                   print(
                       'listIdBanner: ${NetworkRequest.instance.getListIDByName('banner_splash').first}');
