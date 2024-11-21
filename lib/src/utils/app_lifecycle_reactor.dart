@@ -149,7 +149,7 @@ class AppLifecycleReactor {
                   _onDismissCollapse!();
                 }
               });
-        }else{
+        } else {
           if (child != null) {
             if (!_isShowScreenWellCome) {
               showScreenWelCome();
@@ -162,13 +162,13 @@ class AppLifecycleReactor {
     }
   }
 
-  void showAppOpenResumeAds(
+  void showAppOpenResumeAds({
     Function()? onDisabled,
     EasyAdFailedCallback? onAdFailedToLoad,
     EasyAdFailedCallback? onAdFailedToShow,
     EasyAdCallback? onAdDismissed,
     Function? onDismissCollapse,
-  ) {
+  }) {
     AdmobAds.instance.showAppOpen(
         listId: listId,
         config: config,
