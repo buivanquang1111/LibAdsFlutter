@@ -8,14 +8,17 @@ import 'package:adjust_sdk/adjust_event_success.dart';
 import 'package:adjust_sdk/adjust_session_failure.dart';
 import 'package:adjust_sdk/adjust_session_success.dart';
 import 'package:amazic_ads_flutter/src/utils/ad_event.dart';
+import 'package:flutter/foundation.dart';
 
-class AdjustConfigFlutter{
+class AdjustConfigFlutter {
   AdjustConfigFlutter._instance();
+
   static final AdjustConfigFlutter instance = AdjustConfigFlutter._instance();
 
-  void setupAdjust({required String adjustToken}){
+  void setupAdjust({required String adjustToken}) {
     // AdjustConfig config = AdjustConfig(adjustToken, isDebug == true ?  AdjustEnvironment.sandbox : AdjustEnvironment.production);
-    AdjustConfig config = AdjustConfig(adjustToken, AdjustEnvironment.production);
+    AdjustConfig config = AdjustConfig(adjustToken,
+        kDebugMode ? AdjustEnvironment.sandbox : AdjustEnvironment.production);
     config.logLevel = AdjustLogLevel.verbose;
 
     //
@@ -180,5 +183,4 @@ class AdjustConfigFlutter{
       // Adjust.trackEvent(adjustEvent);
     }
   }
-
 }
