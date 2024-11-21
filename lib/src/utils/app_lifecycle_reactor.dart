@@ -149,6 +149,12 @@ class AppLifecycleReactor {
                   _onDismissCollapse!();
                 }
               });
+        }else{
+          if (child != null) {
+            if (!_isShowScreenWellCome) {
+              showScreenWelCome();
+            }
+          }
         }
       } else {
         _isExcludeScreen = false;
