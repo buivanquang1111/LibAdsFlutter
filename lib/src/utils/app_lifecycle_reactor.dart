@@ -176,7 +176,14 @@ class AppLifecycleReactor {
         onAdFailedToLoad: onAdFailedToLoad,
         onAdFailedToShow: onAdFailedToShow,
         onDisabled: onDisabled,
-        onDismissCollapse: onDismissCollapse);
+        onDismissCollapse: () {
+          if(onDismissCollapse != null){
+            onDismissCollapse();
+          }
+          if (_onDismissCollapse != null) {
+            _onDismissCollapse!();
+          }
+        });
   }
 
   void showAppOpenResumeAdsAfter() {}
