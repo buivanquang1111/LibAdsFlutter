@@ -135,6 +135,7 @@ class AdmobAds {
     required bool adResumeConfig,
     AdNetwork adResumeNetwork = AdNetwork.admob,
     Widget? child,
+    bool isShowWelComeScreenAfterAds = true,
 
     ///init mediation callback
     Future<dynamic> Function(bool canRequestAds)? initMediationCallback,
@@ -179,7 +180,8 @@ class AdmobAds {
           listId: listResumeId,
           config: adResumeConfig,
           adNetwork: adResumeNetwork,
-          child: child);
+          child: child,
+          isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds);
       appLifecycleReactor!.listenToAppStateChanges();
     }
   }
@@ -270,13 +272,13 @@ class AdmobAds {
     EasyAdEarnedReward? onEarnedReward,
     EasyAdOnPaidEvent? onPaidEvent,
   }) async {
-    if(!AdmobAds.instance.isEnabled){
+    if (!AdmobAds.instance.isEnabled) {
       return null;
     }
-    if(await AdmobAds.instance.isDeviceOffline()){
+    if (await AdmobAds.instance.isDeviceOffline()) {
       return null;
     }
-    if(!config){
+    if (!config) {
       return null;
     }
     if (!ConsentManager.ins.canRequestAds) {
@@ -299,6 +301,7 @@ class AdmobAds {
     await ad?.load();
     return ad;
   }
+
   //end
 
   AdsBase? createNative({

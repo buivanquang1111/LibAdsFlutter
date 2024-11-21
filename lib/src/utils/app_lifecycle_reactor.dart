@@ -9,6 +9,8 @@ class AppLifecycleReactor {
   final List<String> listId;
   final AdNetwork adNetwork;
   final Widget? child;
+  final bool
+      isShowWelComeScreenAfterAds; //hiển thị màn Welcome sau quảng cáo resume
 
   bool _onSplashScreen = true;
   bool _isExcludeScreen = false;
@@ -23,7 +25,8 @@ class AppLifecycleReactor {
       required this.listId,
       this.config = true,
       required this.adNetwork,
-      this.child});
+      this.child,
+      required this.isShowWelComeScreenAfterAds});
 
   void listenToAppStateChanges() {
     AppStateEventNotifier.startListening();
@@ -109,45 +112,66 @@ class AppLifecycleReactor {
 
         if (listId.isNotEmpty != true) return;
 
-        AdmobAds.instance.showAppOpen(
-            listId: listId,
-            config: true,
-            onAdDismissed: (adNetwork, adUnitType, data) {
-              if (child != null) {
-                if (!_isShowScreenWellCome) {
-                  showScreenWelCome();
+        if (isShowWelComeScreenAfterAds) {
+          AdmobAds.instance.showAppOpen(
+              listId: listId,
+              config: config,
+              onAdDismissed: (adNetwork, adUnitType, data) {
+                if (child != null) {
+                  if (!_isShowScreenWellCome) {
+                    showScreenWelCome();
+                  }
                 }
-              }
-            },
-            onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
-              if (child != null) {
-                if (!_isShowScreenWellCome) {
-                  showScreenWelCome();
+              },
+              onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
+                if (child != null) {
+                  if (!_isShowScreenWellCome) {
+                    showScreenWelCome();
+                  }
                 }
-              }
-            },
-            onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
-              if (child != null) {
-                if (!_isShowScreenWellCome) {
-                  showScreenWelCome();
+              },
+              onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
+                if (child != null) {
+                  if (!_isShowScreenWellCome) {
+                    showScreenWelCome();
+                  }
                 }
-              }
-            },
-            onDisabled: () {
-              if (child != null) {
-                if (!_isShowScreenWellCome) {
-                  showScreenWelCome();
+              },
+              onDisabled: () {
+                if (child != null) {
+                  if (!_isShowScreenWellCome) {
+                    showScreenWelCome();
+                  }
                 }
-              }
-            },
-            onDismissCollapse: () {
-              if (_onDismissCollapse != null) {
-                _onDismissCollapse!();
-              }
-            });
+              },
+              onDismissCollapse: () {
+                if (_onDismissCollapse != null) {
+                  _onDismissCollapse!();
+                }
+              });
+        }
       } else {
         _isExcludeScreen = false;
       }
     }
   }
+
+  void showAppOpenResumeAds(
+    Function()? onDisabled,
+    EasyAdFailedCallback? onAdFailedToLoad,
+    EasyAdFailedCallback? onAdFailedToShow,
+    EasyAdCallback? onAdDismissed,
+    Function? onDismissCollapse,
+  ) {
+    AdmobAds.instance.showAppOpen(
+        listId: listId,
+        config: config,
+        onAdDismissed: onAdDismissed,
+        onAdFailedToLoad: onAdFailedToLoad,
+        onAdFailedToShow: onAdFailedToShow,
+        onDisabled: onDisabled,
+        onDismissCollapse: onDismissCollapse);
+  }
+
+  void showAppOpenResumeAdsAfter() {}
 }
