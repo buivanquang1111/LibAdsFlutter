@@ -35,7 +35,7 @@ class _NativePreloadAdsState extends State<NativePreloadAds> {
     print(
         'load_native: lib --- ${widget.preloadedAd} --- ${widget.preloadedAd != null} --- ${widget.preloadedAd?.show(height: widget.height) != null}');
     return Visibility(
-        visible: widget.config,
+        visible: widget.config && ConsentManager.ins.canRequestAds,
         child: widget.preloadedAd != null &&
                 widget.preloadedAd?.show(height: widget.height) != null
             ? widget.preloadedAd?.show(
