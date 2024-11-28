@@ -110,6 +110,8 @@ class AdmobAds {
     required String keyInterSplash,
     required String keyIntervalBetweenInterstitial,
     required String keyInterstitialFromStart,
+    required String nameAdsOpenSplash,
+    required String nameAdsInterSplash,
     String? linkServer,
     String? appId,
     String? packageName,
@@ -118,7 +120,7 @@ class AdmobAds {
 
     ///call remote config
     Future<void> initRemoteConfig =
-    RemoteConfigLib.init(remoteConfigKeys: remoteConfigKeys).then(
+        RemoteConfigLib.init(remoteConfigKeys: remoteConfigKeys).then(
       (value) {
         RemoteConfigLib.getRemoteConfig();
       },
@@ -186,9 +188,9 @@ class AdmobAds {
     ///set time
     setOpenAppTime(DateTime.now().millisecondsSinceEpoch);
     setTimeIntervalBetweenInter(RemoteConfigLib.configs[
-    RemoteConfigKeyLib.getKeyByName(keyIntervalBetweenInterstitial).name]);
-    setTimeIntervalInterFromStart(RemoteConfigLib
-        .configs[RemoteConfigKeyLib.getKeyByName(keyInterstitialFromStart).name]);
+        RemoteConfigKeyLib.getKeyByName(keyIntervalBetweenInterstitial).name]);
+    setTimeIntervalInterFromStart(RemoteConfigLib.configs[
+        RemoteConfigKeyLib.getKeyByName(keyInterstitialFromStart).name]);
 
     ///call id ads
     await NetworkRequest.instance
@@ -203,7 +205,9 @@ class AdmobAds {
             keyInterSplash: keyInterSplash,
             onNextAction: onNextAction,
             listResumeId: listResumeId,
-            adResumeConfig: adResumeConfig);
+            adResumeConfig: adResumeConfig,
+            nameAdsOpenSplash: nameAdsOpenSplash,
+            nameAdsInterSplash: nameAdsInterSplash);
       },
       onError: (p0) {
         onNextAction();
@@ -218,7 +222,9 @@ class AdmobAds {
             keyInterSplash: keyInterSplash,
             onNextAction: onNextAction,
             listResumeId: listResumeId,
-            adResumeConfig: adResumeConfig);
+            adResumeConfig: adResumeConfig,
+            nameAdsOpenSplash: nameAdsOpenSplash,
+            nameAdsInterSplash: nameAdsInterSplash);
         return;
       },
     );
@@ -229,6 +235,8 @@ class AdmobAds {
     required String keyRateAOA,
     required String keyOpenSplash,
     required String keyInterSplash,
+    required String nameAdsOpenSplash,
+    required String nameAdsInterSplash,
     required Function() onNextAction,
     Widget? child,
     bool isShowWelComeScreenAfterAds = true,
@@ -252,7 +260,9 @@ class AdmobAds {
         keyRateAOA: keyRateAOA,
         keyOpenSplash: keyOpenSplash,
         keyInterSplash: keyInterSplash,
-        onNextAction: onNextAction);
+        onNextAction: onNextAction,
+        nameAdsOpenSplash: nameAdsOpenSplash,
+        nameAdsInterSplash: nameAdsInterSplash);
   }
 
   ///init UMP
@@ -294,18 +304,20 @@ class AdmobAds {
       {required String keyRateAOA,
       required String keyOpenSplash,
       required String keyInterSplash,
+      required String nameAdsOpenSplash,
+      required String nameAdsInterSplash,
       required Function() onNextAction}) {
-    final String rateAoa =
-    RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyRateAOA).name];
-    final bool isShowOpen =
-    RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyOpenSplash).name];
-    final bool isShowInter =
-    RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyInterSplash).name];
+    final String rateAoa = RemoteConfigLib
+        .configs[RemoteConfigKeyLib.getKeyByName(keyRateAOA).name];
+    final bool isShowOpen = RemoteConfigLib
+        .configs[RemoteConfigKeyLib.getKeyByName(keyOpenSplash).name];
+    final bool isShowInter = RemoteConfigLib
+        .configs[RemoteConfigKeyLib.getKeyByName(keyInterSplash).name];
 
     AdsSplash.instance.init(isShowInter, isShowOpen, rateAoa);
     AdsSplash.instance.showAdSplash(
-      listOpenId: NetworkRequest.instance.getListIDByName(keyOpenSplash),
-      listInterId: NetworkRequest.instance.getListIDByName(keyInterSplash),
+      listOpenId: NetworkRequest.instance.getListIDByName(nameAdsOpenSplash),
+      listInterId: NetworkRequest.instance.getListIDByName(nameAdsInterSplash),
       onAdShowed: (adNetwork, adUnitType, data) {},
       onAdDismissed: (adNetwork, adUnitType, data) {
         AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
