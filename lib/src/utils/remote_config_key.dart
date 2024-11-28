@@ -12,15 +12,23 @@ class RemoteConfigKeyLib {
     defaultValue = newDefaultValue;
   }
 
-  static late List<RemoteConfigKeyLib> listRemoteConfigKey;
+  static List<RemoteConfigKeyLib> listRemoteConfigKey = [];
 
   static void initializeKeys(List<RemoteConfigKeyLib> keys) {
     listRemoteConfigKey = keys;
   }
 
+  static void ensureInitialized() {
+    if (listRemoteConfigKey.isEmpty) {
+      throw Exception('RemoteConfigKeyLib has not been initialized. Call initializeKeys() first.');
+    }
+  }
+
   static RemoteConfigKeyLib getKeyByName(String keyName) {
+    ensureInitialized();
     return listRemoteConfigKey.firstWhere(
           (key) => key.name == keyName,
+      orElse: () => throw Exception('Key not found: $keyName'),
     );
   }
 
