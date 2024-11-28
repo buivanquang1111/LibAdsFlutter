@@ -2,15 +2,15 @@ import 'package:amazic_ads_flutter/src/utils/remote_config_key.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
 
-class RemoteConfig {
+class RemoteConfigLib {
   static final _remoteConfig = FirebaseRemoteConfig.instance;
   // static List<RemoteConfigKey> listRemoteConfigKey = [];
   static Map<String, dynamic> configs = {};
 
   static Future<void> init(
-      {required List<RemoteConfigKey> remoteConfigKeys}) async {
+      {required List<RemoteConfigKeyLib> remoteConfigKeys}) async {
     try {
-      RemoteConfigKey.initializeKeys(remoteConfigKeys);
+      RemoteConfigKeyLib.initializeKeys(remoteConfigKeys);
       await _remoteConfig.setConfigSettings(
         RemoteConfigSettings(
           fetchTimeout: const Duration(seconds: 30),
@@ -30,13 +30,13 @@ class RemoteConfig {
   }
 
   static void getRemoteConfig() {
-    var showAds = RemoteConfigKey.getKeyByName('show_ads').defaultValue;
+    var showAds = RemoteConfigKeyLib.getKeyByName('show_ads').defaultValue;
 
     try {
-      showAds = _remoteConfig.getBool(RemoteConfigKey.getKeyByName('show_ads').name);
+      showAds = _remoteConfig.getBool(RemoteConfigKeyLib.getKeyByName('show_ads').name);
     } catch (e) {}
 
-    for (var key in RemoteConfigKey.listRemoteConfigKey) {
+    for (var key in RemoteConfigKeyLib.listRemoteConfigKey) {
       try {
         switch (key.valueType) {
           case const (String):

@@ -93,7 +93,7 @@ class AdmobAds {
 
   Future<void> initAllDataSplash({
     RequestConfiguration? admobConfiguration,
-    required List<RemoteConfigKey> remoteConfigKeys,
+    required List<RemoteConfigKeyLib> remoteConfigKeys,
     bool enableLogger = true,
     bool debugUmp = false,
     Future<dynamic> Function(bool canRequestAds)? initMediationCallback,
@@ -118,9 +118,9 @@ class AdmobAds {
 
     ///call remote config
     Future<void> initRemoteConfig =
-        RemoteConfig.init(remoteConfigKeys: remoteConfigKeys).then(
+    RemoteConfigLib.init(remoteConfigKeys: remoteConfigKeys).then(
       (value) {
-        RemoteConfig.getRemoteConfig();
+        RemoteConfigLib.getRemoteConfig();
       },
     );
 
@@ -185,10 +185,10 @@ class AdmobAds {
 
     ///set time
     setOpenAppTime(DateTime.now().millisecondsSinceEpoch);
-    setTimeIntervalBetweenInter(RemoteConfig.configs[
-        RemoteConfigKey.getKeyByName(keyIntervalBetweenInterstitial).name]);
-    setTimeIntervalInterFromStart(RemoteConfig
-        .configs[RemoteConfigKey.getKeyByName(keyInterstitialFromStart).name]);
+    setTimeIntervalBetweenInter(RemoteConfigLib.configs[
+    RemoteConfigKeyLib.getKeyByName(keyIntervalBetweenInterstitial).name]);
+    setTimeIntervalInterFromStart(RemoteConfigLib
+        .configs[RemoteConfigKeyLib.getKeyByName(keyInterstitialFromStart).name]);
 
     ///call id ads
     await NetworkRequest.instance
@@ -296,11 +296,11 @@ class AdmobAds {
       required String keyInterSplash,
       required Function() onNextAction}) {
     final String rateAoa =
-        RemoteConfig.configs[RemoteConfigKey.getKeyByName(keyRateAOA).name];
+    RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyRateAOA).name];
     final bool isShowOpen =
-        RemoteConfig.configs[RemoteConfigKey.getKeyByName(keyOpenSplash).name];
+    RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyOpenSplash).name];
     final bool isShowInter =
-        RemoteConfig.configs[RemoteConfigKey.getKeyByName(keyInterSplash).name];
+    RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyInterSplash).name];
 
     AdsSplash.instance.init(isShowInter, isShowOpen, rateAoa);
     AdsSplash.instance.showAdSplash(

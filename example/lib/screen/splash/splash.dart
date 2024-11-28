@@ -36,12 +36,12 @@ class SplashState extends State<SplashScreen> {
     super.initState();
     adIdManager = DevAdIdManager();
     AdmobAds.instance.initAllDataSplash(remoteConfigKeys: [
-      RemoteConfigKey(name: 'show_ads', defaultValue: true, valueType: bool),
-      RemoteConfigKey(name: 'open_splash', defaultValue: true, valueType: bool),
-      RemoteConfigKey(name: 'inter_splash', defaultValue: true, valueType: bool),
-      RemoteConfigKey(name: 'rate_aoa_inter_splash', defaultValue: '10_90', valueType: String),
-      RemoteConfigKey(name: 'interstitial_from_start', defaultValue: 15, valueType: int),
-      RemoteConfigKey(name: 'interval_between_interstitial', defaultValue: 20, valueType: int),
+      RemoteConfigKeyLib(name: 'show_ads', defaultValue: true, valueType: bool),
+      RemoteConfigKeyLib(name: 'open_splash', defaultValue: true, valueType: bool),
+      RemoteConfigKeyLib(name: 'inter_splash', defaultValue: true, valueType: bool),
+      RemoteConfigKeyLib(name: 'rate_aoa_inter_splash', defaultValue: '10_90', valueType: String),
+      RemoteConfigKeyLib(name: 'interstitial_from_start', defaultValue: 15, valueType: int),
+      RemoteConfigKeyLib(name: 'interval_between_interstitial', defaultValue: 20, valueType: int),
     ],
         adjustToken: '',
         listResumeId: [],
