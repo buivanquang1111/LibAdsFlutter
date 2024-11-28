@@ -118,6 +118,19 @@ class AdmobAds {
   }) async {
     final Completer<bool> organicCompleter = Completer<bool>();
 
+    const timeoutDuration = Duration(seconds: 12);
+
+    final Completer<void> timeoutCompleter = Completer<void>();
+
+
+    Future.delayed(timeoutDuration).then((_) {
+      if (!timeoutCompleter.isCompleted) {
+        timeoutCompleter.completeError(
+          TimeoutException('Operation timed out after $timeoutDuration'),
+        );
+      }
+    });
+
     ///call remote config
     Future<void> initRemoteConfig =
         RemoteConfigLib.init(remoteConfigKeys: remoteConfigKeys).then(
@@ -152,30 +165,54 @@ class AdmobAds {
       onInitialized: (canRequestAds) {},
     );
 
-    try {
-      await Future.any([
-        Future.wait([
-          initRemoteConfig,
-          initOrganicAdjust,
-          initUMP,
-          organicCompleter.future
-        ]),
-        Future.delayed(const Duration(seconds: 12), () {
-          _logger.logInfo('time_out_call');
-          onNextAction();
-          return;
-        }),
-      ]);
-    } catch (e) {
-      if (e is TimeoutException) {
-        _logger.logInfo('time_out_call: $e');
-        onNextAction();
-        return;
-      } else {
-        onNextAction();
-        _logger.logInfo('An error occurred: $e');
+    final tasksFuture = Future.wait([
+      initRemoteConfig,
+      initOrganicAdjust,
+      initUMP,
+      organicCompleter.future,
+    ]).then((_) {
+      if (!timeoutCompleter.isCompleted) {
+        timeoutCompleter.complete();
       }
+    }).catchError((e) {
+      if (!timeoutCompleter.isCompleted) {
+        timeoutCompleter.completeError(e);
+      }
+    });
+
+    try {
+      await Future.any([tasksFuture, timeoutCompleter.future]);
+      print('time_out_call: All tasks completed successfully.');
+    } on TimeoutException catch (e) {
+      print('time_out_call: Timeout ${e.message}');
+    } catch (e) {
+      print('time_out_call: Error $e');
     }
+
+    // try {
+    //   await Future.any([
+    //     Future.wait([
+    //       initRemoteConfig,
+    //       initOrganicAdjust,
+    //       initUMP,
+    //       organicCompleter.future
+    //     ]),
+    //     Future.delayed(const Duration(seconds: 12), () {
+    //       _logger.logInfo('time_out_call');
+    //       onNextAction();
+    //       return;
+    //     }),
+    //   ]);
+    // } catch (e) {
+    //   if (e is TimeoutException) {
+    //     _logger.logInfo('time_out_call: $e');
+    //     onNextAction();
+    //     return;
+    //   } else {
+    //     onNextAction();
+    //     _logger.logInfo('An error occurred: $e');
+    //   }
+    // }
 
     bool isOrganic = await organicCompleter.future;
     if (isOrganic) {
