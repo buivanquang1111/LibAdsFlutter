@@ -5,6 +5,8 @@ import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:amazic_ads_flutter/src/utils/preferences_util.dart';
+import 'package:amazic_ads_flutter/src/utils/remote_config.dart';
+import 'package:amazic_ads_flutter/src/utils/remote_config_key.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:amazic_ads_flutter/src/utils/amazic_logger.dart';
 
@@ -13,6 +15,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:visibility_detector/visibility_detector.dart';
 
+import '../adjust_config/call_organic_adjust.dart';
 import '../admob_ads_flutter.dart';
 import '../channel/ad_platform_interface.dart';
 import '../channel/loading_channel.dart';
@@ -87,6 +90,241 @@ class AdmobAds {
 
   ///Thời gian mở app
   int _openAppTime = 0;
+
+  Future<void> initAllDataSplash({
+    RequestConfiguration? admobConfiguration,
+    required List<RemoteConfigKey> remoteConfigKeys,
+    bool enableLogger = true,
+    bool debugUmp = false,
+    Future<dynamic> Function(bool canRequestAds)? initMediationCallback,
+    required String adjustToken,
+    Widget? child,
+    bool isShowWelComeScreenAfterAds = true,
+    required List<String> listResumeId,
+    required bool adResumeConfig,
+    required Function() onSetRemoteConfigOrganic,
+    required Function() onStartLoadBannerSplash,
+    required Function() onNextAction,
+    required String keyRateAOA,
+    required String keyOpenSplash,
+    required String keyInterSplash,
+    required String keyIntervalBetweenInterstitial,
+    required String keyInterstitialFromStart,
+    String? linkServer,
+    String? appId,
+    String? packageName,
+  }) async {
+    final Completer<bool> organicCompleter = Completer<bool>();
+
+    ///call remote config
+    Future<void> initRemoteConfig =
+        RemoteConfig.init(remoteConfigKeys: remoteConfigKeys).then(
+      (value) {
+        RemoteConfig.getRemoteConfig();
+      },
+    );
+
+    ///call Organic
+    Future<void> initOrganicAdjust =
+        CallOrganicAdjust.instance.initOrganicAdjust(
+            onOrganic: () {
+              if (!organicCompleter.isCompleted) {
+                organicCompleter.complete(true);
+              }
+            },
+            onError: (p0) {
+              if (!organicCompleter.isCompleted) {
+                organicCompleter.complete(false);
+              }
+            },
+            onNextAction: () {},
+            appToken: adjustToken);
+
+    ///call UMP
+    Future<void> initUMP = initUMPAndAdmob(
+      adMobAdRequest: const AdRequest(httpTimeoutMillis: 30000),
+      admobConfiguration: admobConfiguration,
+      initMediationCallback: initMediationCallback,
+      debugUmp: debugUmp,
+      enableLogger: enableLogger,
+      onInitialized: (canRequestAds) {},
+    );
+
+    try {
+      await Future.any([
+        Future.wait([
+          initRemoteConfig,
+          initOrganicAdjust,
+          initUMP,
+          organicCompleter.future
+        ]),
+        Future.delayed(const Duration(seconds: 12), () {
+          _logger.logInfo('time_out_call');
+          onNextAction();
+          return;
+        }),
+      ]);
+    } catch (e) {
+      if (e is TimeoutException) {
+        _logger.logInfo('time_out_call: $e');
+        onNextAction();
+        return;
+      } else {
+        onNextAction();
+        _logger.logInfo('An error occurred: $e');
+      }
+    }
+
+    bool isOrganic = await organicCompleter.future;
+    if (isOrganic) {
+      onSetRemoteConfigOrganic();
+    }
+
+    /// sau khi call xong thì load Bannner Splash luôn
+    onStartLoadBannerSplash();
+
+    ///set time
+    setOpenAppTime(DateTime.now().millisecondsSinceEpoch);
+    setTimeIntervalBetweenInter(RemoteConfig.configs[
+        RemoteConfigKey.getKeyByName(keyIntervalBetweenInterstitial).name]);
+    setTimeIntervalInterFromStart(RemoteConfig
+        .configs[RemoteConfigKey.getKeyByName(keyInterstitialFromStart).name]);
+
+    ///call id ads
+    await NetworkRequest.instance
+        .fetchAdsModel(
+      linkServer: linkServer,
+      appId: appId,
+      packageName: packageName,
+      onResponse: () {
+        initAdsResumeAndSplash(
+            keyRateAOA: keyRateAOA,
+            keyOpenSplash: keyOpenSplash,
+            keyInterSplash: keyInterSplash,
+            onNextAction: onNextAction,
+            listResumeId: listResumeId,
+            adResumeConfig: adResumeConfig);
+      },
+      onError: (p0) {
+        onNextAction();
+      },
+    )
+        .timeout(
+      const Duration(seconds: 4),
+      onTimeout: () {
+        initAdsResumeAndSplash(
+            keyRateAOA: keyRateAOA,
+            keyOpenSplash: keyOpenSplash,
+            keyInterSplash: keyInterSplash,
+            onNextAction: onNextAction,
+            listResumeId: listResumeId,
+            adResumeConfig: adResumeConfig);
+        return;
+      },
+    );
+  }
+
+  //init ads resume and ads splash
+  Future<void> initAdsResumeAndSplash({
+    required String keyRateAOA,
+    required String keyOpenSplash,
+    required String keyInterSplash,
+    required Function() onNextAction,
+    Widget? child,
+    bool isShowWelComeScreenAfterAds = true,
+    required List<String> listResumeId,
+    required bool adResumeConfig,
+  }) async {
+    ///khởi tạo ads resume
+    if (navigatorKey != null) {
+      appLifecycleReactor = AppLifecycleReactor(
+          navigatorKey: navigatorKey!,
+          listId: listResumeId,
+          config: adResumeConfig,
+          adNetwork: AdNetwork.admob,
+          child: child,
+          isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds);
+      appLifecycleReactor!.listenToAppStateChanges();
+    }
+
+    ///showAds inter/open Splash
+    showAdsSplash(
+        keyRateAOA: keyRateAOA,
+        keyOpenSplash: keyOpenSplash,
+        keyInterSplash: keyInterSplash,
+        onNextAction: onNextAction);
+  }
+
+  ///init UMP
+  Future<void> initUMPAndAdmob({
+    AdRequest? adMobAdRequest,
+    RequestConfiguration? admobConfiguration,
+    bool enableLogger = true,
+    bool debugUmp = false,
+    Future<dynamic> Function(bool canRequestAds)? initMediationCallback,
+    required Function(bool canRequestAds) onInitialized,
+  }) async {
+    VisibilityDetectorController.instance.updateInterval = Duration.zero;
+    if (enableLogger) _logger.enable(enableLogger);
+
+    if (adMobAdRequest != null) {
+      _adRequest = adMobAdRequest;
+    }
+
+    ConsentManager.ins.debugUmp = debugUmp;
+    ConsentManager.ins.testIdentifiers = admobConfiguration?.testDeviceIds;
+    ConsentManager.ins.initMediation = initMediationCallback;
+
+    if (debugUmp) {
+      resetUmp();
+    }
+    ConsentManager.ins.handleRequestUmp(
+        onPostExecute: () => onInitialized(ConsentManager.ins.canRequestAds));
+
+    this.admobConfiguration = admobConfiguration;
+    if (navigatorKey?.currentContext != null) {
+      admobAdSize =
+          await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
+              MediaQuery.sizeOf(navigatorKey!.currentContext!).width.toInt());
+    }
+  }
+
+  ///show Ads inter/open Splash
+  void showAdsSplash(
+      {required String keyRateAOA,
+      required String keyOpenSplash,
+      required String keyInterSplash,
+      required Function() onNextAction}) {
+    final String rateAoa =
+        RemoteConfig.configs[RemoteConfigKey.getKeyByName(keyRateAOA).name];
+    final bool isShowOpen =
+        RemoteConfig.configs[RemoteConfigKey.getKeyByName(keyOpenSplash).name];
+    final bool isShowInter =
+        RemoteConfig.configs[RemoteConfigKey.getKeyByName(keyInterSplash).name];
+
+    AdsSplash.instance.init(isShowInter, isShowOpen, rateAoa);
+    AdsSplash.instance.showAdSplash(
+      listOpenId: NetworkRequest.instance.getListIDByName(keyOpenSplash),
+      listInterId: NetworkRequest.instance.getListIDByName(keyInterSplash),
+      onAdShowed: (adNetwork, adUnitType, data) {},
+      onAdDismissed: (adNetwork, adUnitType, data) {
+        AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
+        onNextAction();
+      },
+      onDisabled: () {
+        AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
+        onNextAction();
+      },
+      onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
+        AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
+        onNextAction();
+      },
+      onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
+        AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
+        onNextAction();
+      },
+    );
+  }
 
   Future<void> initAdmob() async {
     if (_isAdmobInitialized) {

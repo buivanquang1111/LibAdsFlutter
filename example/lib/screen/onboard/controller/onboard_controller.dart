@@ -21,8 +21,6 @@ class OnboardController extends GetxController {
 
   @override
   void onInit() {
-    EventLog.logScreenView("OnBoardScreen", "OnBoardScreen");
-    EventLog.logEvent("Onboarding1_view", null);
     super.onInit();
   }
 
@@ -38,9 +36,7 @@ class OnboardController extends GetxController {
   void onPress() {
     if (index.value < 2) {
       if (index.value == 1) {
-        EventLog.logEvent("Onboarding2_view", null);
       } else {
-        EventLog.logEvent("Onboarding3_view", null);
       }
       txt.value = L.nextBtn;
       index.value += 1;

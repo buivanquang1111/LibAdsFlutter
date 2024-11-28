@@ -58,8 +58,6 @@ class LanguageController extends GetxController implements GetxService {
     await PreferencesUtil.putLanguage(currentLanguage.value);
     previousLanguage = PreferencesUtil.getLanguage().obs;
     LanguageUtil.changeLocale(currentLanguage.value);
-    EventLog.logEvent("language_fo_save_click",
-        {"language_fo_save_click": currentLanguage.value});
     pushCurrentLangOnTop();
     Get.to(const OnboardScreen1());
   }

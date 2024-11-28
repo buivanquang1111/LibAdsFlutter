@@ -29,6 +29,8 @@ dependencies:
   advertising_id: ^2.6.0
   in_app_purchase: ^3.2.0
   in_app_purchase_storekit: ^0.3.18+1
+  firebase_analytics: ^11.0.0
+  firebase_remote_config: ^5.0.0
 
 dev_dependencies:
   flutter_test:

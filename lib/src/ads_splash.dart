@@ -1,7 +1,9 @@
 import 'dart:math';
 
+import 'package:amazic_ads_flutter/adjust_config/call_organic_adjust.dart';
 import 'package:amazic_ads_flutter/admob_ads_flutter.dart';
 import 'package:amazic_ads_flutter/src/enums/state_ad_splash.dart';
+import 'package:amazic_ads_flutter/src/utils/event_log.dart';
 
 import 'ads_base.dart';
 
@@ -16,6 +18,11 @@ class AdsSplash {
   bool? configAdsInter;
 
   init(bool showInter, bool showOpen, String rate) {
+    EventLog.logEvent("inter_splash_tracking", parameters: {
+      'splash_detail':
+          '${ConsentManager.ins.canRequestAds}_${CallOrganicAdjust.instance.isOrganic()}_${AdmobAds.instance.isDeviceOffline()}_${AdmobAds.instance.isEnabled}_'
+    });
+
     configAdsOpen = showOpen;
     configAdsInter = showInter;
     if (showInter && showOpen) {
@@ -43,42 +50,41 @@ class AdsSplash {
         listId: listOpenId,
         config: configAdsOpen!,
         onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
-          onAdFailedToShow?.call(adNetwork,adUnitType,data,errorMessage);
+          onAdFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);
         },
         onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
-          onAdFailedToLoad?.call(adNetwork,adUnitType,data,errorMessage);
+          onAdFailedToLoad?.call(adNetwork, adUnitType, data, errorMessage);
         },
         onDisabled: () {
           onDisabled?.call();
         },
         onAdDismissed: (adNetwork, adUnitType, data) {
-          onAdDismissed?.call(adNetwork,adUnitType,data);
+          onAdDismissed?.call(adNetwork, adUnitType, data);
         },
         onAdShowed: (adNetwork, adUnitType, data) {
-          onAdShowed?.call(adNetwork,adUnitType,data);
+          onAdShowed?.call(adNetwork, adUnitType, data);
         },
       );
     } else if (getState() == StateAdSplash.inter) {
       AdmobAds.instance.showInterstitialAd(
           listId: listInterId,
           config: configAdsInter!,
-        isShowAdsSplash: true,
-        onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
-          onAdFailedToShow?.call(adNetwork,adUnitType,data,errorMessage);
-        },
-        onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
-          onAdFailedToLoad?.call(adNetwork,adUnitType,data,errorMessage);
-        },
-        onDisabled: () {
-          onDisabled?.call();
-        },
-        onAdDismissed: (adNetwork, adUnitType, data) {
-         onAdDismissed?.call(adNetwork,adUnitType,data);
-        },
-        onAdShowed: (adNetwork, adUnitType, data) {
-          onAdShowed?.call(adNetwork,adUnitType,data);
-        }
-      );
+          isShowAdsSplash: true,
+          onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
+            onAdFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);
+          },
+          onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
+            onAdFailedToLoad?.call(adNetwork, adUnitType, data, errorMessage);
+          },
+          onDisabled: () {
+            onDisabled?.call();
+          },
+          onAdDismissed: (adNetwork, adUnitType, data) {
+            onAdDismissed?.call(adNetwork, adUnitType, data);
+          },
+          onAdShowed: (adNetwork, adUnitType, data) {
+            onAdShowed?.call(adNetwork, adUnitType, data);
+          });
     } else {
       onDisabled?.call();
     }
@@ -88,7 +94,7 @@ class AdsSplash {
     final int rateInter;
     final int rateOpen;
 
-    if(isValidFormat(rate)) {
+    if (isValidFormat(rate)) {
       rateOpen = int.tryParse(rate.split('_')[0]) ?? 30;
       rateInter = int.tryParse(rate.split('_')[1]) ?? 70;
       print('rateOpen: $rateOpen');
@@ -100,14 +106,14 @@ class AdsSplash {
       } else {
         setState(StateAdSplash.noAds);
       }
-    }else{
+    } else {
       setState(StateAdSplash.noAds);
     }
   }
 
   bool isValidFormat(String input) {
-    // Kiểm tra độ dài chuỗi phải ít nhất là 5 ký tự (ví dụ: "x_yy")
-    if (input.length < 5) {
+    // Kiểm tra độ dài chuỗi phải ít nhất là 4 ký tự (ví dụ: "x_yy")
+    if (input.length < 4) {
       return false;
     }
 

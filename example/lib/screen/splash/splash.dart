@@ -17,8 +17,6 @@ import 'package:example/language/l.dart';
 import 'package:example/main.dart';
 import 'package:example/screen/language/language.dart';
 import 'package:example/utils/connectivity.dart';
-import 'package:example/utils/event_log.dart';
-import 'package:example/utils/remote_config.dart';
 
 // PreloadNativeController? introAdCtrl;
 AdsBase? preloadAds;
@@ -36,164 +34,120 @@ class SplashState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    EventLog.logScreenView("SplashScreen", "SplashScreen");
-    initAdModule();
-    EventLog.logEvent("splash_open", null);
+    adIdManager = DevAdIdManager();
+    AdmobAds.instance.initAllDataSplash(remoteConfigKeys: [
+      RemoteConfigKey(name: 'show_ads', defaultValue: true, valueType: bool),
+      RemoteConfigKey(name: 'open_splash', defaultValue: true, valueType: bool),
+      RemoteConfigKey(name: 'inter_splash', defaultValue: true, valueType: bool),
+      RemoteConfigKey(name: 'rate_aoa_inter_splash', defaultValue: '10_90', valueType: String),
+      RemoteConfigKey(name: 'interstitial_from_start', defaultValue: 15, valueType: int),
+      RemoteConfigKey(name: 'interval_between_interstitial', defaultValue: 20, valueType: int),
+    ],
+        adjustToken: '',
+        listResumeId: [],
+        adResumeConfig: true,
+        onSetRemoteConfigOrganic: () {
+          
+        },
+        onStartLoadBannerSplash: () {
+          
+        },
+        onNextAction: () {
+          handleNavigate();
+        },
+        keyRateAOA: 'keyRateAOA',
+        keyOpenSplash: 'open_splash',
+        keyInterSplash: 'inter_splash',
+        keyIntervalBetweenInterstitial: 'interval_between_interstitial',
+        keyInterstitialFromStart: 'interstitial_from_start');
   }
 
   Future<void> handleNavigate() async {
     Get.offAll(const LanguageScreen(isFromSetting: false));
   }
 
-  Future<void> initAdModule() async {
-    AdmobAds.instance.setOpenAppTime(DateTime.now().millisecondsSinceEpoch);
-    AdmobAds.instance.setTimeIntervalBetweenInter(RemoteConfig
-            .configs[RemoteConfigKey.interval_between_interstitial.name] *
-        1000);
-    AdmobAds.instance.setTimeIntervalInterFromStart(
-        RemoteConfig.configs[RemoteConfigKey.interval_from_start.name] * 1000);
-
-    NetworkRequest.instance.fetchAdsModel(
-        linkServer: null,
-        appId: null,
-        packageName: null,
-        onResponse: () async {
-          print(
-              'inter_splash: ${NetworkRequest.instance.getListIDByName('inter_splash')}');
-          print(
-              'open_splash: ${NetworkRequest.instance.getListIDByName('open_splash')}');
-
-          adIdManager = DevAdIdManager();
-          try {
-            await AdmobAds.instance.initialize(
-              adResumeConfig:
-                  RemoteConfig.configs[RemoteConfigKey.appopen_resume.name],
-              adMobAdRequest: const AdRequest(httpTimeoutMillis: 30000),
-              admobConfiguration: RequestConfiguration(testDeviceIds: ['']),
-              navigatorKey: Get.key,
-              listResumeId:
-                  NetworkRequest.instance.getListIDByName('open_resume'),
-              initMediationCallback: (bool canRequestAds) {
-                print('initMediationCallback: $canRequestAds');
-                return const MethodChannel('channel')
-                    .invokeMethod<bool>('init_mediation', canRequestAds);
-              },
-              onInitialized: (bool canRequestAds) {
-                if (canRequestAds) {
-                  // if (RemoteConfig.configs[RemoteConfigKey.native_intro.name]) {
-                  //   introAdCtrl = PreloadNativeController(
-                  //     autoReloadOnFinish: false,
-                  //     nativeNormalId: NetworkRequest.instance
-                  //         .getListIDByName('native_intro')
-                  //         .first,
-                  //     nativeMediumId: null,
-                  //     nativeHighId: null,
-                  //   );
-                  //   if (introAdCtrl != null) {
-                  //     introAdCtrl!.load();
-                  //   }
-                  // }
-                  // initAndLoadAd();
-                  print(
-                      'listIdBanner: ${NetworkRequest.instance.getListIDByName('banner_splash').first}');
-                  // setState(() {});
-                  showAdsSplash();
-                } else {
-                  handleNavigate();
-                }
-              },
-            );
-          } catch (e) {
-            handleNavigate();
-          }
-        },
-        onError: (e) {});
-  }
-
-  // void initAndLoadAd() {
-  //   if (AdHelper.splashType == AdSplashType.open) {
-  //     AdmobAds.instance.showAppOpen(
-  //       onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
-  //         AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
-  //         handleNavigate();
+  // Future<void> initAdModule() async {
+  //   AdmobAds.instance.setOpenAppTime(DateTime.now().millisecondsSinceEpoch);
+  //   AdmobAds.instance.setTimeIntervalBetweenInter(RemoteConfig
+  //           .configs[RemoteConfigKey.interval_between_interstitial.name] *
+  //       1000);
+  //   AdmobAds.instance.setTimeIntervalInterFromStart(
+  //       RemoteConfig.configs[RemoteConfigKey.interval_from_start.name] * 1000);
+  //
+  //   NetworkRequest.instance.fetchAdsModel(
+  //       linkServer: null,
+  //       appId: null,
+  //       packageName: null,
+  //       onResponse: () async {
+  //         print(
+  //             'inter_splash: ${NetworkRequest.instance.getListIDByName('inter_splash')}');
+  //         print(
+  //             'open_splash: ${NetworkRequest.instance.getListIDByName('open_splash')}');
+  //
+  //         adIdManager = DevAdIdManager();
+  //         try {
+  //           await AdmobAds.instance.initialize(
+  //             adResumeConfig:
+  //                 RemoteConfig.configs[RemoteConfigKey.appopen_resume.name],
+  //             adMobAdRequest: const AdRequest(httpTimeoutMillis: 30000),
+  //             admobConfiguration: RequestConfiguration(testDeviceIds: ['']),
+  //             navigatorKey: Get.key,
+  //             listResumeId:
+  //                 NetworkRequest.instance.getListIDByName('open_resume'),
+  //             initMediationCallback: (bool canRequestAds) {
+  //               print('initMediationCallback: $canRequestAds');
+  //               return const MethodChannel('channel')
+  //                   .invokeMethod<bool>('init_mediation', canRequestAds);
+  //             },
+  //             onInitialized: (bool canRequestAds) {
+  //               if (canRequestAds) {
+  //                 print(
+  //                     'listIdBanner: ${NetworkRequest.instance.getListIDByName('banner_splash').first}');
+  //                 showAdsSplash();
+  //               } else {
+  //                 handleNavigate();
+  //               }
+  //             },
+  //           );
+  //         } catch (e) {
+  //           handleNavigate();
+  //         }
   //       },
-  //       onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
-  //         AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
-  //         handleNavigate();
-  //       },
-  //       onDisabled: () {
-  //         AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
-  //         handleNavigate();
-  //       },
-  //       onAdDismissed: (adNetwork, adUnitType, data) {
-  //         AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
-  //       },
-  //       onAdShowed: (adNetwork, adUnitType, data) {
-  //         handleNavigate();
-  //       },
-  //       adId: adIdManager.openSplash,
-  //       config: RemoteConfig.configs[RemoteConfigKey.open_splash.name],
-  //     );
-  //   } else if (AdHelper.splashType == AdSplashType.inter) {
-  //     AdmobAds.instance.showInterstitialAd(
-  //       onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
-  //         AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
-  //         handleNavigate();
-  //       },
-  //       onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
-  //         AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
-  //         handleNavigate();
-  //       },
-  //       onDisabled: () {
-  //         AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
-  //         handleNavigate();
-  //       },
-  //       onAdDismissed: (adNetwork, adUnitType, data) {
-  //         AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
-  //       },
-  //       onAdShowed: (adNetwork, adUnitType, data) {
-  //         handleNavigate();
-  //       },
-  //       adId: adIdManager.interSplash,
-  //       config: RemoteConfig.configs[RemoteConfigKey.inter_splash.name],
-  //     );
-  //   } else {
-  //     AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
-  //     handleNavigate();
-  //   }
+  //       onError: (e) {});
   // }
-
-  void showAdsSplash() {
-    final String rateAoa =
-        RemoteConfig.configs[RemoteConfigKey.rate_aoa_inter_splash.name];
-    final bool isShowOpen =
-        RemoteConfig.configs[RemoteConfigKey.open_splash.name];
-    final bool isShownInter =
-        RemoteConfig.configs[RemoteConfigKey.inter_splash.name];
-
-    AdsSplash.instance.init(isShownInter, isShowOpen, rateAoa);
-    AdsSplash.instance.showAdSplash(
-      listOpenId: NetworkRequest.instance.getListIDByName('open_splash'),
-      listInterId: NetworkRequest.instance.getListIDByName('inter_splash'),
-      onAdShowed: (adNetwork, adUnitType, data) {},
-      onAdDismissed: (adNetwork, adUnitType, data) {
-        AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
-        handleNavigate();
-      },
-      onDisabled: () {
-        AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
-        handleNavigate();
-      },
-      onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
-        AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
-        handleNavigate();
-      },
-      onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
-        AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
-        handleNavigate();
-      },
-    );
-  }
+  //
+  //
+  // void showAdsSplash() {
+  //   final String rateAoa =
+  //       RemoteConfig.configs[RemoteConfigKey.rate_aoa_inter_splash.name];
+  //   final bool isShowOpen =
+  //       RemoteConfig.configs[RemoteConfigKey.open_splash.name];
+  //   final bool isShownInter =
+  //       RemoteConfig.configs[RemoteConfigKey.inter_splash.name];
+  //
+  //   AdsSplash.instance.init(isShownInter, isShowOpen, rateAoa);
+  //   AdsSplash.instance.showAdSplash(
+  //     listOpenId: NetworkRequest.instance.getListIDByName('open_splash'),
+  //     listInterId: NetworkRequest.instance.getListIDByName('inter_splash'),
+  //     onAdShowed: (adNetwork, adUnitType, data) {},
+  //     onAdDismissed: (adNetwork, adUnitType, data) {
+  //       AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
+  //       handleNavigate();
+  //     },
+  //     onDisabled: () {
+  //       AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
+  //       handleNavigate();
+  //     },
+  //     onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
+  //       AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
+  //       handleNavigate();
+  //     },
+  //     onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
+  //       AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
+  //       handleNavigate();
+  //     },
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {

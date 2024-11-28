@@ -47,9 +47,6 @@ class LanguageScreenState extends State<LanguageScreen>
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     print('appLifeState: initState');
-
-    EventLog.logScreenView("LanguageScreen", "LanguageScreen");
-    EventLog.logEvent("language_fo_open", null);
     super.initState();
   }
 

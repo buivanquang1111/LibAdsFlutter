@@ -35,6 +35,22 @@ class OnBoardState1 extends State<OnboardScreen1> {
   void initState() {
     super.initState();
 
+    loadAdsIntro();
+  }
+
+  reloadAdsIntro() {
+    if (preloadAds != null) {
+      print('check_load_native_intro: reload');
+      preloadAds = null;
+      setState(() {
+
+      });
+      loadAdsIntro();
+    }
+  }
+
+  loadAdsIntro() {
+    print('check_load_native_intro: load');
     AdmobAds.instance
         .loadNativeAds(
       config: true,
@@ -43,14 +59,17 @@ class OnBoardState1 extends State<OnboardScreen1> {
       listId: NetworkRequest.instance.getListIDByName('native_intro'),
       onAdLoaded: (adNetwork, adUnitType, data) {
         setState(() {});
+        print('check_load_native_intro: xong');
       },
       onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
         setState(() {});
+        print('check_load_native_intro: false');
       },
     )
         .then(
       (ad) {
         preloadAds = ad;
+        print('check_load_native_intro: co data');
         print('check_show_native. 2');
       },
     );
@@ -67,7 +86,7 @@ class OnBoardState1 extends State<OnboardScreen1> {
               onPressed: () {
                 toggleAd();
               },
-              child: Text(isShowAd ? 'Hide Ad' : 'Show Ad'),
+              child: Text(isShowAd ? 'Hide Ads' : 'Show Ad'),
             ),
             SizedBox(height: 20.h),
             SizedBox(
@@ -80,6 +99,7 @@ class OnBoardState1 extends State<OnboardScreen1> {
                 },
                 onPageChanged: (value) {
                   controller.onchange(value);
+                  reloadAdsIntro();
                 },
               ),
             ),
