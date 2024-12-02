@@ -33,3 +33,4 @@ export 'package:amazic_ads_flutter/src/amazic_ads/native_preload_ads.dart';
 export 'package:amazic_ads_flutter/src/utils/event_log.dart';
 export 'package:amazic_ads_flutter/src/utils/remote_config.dart';
 export 'package:amazic_ads_flutter/src/utils/remote_config_key.dart';
+export 'package:amazic_ads_flutter/channel/iap_method_channel.dart';

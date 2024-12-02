@@ -49,11 +49,11 @@ class AdmobAds {
   bool get isFullscreenAdShowing => _isFullscreenAdShowing;
 
   /// Enable or disable all ads
-  bool _isEnabled = true;
+  bool _isShowAllAds = true;
 
-  void enableAd(bool value) => _isEnabled = value;
+  void setShowAllAds(bool value) => _isShowAllAds = value;
 
-  bool get isEnabled => _isEnabled;
+  bool get isShowAllAds => _isShowAllAds;
 
   // final _eventController = EasyEventController();
   // Stream<AdEvent> get onEvent => _eventController.onEvent;
@@ -115,6 +115,7 @@ class AdmobAds {
     String? linkServer,
     String? appId,
     String? packageName,
+    bool isIap = false,
   }) async {
     final Completer<bool> organicCompleter = Completer<bool>();
 
@@ -191,35 +192,24 @@ class AdmobAds {
       onNextAction();
     }
 
-    // try {
-    //   await Future.any([
-    //     Future.wait([
-    //       initRemoteConfig,
-    //       initOrganicAdjust,
-    //       initUMP,
-    //       organicCompleter.future
-    //     ]),
-    //     Future.delayed(const Duration(seconds: 12), () {
-    //       _logger.logInfo('time_out_call');
-    //       onNextAction();
-    //       return;
-    //     }),
-    //   ]);
-    // } catch (e) {
-    //   if (e is TimeoutException) {
-    //     _logger.logInfo('time_out_call: $e');
-    //     onNextAction();
-    //     return;
-    //   } else {
-    //     onNextAction();
-    //     _logger.logInfo('An error occurred: $e');
-    //   }
-    // }
-
+    ///set giá trị remote TH Organic
     bool isOrganic = await organicCompleter.future;
     if (isOrganic) {
       onSetRemoteConfigOrganic();
     }
+
+    ///set k show all ads TH đã mua sub
+    if(isIap){
+      IapMethodChannel.instance().setUpListener(onAction: () {
+
+      },);
+      bool isPurchase = await IapMethodChannel.instance().isPurchase();
+      if(isPurchase){
+        //off all ads
+        setShowAllAds(false);
+      }
+    }
+
 
     /// sau khi call xong thì load Bannner Splash luôn
     onStartLoadBannerSplash();
@@ -561,7 +551,7 @@ class AdmobAds {
     EasyAdEarnedReward? onEarnedReward,
     EasyAdOnPaidEvent? onPaidEvent,
   }) async {
-    if (!AdmobAds.instance.isEnabled) {
+    if (!AdmobAds.instance.isShowAllAds) {
       return null;
     }
     if (await AdmobAds.instance.isDeviceOffline()) {
@@ -786,7 +776,7 @@ class AdmobAds {
     EasyAdOnPaidEvent? onPaidEvent,
     Function? onDismissCollapse,
   }) async {
-    if (!isEnabled || !config) {
+    if (!isShowAllAds || !config) {
       onDisabled?.call();
       return;
     }
@@ -883,8 +873,8 @@ class AdmobAds {
     EasyAdCallback? onAdDismissed,
     EasyAdOnPaidEvent? onPaidEvent,
   }) async {
-    if (!isEnabled || !config) {
-      _logger.logInfo('1. isEnabled: $isEnabled, config: $config');
+    if (!isShowAllAds || !config) {
+      _logger.logInfo('1. isEnabled: $isShowAllAds, config: $config');
       onDisabled?.call();
       return;
     }
@@ -1002,7 +992,7 @@ class AdmobAds {
     EasyAdEarnedReward? onEarnedReward,
     EasyAdOnPaidEvent? onPaidEvent,
   }) async {
-    if (!isEnabled || !config) {
+    if (!isShowAllAds || !config) {
       onDisabled?.call();
       return;
     }
@@ -1099,7 +1089,7 @@ class AdmobAds {
     EasyAdOnPaidEvent? onAppOpenPaidEvent,
     required bool configAppOpen,
   }) async {
-    if (!isEnabled) {
+    if (!isShowAllAds) {
       onDisabled?.call();
       return;
     }

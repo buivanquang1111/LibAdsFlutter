@@ -132,7 +132,7 @@ class AdmobNativeAd extends AdsBase {
     EdgeInsetsGeometry? margin,
   }) {
 
-    if (!AdmobAds.instance.isEnabled) {
+    if (!AdmobAds.instance.isShowAllAds) {
       return const SizedBox(
         height: 1,
         width: 1,

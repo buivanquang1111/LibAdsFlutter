@@ -20,7 +20,7 @@ class AdsSplash {
   init(bool showInter, bool showOpen, String rate) {
     EventLogLib.logEvent("inter_splash_tracking", parameters: {
       'splash_detail':
-          '${ConsentManager.ins.canRequestAds}_${CallOrganicAdjust.instance.isOrganic()}_${AdmobAds.instance.isDeviceOffline()}_${AdmobAds.instance.isEnabled}_'
+          '${ConsentManager.ins.canRequestAds}_${CallOrganicAdjust.instance.isOrganic()}_${AdmobAds.instance.isDeviceOffline()}_${AdmobAds.instance.isShowAllAds}_'
     });
 
     configAdsOpen = showOpen;

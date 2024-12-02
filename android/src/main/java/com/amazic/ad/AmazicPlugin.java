@@ -23,6 +23,17 @@ import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 
+import android.text.SpannableString;
+import android.util.Log;
+
+import com.amazic.ad.iap.BillingCallback;
+import com.amazic.ad.iap.IAPManager;
+import com.amazic.ad.iap.ProductDetailCustom;
+import com.amazic.ad.iap.PurchaseCallback;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import java.util.Objects;
 
 /**
@@ -37,6 +48,10 @@ public class AmazicPlugin
     private Activity mActivity;
 
     static final String TAG = "AmazicPlugin";
+
+    private static final String CHANNEL_IAP = "channel_iap";
+    private MethodChannel methodChannel;
+    private IAPManager iapManager;
 
     @Override
     public void onAttachedToEngine(
@@ -61,6 +76,10 @@ public class AmazicPlugin
                             "loadingChannel"
                     );
         }
+
+        methodChannel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), CHANNEL_IAP);
+        methodChannel.setMethodCallHandler(this);
+        iapManager = new IAPManager();
     }
 
     @Override
@@ -104,6 +123,74 @@ public class AmazicPlugin
                 hideOverlayLoading();
                 break;
             }
+
+            //iap
+            case "initBilling":
+                List<String> productIds = call.argument("productIds");
+                if (productIds == null) productIds = new ArrayList<>();
+                List<String> finalProductIds = productIds;
+                initializePurchases(productIds, () -> {
+                    methodChannel.invokeMethod("onNextAction", finalProductIds);
+                    result.success(true);
+                });
+                break;
+
+            case "isPurchase":
+                boolean isPurchase = iapManager.isPurchase();
+                result.success(isPurchase);
+                break;
+
+            case "getSalePrice":
+                String idSub = call.arguments.toString();
+                String price = iapManager.getPriceSub(idSub);
+                result.success(price);
+                break;
+
+            case "getOriginalPrice":
+                handleGetOriginalPrice(call, result);
+                break;
+
+            case "getPricePerWeek":
+                handleGetPricePerWeek(call, result);
+                break;
+
+            case "getPrice":
+                String id = call.arguments.toString();
+                String priceValue = iapManager.getPrice(id);
+                result.success(priceValue);
+                break;
+
+            case "getCurrency":
+                String currencyId = call.arguments.toString();
+                String currency = iapManager.getCurrency(currencyId, IAPManager.typeSub);
+                result.success(currency);
+                break;
+
+            case "getPriceWithoutCurrency":
+                String priceId = call.arguments.toString();
+                double priceWithoutCurrency = iapManager.getPriceWithoutCurrency(priceId, IAPManager.typeSub);
+                result.success(priceWithoutCurrency);
+                break;
+
+            case "buySubscribe":
+                String subId = call.arguments.toString();
+                iapManager.subscribe(mActivity, subId);
+                result.success(true);
+                break;
+
+            case "purchaseListener":
+                iapManager.setPurchaseListener(new PurchaseCallback() {
+                    @Override
+                    public void onProductPurchased(String productId, String transactionDetails) {
+                        super.onProductPurchased(productId, transactionDetails);
+                        Log.e("android", "check_method --- onProductPurchased");
+                        methodChannel.invokeMethod("onSuccessfulPurchase", null);
+                        result.success(true);
+                    }
+                });
+                break;
+            //end
+
             default:
                 result.notImplemented();
                 break;
@@ -181,5 +268,74 @@ public class AmazicPlugin
     @Override
     public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
         mActivity = binding.getActivity();
+    }
+
+    //iap
+    private void initializePurchases(List<String> productList, Runnable callback) {
+        ArrayList<ProductDetailCustom> products = new ArrayList<>();
+        for (String productId : productList) {
+            products.add(new ProductDetailCustom(productId, IAPManager.typeSub));
+        }
+
+        iapManager.initBilling(context, products, new BillingCallback() {
+            @Override
+            public void onBillingServiceDisconnected() {
+                super.onBillingServiceDisconnected();
+                callback.run();
+            }
+
+            @Override
+            public void onBillingSetupFinished(int resultCode) {
+                super.onBillingSetupFinished(resultCode);
+                callback.run();
+            }
+        });
+    }
+
+    private void handleGetOriginalPrice(MethodCall call, MethodChannel.Result result) {
+        String idSub = call.argument("idSub");
+        int percentSale = call.argument("percentSale");
+        String salePriceString = iapManager.getPriceSub(idSub);
+        double salePrice = iapManager.getPriceWithoutCurrency(idSub, IAPManager.typeSub) / 1000000.0;
+        String currencySymbol = salePriceString.replaceAll("[0-9,.]", "");
+        boolean isSymbolAtStart = salePriceString.startsWith(currencySymbol);
+        double originalPrice = salePrice * (100 / (100 - percentSale));
+
+        SpannableString originalPriceString = new SpannableString(
+                isSymbolAtStart ? currencySymbol + formatNumber((int) originalPrice) : formatNumber((int) originalPrice) + currencySymbol
+        );
+
+        result.success(originalPriceString);
+    }
+
+    private void handleGetPricePerWeek(MethodCall call, MethodChannel.Result result) {
+        int numberWeek = call.argument("numberWeek");
+        String idSub = call.argument("idSub");
+        String salePriceString = iapManager.getPriceSub(idSub);
+        double salePrice = iapManager.getPriceWithoutCurrency(idSub, IAPManager.typeSub) / 1000000.0;
+        String currencySymbol = salePriceString.replaceAll("[0-9,.]", "");
+        boolean isSymbolAtStart = salePriceString.startsWith(currencySymbol);
+        int amountPerWeek = (int) (salePrice / numberWeek);
+
+        SpannableString amountPerWeekString = new SpannableString(
+                isSymbolAtStart ? currencySymbol + formatNumber(amountPerWeek) : formatNumber(amountPerWeek) + currencySymbol
+        );
+
+        result.success(amountPerWeekString);
+    }
+
+    private String formatNumber(int number) {
+        String numberString = String.valueOf(number);
+        StringBuilder stringBuilder = new StringBuilder();
+        int length = numberString.length();
+
+        for (int i = 0; i < length; i++) {
+            stringBuilder.append(numberString.charAt(i));
+            if ((length - i - 1) > 0 && (length - i - 1) % 3 == 0) {
+                stringBuilder.append('.');
+            }
+        }
+
+        return stringBuilder.toString();
     }
 }

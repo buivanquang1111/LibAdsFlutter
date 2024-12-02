@@ -126,7 +126,7 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
       }
       return;
     }
-    if (!AdmobAds.instance.isEnabled) {
+    if (!AdmobAds.instance.isShowAllAds) {
       if (_isLoading.value) {
         _isLoading.value = false;
       }

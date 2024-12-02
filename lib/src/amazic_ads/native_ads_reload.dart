@@ -126,7 +126,7 @@ class _NativeAdsReloadState extends State<NativeAdsReload> with WidgetsBindingOb
   }
 
   Future<void> _prepareAd() async {
-    if (!AdmobAds.instance.isEnabled) {
+    if (!AdmobAds.instance.isShowAllAds) {
       widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.banner, null);
       return;
     }

@@ -112,7 +112,7 @@ class _BannerAdsState extends State<BannerAds> with WidgetsBindingObserver {
       return;
     }
 
-    if (!AdmobAds.instance.isEnabled) {
+    if (!AdmobAds.instance.isShowAllAds) {
       widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.banner, null);
       return;
     }

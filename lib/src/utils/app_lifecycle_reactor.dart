@@ -100,7 +100,7 @@ class AppLifecycleReactor {
         if (AdmobAds.instance.isFullscreenAdShowing) {
           return;
         }
-        if (!AdmobAds.instance.isEnabled) {
+        if (!AdmobAds.instance.isShowAllAds) {
           return;
         }
         if (await AdmobAds.instance.isDeviceOffline()) {

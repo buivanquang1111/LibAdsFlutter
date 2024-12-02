@@ -115,7 +115,7 @@ class CollapseBannerAdsState extends State<CollapseBannerAds>
   }
 
   Future<void> _prepareAd() async {
-    if (!AdmobAds.instance.isEnabled) {
+    if (!AdmobAds.instance.isShowAllAds) {
       widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.banner, null);
       return;
     }
