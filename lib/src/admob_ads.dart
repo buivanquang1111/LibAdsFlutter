@@ -123,7 +123,6 @@ class AdmobAds {
 
     final Completer<void> timeoutCompleter = Completer<void>();
 
-
     Future.delayed(timeoutDuration).then((_) {
       if (!timeoutCompleter.isCompleted) {
         timeoutCompleter.completeError(
@@ -186,9 +185,11 @@ class AdmobAds {
       print('time_out_call: All tasks completed successfully.');
     } on TimeoutException catch (e) {
       print('time_out_call: Timeout ${e.message}');
+      EventLogLib.logEvent("inter_splash_id_timeout");
       onNextAction();
     } catch (e) {
       print('time_out_call: Error $e');
+      EventLogLib.logEvent("inter_splash_error");
       onNextAction();
     }
 
@@ -199,17 +200,16 @@ class AdmobAds {
     }
 
     ///set k show all ads TH đã mua sub
-    if(isIap){
-      IapMethodChannel.instance().setUpListener(onAction: () {
-
-      },);
+    if (isIap) {
+      IapMethodChannel.instance().setUpListener(
+        onAction: () {},
+      );
       bool isPurchase = await IapMethodChannel.instance().isPurchase();
-      if(isPurchase){
+      if (isPurchase) {
         //off all ads
         setShowAllAds(false);
       }
     }
-
 
     /// sau khi call xong thì load Bannner Splash luôn
     onStartLoadBannerSplash();
@@ -343,6 +343,22 @@ class AdmobAds {
     final bool isShowInter = RemoteConfigLib
         .configs[RemoteConfigKeyLib.getKeyByName(keyInterSplash).name];
 
+    ///log Event
+    bool idAdsCheck =
+        NetworkRequest.instance.listAdsId.isNotEmpty ? true : false;
+    EventLogLib.logEvent("inter_splash_tracking", parameters: {
+      'splash_detail':
+          '${ConsentManager.ins.canRequestAds}_${CallOrganicAdjust.instance.isOrganic()}_${AdmobAds.instance.isDeviceOffline()}_${AdmobAds.instance.isShowAllAds}_${idAdsCheck}_$rateAoa',
+      'ump': '${ConsentManager.ins.canRequestAds}',
+      'organic': '${CallOrganicAdjust.instance.isOrganic()}',
+      'haveinternet': '${AdmobAds.instance.isDeviceOffline()}',
+      'showallad': '${AdmobAds.instance.isShowAllAds}',
+      'idcheck': '$idAdsCheck',
+      'interremote_openremote_aoavalue': '${isShowInter}_${isShowOpen}_$rateAoa'
+    });
+
+    ///end Log
+
     AdsSplash.instance.init(isShowInter, isShowOpen, rateAoa);
     AdsSplash.instance.showAdSplash(
       listOpenId: NetworkRequest.instance.getListIDByName(nameAdsOpenSplash),
@@ -363,6 +379,9 @@ class AdmobAds {
       onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
         AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
         onNextAction();
+      },
+      onAdLoaded: (adNetwork, adUnitType, data) {
+        EventLogLib.logEvent("inter_splash_true");
       },
     );
   }

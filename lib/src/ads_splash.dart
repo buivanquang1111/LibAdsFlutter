@@ -18,11 +18,6 @@ class AdsSplash {
   bool? configAdsInter;
 
   init(bool showInter, bool showOpen, String rate) {
-    EventLogLib.logEvent("inter_splash_tracking", parameters: {
-      'splash_detail':
-          '${ConsentManager.ins.canRequestAds}_${CallOrganicAdjust.instance.isOrganic()}_${AdmobAds.instance.isDeviceOffline()}_${AdmobAds.instance.isShowAllAds}_'
-    });
-
     configAdsOpen = showOpen;
     configAdsInter = showInter;
     if (showInter && showOpen) {
@@ -44,6 +39,7 @@ class AdsSplash {
     Function()? onDisabled,
     EasyAdCallback? onAdDismissed,
     EasyAdCallback? onAdShowed,
+    EasyAdCallback? onAdLoaded,
   }) {
     if (getState() == StateAdSplash.open) {
       AdmobAds.instance.showAppOpen(
@@ -64,27 +60,34 @@ class AdsSplash {
         onAdShowed: (adNetwork, adUnitType, data) {
           onAdShowed?.call(adNetwork, adUnitType, data);
         },
+        onAdLoaded: (adNetwork, adUnitType, data) {
+          onAdLoaded?.call(adNetwork, adUnitType, data);
+        },
       );
     } else if (getState() == StateAdSplash.inter) {
       AdmobAds.instance.showInterstitialAd(
-          listId: listInterId,
-          config: configAdsInter!,
-          isShowAdsSplash: true,
-          onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
-            onAdFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);
-          },
-          onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
-            onAdFailedToLoad?.call(adNetwork, adUnitType, data, errorMessage);
-          },
-          onDisabled: () {
-            onDisabled?.call();
-          },
-          onAdDismissed: (adNetwork, adUnitType, data) {
-            onAdDismissed?.call(adNetwork, adUnitType, data);
-          },
-          onAdShowed: (adNetwork, adUnitType, data) {
-            onAdShowed?.call(adNetwork, adUnitType, data);
-          });
+        listId: listInterId,
+        config: configAdsInter!,
+        isShowAdsSplash: true,
+        onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
+          onAdFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);
+        },
+        onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
+          onAdFailedToLoad?.call(adNetwork, adUnitType, data, errorMessage);
+        },
+        onDisabled: () {
+          onDisabled?.call();
+        },
+        onAdDismissed: (adNetwork, adUnitType, data) {
+          onAdDismissed?.call(adNetwork, adUnitType, data);
+        },
+        onAdShowed: (adNetwork, adUnitType, data) {
+          onAdShowed?.call(adNetwork, adUnitType, data);
+        },
+        onAdLoaded: (adNetwork, adUnitType, data) {
+          onAdLoaded?.call(adNetwork, adUnitType, data);
+        },
+      );
     } else {
       onDisabled?.call();
     }

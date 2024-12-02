@@ -22,4 +22,15 @@ class PreferencesUtilLib {
   static bool isOrganicAdjust() {
     return _pref?.getBool("organic_adjust") ?? false;
   }
+
+  static int getCountOpenApp(){
+    return _pref?.getInt("count_open_app")?? 1;
+  }
+  static void increaseCountOpenApp(){
+    var count = getCountOpenApp();
+    count++;
+    _pref?.setInt("count_open_app", count);
+  }
+
+
 }
