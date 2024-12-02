@@ -185,8 +185,10 @@ class AdmobAds {
       print('time_out_call: All tasks completed successfully.');
     } on TimeoutException catch (e) {
       print('time_out_call: Timeout ${e.message}');
+      onNextAction();
     } catch (e) {
       print('time_out_call: Error $e');
+      onNextAction();
     }
 
     // try {

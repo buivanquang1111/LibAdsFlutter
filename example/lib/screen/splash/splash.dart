@@ -64,7 +64,7 @@ class SplashState extends State<SplashScreen> {
         onNextAction: () {
           handleNavigate();
         },
-        keyRateAOA: 'keyRateAOA',
+        keyRateAOA: 'rate_aoa_inter_splash',
         keyOpenSplash: 'open_splash',
         keyInterSplash: 'inter_splash',
         keyIntervalBetweenInterstitial: 'interval_between_interstitial',

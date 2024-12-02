@@ -31,6 +31,10 @@ dependencies:
   in_app_purchase_storekit: ^0.3.18+1
   firebase_analytics: ^11.0.0
   firebase_remote_config: ^5.0.0
+  iap_flutter:
+    git:
+      url: https://github.com/buivanquang1111/LibAdsFlutter
+      ref: update_call_splash
 
 dev_dependencies:
   flutter_test:
