@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:math';
 
 import 'package:amazic_ads_flutter/adjust_config/call_organic_adjust.dart';
@@ -40,6 +41,8 @@ class AdsSplash {
     EasyAdCallback? onAdDismissed,
     EasyAdCallback? onAdShowed,
     EasyAdCallback? onAdLoaded,
+    EasyAdCallback? onAdImpression,
+    EasyAdCallback? onAdClicked,
   }) {
     if (getState() == StateAdSplash.open) {
       AdmobAds.instance.showAppOpen(
@@ -62,6 +65,12 @@ class AdsSplash {
         },
         onAdLoaded: (adNetwork, adUnitType, data) {
           onAdLoaded?.call(adNetwork, adUnitType, data);
+        },
+        onAdImpression: (adNetwork, adUnitType, data) {
+          onAdImpression?.call(adNetwork, adUnitType, data);
+        },
+        onAdClicked: (adNetwork, adUnitType, data) {
+          onAdClicked?.call(adNetwork, adUnitType, data);
         },
       );
     } else if (getState() == StateAdSplash.inter) {
@@ -86,6 +95,12 @@ class AdsSplash {
         },
         onAdLoaded: (adNetwork, adUnitType, data) {
           onAdLoaded?.call(adNetwork, adUnitType, data);
+        },
+        onAdImpression: (adNetwork, adUnitType, data) {
+          onAdImpression?.call(adNetwork, adUnitType, data);
+        },
+        onAdClicked: (adNetwork, adUnitType, data) {
+          onAdClicked?.call(adNetwork, adUnitType, data);
         },
       );
     } else {

@@ -8,6 +8,7 @@ abstract class AdsBase {
   EasyAdCallback? onAdLoaded;
   EasyAdCallback? onAdShowed;
   EasyAdCallback? onAdClicked;
+  EasyAdCallback? onAdImpression;
   EasyAdFailedCallback? onAdFailedToLoad;
   EasyAdFailedCallback? onAdFailedToShow;
   EasyAdCallback? onAdDismissed;
@@ -27,12 +28,14 @@ abstract class AdsBase {
     this.onEarnedReward,
     this.onPaidEvent,
     this.onBannerAdReadyForSetState,
+    this.onAdImpression,
   });
 
   void updateListener({
     EasyAdCallback? onAdLoaded,
     EasyAdCallback? onAdShowed,
     EasyAdCallback? onAdClicked,
+    EasyAdCallback? onAdImpression,
     EasyAdFailedCallback? onAdFailedToLoad,
     EasyAdFailedCallback? onAdFailedToShow,
     EasyAdCallback? onAdDismissed,
@@ -49,6 +52,7 @@ abstract class AdsBase {
     this.onEarnedReward = onEarnedReward;
     this.onPaidEvent = onPaidEvent;
     this.onBannerAdReadyForSetState = onBannerAdReadyForSetState;
+    this.onAdImpression = onAdImpression;
   }
 
   AdNetwork get adNetwork;

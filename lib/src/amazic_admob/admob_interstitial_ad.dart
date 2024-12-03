@@ -22,6 +22,7 @@ class AdmobInterstitialAd extends AdsBase {
     super.onAdDismissed,
     super.onEarnedReward,
     super.onPaidEvent,
+    super.onAdImpression,
   });
 
   InterstitialAd? _interstitialAd;
@@ -30,6 +31,7 @@ class AdmobInterstitialAd extends AdsBase {
   bool _isAdLoadedFailed = false;
 
   final AmazicLogger _logger = AmazicLogger();
+
   @override
   AdNetwork get adNetwork => AdNetwork.admob;
 
@@ -143,6 +145,9 @@ class AdmobInterstitialAd extends AdsBase {
       onAdClicked: (ad) {
         AdmobAds.instance.onAdClickedMethod(adNetwork, adUnitType, ad);
         onAdClicked?.call(adNetwork, adUnitType, ad);
+      },
+      onAdImpression: (ad) {
+        onAdImpression?.call(adNetwork, adUnitType, ad);
       },
     );
     ad.setImmersiveMode(true);

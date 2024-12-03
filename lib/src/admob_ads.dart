@@ -91,6 +91,10 @@ class AdmobAds {
   ///Thời gian mở app
   int _openAppTime = 0;
 
+  ///Count time load ads
+  Timer? _timer;
+  int _second = 0;
+
   Future<void> initAllDataSplash({
     RequestConfiguration? admobConfiguration,
     required List<RemoteConfigKeyLib> remoteConfigKeys,
@@ -117,6 +121,13 @@ class AdmobAds {
     String? packageName,
     bool isIap = false,
   }) async {
+    _timer = Timer.periodic(
+      const Duration(seconds: 1),
+      (timer) {
+        _second++;
+      },
+    );
+
     final Completer<bool> organicCompleter = Completer<bool>();
 
     const timeoutDuration = Duration(seconds: 12);
@@ -186,10 +197,12 @@ class AdmobAds {
     } on TimeoutException catch (e) {
       print('time_out_call: Timeout ${e.message}');
       EventLogLib.logEvent("inter_splash_id_timeout");
+      countOpenApp();
       onNextAction();
     } catch (e) {
       print('time_out_call: Error $e');
       EventLogLib.logEvent("inter_splash_error");
+      countOpenApp();
       onNextAction();
     }
 
@@ -239,6 +252,7 @@ class AdmobAds {
             nameAdsInterSplash: nameAdsInterSplash);
       },
       onError: (p0) {
+        countOpenApp();
         onNextAction();
       },
     )
@@ -346,12 +360,13 @@ class AdmobAds {
     ///log Event
     bool idAdsCheck =
         NetworkRequest.instance.listAdsId.isNotEmpty ? true : false;
+
     EventLogLib.logEvent("inter_splash_tracking", parameters: {
       'splash_detail':
-          '${ConsentManager.ins.canRequestAds}_${CallOrganicAdjust.instance.isOrganic()}_${AdmobAds.instance.isDeviceOffline()}_${AdmobAds.instance.isShowAllAds}_${idAdsCheck}_$rateAoa',
+          '${ConsentManager.ins.canRequestAds}_${CallOrganicAdjust.instance.isOrganic()}_${isHaveInternet()}_${AdmobAds.instance.isShowAllAds}_${idAdsCheck}_$rateAoa',
       'ump': '${ConsentManager.ins.canRequestAds}',
       'organic': '${CallOrganicAdjust.instance.isOrganic()}',
-      'haveinternet': '${AdmobAds.instance.isDeviceOffline()}',
+      'haveinternet': '${isHaveInternet()}',
       'showallad': '${AdmobAds.instance.isShowAllAds}',
       'idcheck': '$idAdsCheck',
       'interremote_openremote_aoavalue': '${isShowInter}_${isShowOpen}_$rateAoa'
@@ -363,27 +378,51 @@ class AdmobAds {
     AdsSplash.instance.showAdSplash(
       listOpenId: NetworkRequest.instance.getListIDByName(nameAdsOpenSplash),
       listInterId: NetworkRequest.instance.getListIDByName(nameAdsInterSplash),
-      onAdShowed: (adNetwork, adUnitType, data) {},
+      onAdShowed: (adNetwork, adUnitType, data) {
+        EventLogLib.logEvent('inter_splash_showad_time',
+            parameters: {'showad_time': 'true_$_second'});
+        _timer?.cancel();
+      },
       onAdDismissed: (adNetwork, adUnitType, data) {
         AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
+        countOpenApp();
         onNextAction();
       },
       onDisabled: () {
         AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
+        countOpenApp();
         onNextAction();
       },
       onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
         AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
+        countOpenApp();
         onNextAction();
       },
       onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
+        EventLogLib.logEvent("inter_splash_showad_time",
+            parameters: {'showad_time': 'false_$_second'});
+        _timer?.cancel();
         AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
+        countOpenApp();
         onNextAction();
       },
       onAdLoaded: (adNetwork, adUnitType, data) {
         EventLogLib.logEvent("inter_splash_true");
       },
+      onAdImpression: (adNetwork, adUnitType, data) {
+        EventLogLib.logEvent(
+            "inter_splash_impression_${PreferencesUtilLib.getCountOpenApp()}");
+      },
+      onAdClicked: (adNetwork, adUnitType, data) {
+        EventLogLib.logEvent(
+            "inter_splash_click_${PreferencesUtilLib.getCountOpenApp()}");
+      },
     );
+  }
+
+  ///count số lần vào app
+  Future<void> countOpenApp() async {
+    PreferencesUtilLib.increaseCountOpenApp();
   }
 
   Future<void> initAdmob() async {
@@ -682,6 +721,7 @@ class AdmobAds {
     required List<String> listId,
     EasyAdCallback? onAdLoaded,
     EasyAdCallback? onAdShowed,
+    EasyAdCallback? onAdImpression,
     EasyAdCallback? onAdClicked,
     EasyAdFailedCallback? onAdFailedToLoad,
     EasyAdFailedCallback? onAdFailedToShow,
@@ -705,6 +745,7 @@ class AdmobAds {
           onAdDismissed: onAdDismissed,
           onEarnedReward: onEarnedReward,
           onPaidEvent: onPaidEvent,
+          onAdImpression: onAdImpression,
         );
         break;
     }
@@ -751,6 +792,7 @@ class AdmobAds {
     required List<String> listId,
     EasyAdCallback? onAdLoaded,
     EasyAdCallback? onAdShowed,
+    EasyAdCallback? onAdImpression,
     EasyAdCallback? onAdClicked,
     EasyAdFailedCallback? onAdFailedToLoad,
     EasyAdFailedCallback? onAdFailedToShow,
@@ -774,6 +816,7 @@ class AdmobAds {
           onAdDismissed: onAdDismissed,
           onEarnedReward: onEarnedReward,
           onPaidEvent: onPaidEvent,
+          onAdImpression: onAdImpression,
         );
         break;
     }
@@ -788,6 +831,7 @@ class AdmobAds {
     required bool config,
     EasyAdCallback? onAdLoaded,
     EasyAdCallback? onAdShowed,
+    EasyAdCallback? onAdImpression,
     EasyAdCallback? onAdClicked,
     EasyAdFailedCallback? onAdFailedToLoad,
     EasyAdFailedCallback? onAdFailedToShow,
@@ -864,6 +908,7 @@ class AdmobAds {
         onAdShowed?.call(adNetwork, adUnitType, data);
       },
       onPaidEvent: onPaidEvent,
+      onAdImpression: onAdImpression,
     );
 
     if (appOpen == null) {
@@ -886,6 +931,7 @@ class AdmobAds {
     bool? isShowAdsSplash = false,
     EasyAdCallback? onAdLoaded,
     EasyAdCallback? onAdShowed,
+    EasyAdCallback? onAdImpression,
     EasyAdCallback? onAdClicked,
     EasyAdFailedCallback? onAdFailedToLoad,
     EasyAdFailedCallback? onAdFailedToShow,
@@ -976,6 +1022,7 @@ class AdmobAds {
         onAdShowed?.call(adNetwork, adUnitType, data);
       },
       onPaidEvent: onPaidEvent,
+      onAdImpression: onAdImpression,
     );
     if (interstitialAd == null) {
       return;
@@ -1194,6 +1241,15 @@ class AdmobAds {
       return true;
     }
     return false;
+  }
+  bool isHaveInternet(){
+    bool isNetwork = true;
+    AdmobAds.instance.isDeviceOffline().then(
+          (value) {
+        isNetwork = value;
+      },
+    );
+    return isNetwork;
   }
 
   Future<bool?> getConsentResult() async {

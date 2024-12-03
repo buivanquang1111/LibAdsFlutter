@@ -4,6 +4,8 @@ import 'package:amazic_ads_flutter/admob_ads_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
+import '../../adjust_config/call_organic_adjust.dart';
+
 class BannerAds extends StatefulWidget {
   final AdNetwork adNetwork;
   final List<String> listId;
@@ -108,31 +110,42 @@ class _BannerAdsState extends State<BannerAds> with WidgetsBindingObserver {
   }
 
   Future<void> _prepareAd() async {
-    if (loadFailedCount == maxFailedTimes) {
-      return;
-    }
+    // if (loadFailedCount == maxFailedTimes) {
+    //   return;
+    // }
 
-    if (!AdmobAds.instance.isShowAllAds) {
+    if (!AdmobAds.instance.isShowAllAds ||
+        await AdmobAds.instance.isDeviceOffline() ||
+        !widget.config ||
+        !ConsentManager.ins.canRequestAds) {
       widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.banner, null);
-      return;
-    }
-    if (await AdmobAds.instance.isDeviceOffline()) {
-      widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.banner, null);
-      return;
-    }
 
-    if (!widget.config) {
-      widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.banner, null);
+      if (widget.onSplashScreen) {
+        EventLogLib.logEvent("banner_splash_false", parameters: {
+          "reason":
+              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.isHaveInternet()}"
+        });
+      }
       return;
     }
-    if (!ConsentManager.ins.canRequestAds) {
-      widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.banner, null);
-      return;
-    }
+    // if () {
+    //   widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.banner, null);
+    //   return;
+    // }
+    //
+    // if () {
+    //   widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.banner, null);
+    //   return;
+    // }
+    // if () {
+    //   widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.banner, null);
+    //   return;
+    // }
 
     ConsentManager.ins.handleRequestUmp(
       onPostExecute: () {
         if (ConsentManager.ins.canRequestAds) {
+          EventLogLib.logEvent("banner_splash_true");
           _initAd();
         } else {
           widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.banner, null);
@@ -192,7 +205,7 @@ class _BannerAdsState extends State<BannerAds> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.resumed:
-        if(widget.reloadResume && widget.onSplashScreen == false){
+        if (widget.reloadResume && widget.onSplashScreen == false) {
           _prepareAd();
         }
 
@@ -248,13 +261,15 @@ class _BannerAdsState extends State<BannerAds> with WidgetsBindingObserver {
       },
       onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
         loadFailedCount++;
-        widget.onAdFailedToLoad?.call(adNetwork, adUnitType, data, errorMessage);
+        widget.onAdFailedToLoad
+            ?.call(adNetwork, adUnitType, data, errorMessage);
         if (mounted) {
           setState(() {});
         }
       },
       onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
-        widget.onAdFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);
+        widget.onAdFailedToShow
+            ?.call(adNetwork, adUnitType, data, errorMessage);
         if (mounted) {
           setState(() {});
         }
