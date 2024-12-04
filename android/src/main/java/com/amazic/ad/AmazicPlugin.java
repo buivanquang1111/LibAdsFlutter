@@ -129,9 +129,14 @@ public class AmazicPlugin
                 List<String> productIds = call.argument("productIds");
                 if (productIds == null) productIds = new ArrayList<>();
                 List<String> finalProductIds = productIds;
+
+                final boolean[] isResultCalled = {false};
                 initializePurchases(productIds, () -> {
-                    methodChannel.invokeMethod("onNextAction", finalProductIds);
-                    result.success(true);
+                    if (!isResultCalled[0]) {
+                        methodChannel.invokeMethod("onNextAction", finalProductIds);
+                        result.success(true);
+                        isResultCalled[0] = true;
+                    }
                 });
                 break;
 
@@ -277,17 +282,25 @@ public class AmazicPlugin
             products.add(new ProductDetailCustom(productId, IAPManager.typeSub));
         }
 
+        final boolean[] isCallbackCalled = {false};
+
         iapManager.initBilling(context, products, new BillingCallback() {
             @Override
             public void onBillingServiceDisconnected() {
                 super.onBillingServiceDisconnected();
-                callback.run();
+                if (!isCallbackCalled[0]) {
+                    isCallbackCalled[0] = true;
+                    callback.run();
+                }
             }
 
             @Override
             public void onBillingSetupFinished(int resultCode) {
                 super.onBillingSetupFinished(resultCode);
-                callback.run();
+                if (!isCallbackCalled[0]) {
+                    isCallbackCalled[0] = true;
+                    callback.run();
+                }
             }
         });
     }
