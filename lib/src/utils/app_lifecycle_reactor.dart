@@ -1,4 +1,5 @@
 // ignore_for_file: public_member_api_docs
+import 'package:amazic_ads_flutter/adjust_config/call_organic_adjust.dart';
 import 'package:flutter/material.dart';
 
 import '../../admob_ads_flutter.dart';
@@ -116,6 +117,9 @@ class AppLifecycleReactor {
           AdmobAds.instance.showAppOpen(
               listId: listId,
               config: config,
+              onCanRequestLogEvent: () {
+                EventLogLib.logEvent("open_resume_true");
+              },
               onAdDismissed: (adNetwork, adUnitType, data) {
                 if (child != null) {
                   if (!_isShowScreenWellCome) {
@@ -138,6 +142,11 @@ class AppLifecycleReactor {
                 }
               },
               onDisabled: () {
+                EventLogLib.logEvent("open_resume_false", parameters: {
+                  "reason":
+                      "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.isHaveInternet()}"
+                });
+
                 if (child != null) {
                   if (!_isShowScreenWellCome) {
                     showScreenWelCome();
@@ -170,20 +179,30 @@ class AppLifecycleReactor {
     Function? onDismissCollapse,
   }) {
     AdmobAds.instance.showAppOpen(
-        listId: listId,
-        config: config,
-        onAdDismissed: onAdDismissed,
-        onAdFailedToLoad: onAdFailedToLoad,
-        onAdFailedToShow: onAdFailedToShow,
-        onDisabled: onDisabled,
-        onDismissCollapse: () {
-          if(onDismissCollapse != null){
-            onDismissCollapse();
-          }
-          if (_onDismissCollapse != null) {
-            _onDismissCollapse!();
-          }
+      listId: listId,
+      config: config,
+      onAdDismissed: onAdDismissed,
+      onAdFailedToLoad: onAdFailedToLoad,
+      onAdFailedToShow: onAdFailedToShow,
+      onDisabled: () {
+        EventLogLib.logEvent("open_resume_false", parameters: {
+          "reason":
+          "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.isHaveInternet()}"
         });
+        onDisabled?.call();
+      },
+      onDismissCollapse: () {
+        if (onDismissCollapse != null) {
+          onDismissCollapse();
+        }
+        if (_onDismissCollapse != null) {
+          _onDismissCollapse!();
+        }
+      },
+      onCanRequestLogEvent: () {
+        EventLogLib.logEvent("open_resume_true");
+      },
+    );
   }
 
   void showAppOpenResumeAdsAfter() {}

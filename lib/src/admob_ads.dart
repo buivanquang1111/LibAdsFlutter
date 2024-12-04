@@ -594,7 +594,7 @@ class AdmobAds {
     return ad;
   }
 
-  //load ads trước
+  //load ads native trước
   Future<AdsBase?> loadNativeAds({
     required AdNetwork adNetwork,
     required String factoryId,
@@ -609,17 +609,28 @@ class AdmobAds {
     EasyAdEarnedReward? onEarnedReward,
     EasyAdOnPaidEvent? onPaidEvent,
   }) async {
-    if (!AdmobAds.instance.isShowAllAds) {
+    if (!AdmobAds.instance.isShowAllAds ||
+        await AdmobAds.instance.isDeviceOffline() ||
+        !config ||
+        !ConsentManager.ins.canRequestAds) {
+      if (factoryId.toLowerCase().contains("intro_full")) {
+        EventLogLib.logEvent("native_intro_full_false", parameters: {
+          "reason":
+              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.isHaveInternet()}"
+        });
+      } else {
+        EventLogLib.logEvent("native_intro_false", parameters: {
+          "reason":
+              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.isHaveInternet()}"
+        });
+      }
       return null;
     }
-    if (await AdmobAds.instance.isDeviceOffline()) {
-      return null;
-    }
-    if (!config) {
-      return null;
-    }
-    if (!ConsentManager.ins.canRequestAds) {
-      return null;
+
+    if (factoryId.toLowerCase().contains("intro_full")) {
+      EventLogLib.logEvent("native_intro_full_true");
+    } else {
+      EventLogLib.logEvent("native_intro_true");
     }
 
     AdsBase? ad = AdmobAds.instance.createNative(
@@ -647,6 +658,7 @@ class AdmobAds {
     required List<String> listId,
     EasyAdCallback? onAdLoaded,
     EasyAdCallback? onAdShowed,
+    EasyAdCallback? onAdImpression,
     EasyAdCallback? onAdClicked,
     EasyAdFailedCallback? onAdFailedToLoad,
     EasyAdFailedCallback? onAdFailedToShow,
@@ -671,6 +683,7 @@ class AdmobAds {
           onAdDismissed: onAdDismissed,
           onEarnedReward: onEarnedReward,
           onPaidEvent: onPaidEvent,
+          onAdImpression: onAdImpression,
         );
         break;
     }
@@ -838,23 +851,31 @@ class AdmobAds {
     EasyAdCallback? onAdDismissed,
     EasyAdOnPaidEvent? onPaidEvent,
     Function? onDismissCollapse,
+    Function? onCanRequestLogEvent,
   }) async {
-    if (!isShowAllAds || !config) {
+    if (!isShowAllAds ||
+        !config ||
+        _isFullscreenAdShowing ||
+        await isDeviceOffline() ||
+        !ConsentManager.ins.canRequestAds) {
       onDisabled?.call();
       return;
     }
-    if (_isFullscreenAdShowing) {
-      onDisabled?.call();
-      return;
-    }
-    if (await isDeviceOffline()) {
-      onDisabled?.call();
-      return;
-    }
-    if (!ConsentManager.ins.canRequestAds) {
-      onDisabled?.call();
-      return;
-    }
+    // if () {
+    //   onDisabled?.call();
+    //   return;
+    // }
+    // if () {
+    //   onDisabled?.call();
+    //   return;
+    // }
+    // if () {
+    //   onDisabled?.call();
+    //   return;
+    // }
+
+    //logEvent có thể Request ads
+    onCanRequestLogEvent?.call();
 
     final appOpen = createAppOpenAd(
       adNetwork: adNetwork,
@@ -938,26 +959,35 @@ class AdmobAds {
     EasyAdCallback? onAdDismissed,
     EasyAdOnPaidEvent? onPaidEvent,
   }) async {
-    if (!isShowAllAds || !config) {
+    if (!isShowAllAds ||
+        !config ||
+        _isFullscreenAdShowing ||
+        await isDeviceOffline() ||
+        !ConsentManager.ins.canRequestAds) {
       _logger.logInfo('1. isEnabled: $isShowAllAds, config: $config');
+
+      EventLogLib.logEvent("inter_intro_false", parameters: {
+        "reason":
+            "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.isHaveInternet()}"
+      });
       onDisabled?.call();
       return;
     }
-    if (_isFullscreenAdShowing) {
-      _logger.logInfo('2. _isFullscreenAdShowing: $_isFullscreenAdShowing');
-      onDisabled?.call();
-      return;
-    }
-    if (await isDeviceOffline()) {
-      _logger.logInfo('3. isDeviceOffline: ${isDeviceOffline()}');
-      onDisabled?.call();
-      return;
-    }
-    if (!ConsentManager.ins.canRequestAds) {
-      _logger.logInfo('4. canRequestAds: ${ConsentManager.ins.canRequestAds}');
-      onDisabled?.call();
-      return;
-    }
+    // if () {
+    //   _logger.logInfo('2. _isFullscreenAdShowing: $_isFullscreenAdShowing');
+    //   onDisabled?.call();
+    //   return;
+    // }
+    // if () {
+    //   _logger.logInfo('3. isDeviceOffline: ${isDeviceOffline()}');
+    //   onDisabled?.call();
+    //   return;
+    // }
+    // if () {
+    //   _logger.logInfo('4. canRequestAds: ${ConsentManager.ins.canRequestAds}');
+    //   onDisabled?.call();
+    //   return;
+    // }
 
     ///check nếu là show ads màn Splash thì k cần check interval_interstitial_from_start
     if (isShowAdsSplash == false &&
@@ -979,6 +1009,8 @@ class AdmobAds {
       onDisabled?.call();
       return;
     }
+
+    EventLogLib.logEvent("inter_intro_true");
 
     final interstitialAd = createInterstitial(
       adNetwork: adNetwork,
@@ -1242,10 +1274,11 @@ class AdmobAds {
     }
     return false;
   }
-  bool isHaveInternet(){
+
+  bool isHaveInternet() {
     bool isNetwork = true;
     AdmobAds.instance.isDeviceOffline().then(
-          (value) {
+      (value) {
         isNetwork = value;
       },
     );

@@ -145,7 +145,9 @@ class _BannerAdsState extends State<BannerAds> with WidgetsBindingObserver {
     ConsentManager.ins.handleRequestUmp(
       onPostExecute: () {
         if (ConsentManager.ins.canRequestAds) {
-          EventLogLib.logEvent("banner_splash_true");
+          if (widget.onSplashScreen) {
+            EventLogLib.logEvent("banner_splash_true");
+          }
           _initAd();
         } else {
           widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.banner, null);

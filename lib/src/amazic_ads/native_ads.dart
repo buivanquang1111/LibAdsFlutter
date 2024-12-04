@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:amazic_ads_flutter/adjust_config/call_organic_adjust.dart';
 import 'package:flutter/material.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -20,6 +21,7 @@ class NativeAds extends StatefulWidget {
 
   final EasyAdCallback? onAdLoaded;
   final EasyAdCallback? onAdShowed;
+  final EasyAdCallback? onAdImpression;
   final EasyAdCallback? onAdClicked;
   final EasyAdFailedCallback? onAdFailedToLoad;
   final EasyAdFailedCallback? onAdFailedToShow;
@@ -60,6 +62,7 @@ class NativeAds extends StatefulWidget {
     this.reloadResume = false,
     this.refreshRateSec = 0,
     Key? key,
+    this.onAdImpression,
   }) : super(key: key);
 
   @override
@@ -120,40 +123,73 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
 
   Future<void> _prepareAd() async {
     print("debug-libraries: _prepareAd");
-    if (loadFailedCount == maxFailedTimes) {
+    // if (loadFailedCount == maxFailedTimes) {
+    //   if (_isLoading.value) {
+    //     _isLoading.value = false;
+    //   }
+    //   return;
+    // }
+    if (!AdmobAds.instance.isShowAllAds ||
+        await AdmobAds.instance.isDeviceOffline() ||
+        !widget.config ||
+        !ConsentManager.ins.canRequestAds) {
       if (_isLoading.value) {
         _isLoading.value = false;
       }
-      return;
-    }
-    if (!AdmobAds.instance.isShowAllAds) {
-      if (_isLoading.value) {
-        _isLoading.value = false;
+
+      //logEvent
+      if (widget.factoryId.toLowerCase().contains('language')) {
+        EventLogLib.logEvent("native_language_false", parameters: {
+          "reason":
+              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.isHaveInternet()}"
+        });
+      } else if (widget.factoryId.toLowerCase().contains('intro')) {
+        EventLogLib.logEvent("native_intro_false", parameters: {
+          "reason":
+              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.isHaveInternet()}"
+        });
+      } else if (widget.factoryId.toLowerCase().contains('permission')) {
+        EventLogLib.logEvent("native_permission_false", parameters: {
+          "reason":
+              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.isHaveInternet()}"
+        });
+      } else if (widget.factoryId.toLowerCase().contains('interest')) {
+        EventLogLib.logEvent("native_interest_false", parameters: {
+          "reason":
+              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.isHaveInternet()}"
+        });
+      } else if (widget.factoryId.toLowerCase().contains('wb')) {
+        EventLogLib.logEvent("native_wb_false", parameters: {
+          "reason":
+              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.isHaveInternet()}"
+        });
       }
+      //end
+
       widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.native, null);
       return;
     }
-    if (await AdmobAds.instance.isDeviceOffline()) {
-      if (_isLoading.value) {
-        _isLoading.value = false;
-      }
-      widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.native, null);
-      return;
-    }
-    if (!widget.config) {
-      if (_isLoading.value) {
-        _isLoading.value = false;
-      }
-      widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.native, null);
-      return;
-    }
-    if (!ConsentManager.ins.canRequestAds) {
-      if (_isLoading.value) {
-        _isLoading.value = false;
-      }
-      widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.native, null);
-      return;
-    }
+    // if () {
+    //   if (_isLoading.value) {
+    //     _isLoading.value = false;
+    //   }
+    //   widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.native, null);
+    //   return;
+    // }
+    // if () {
+    //   if (_isLoading.value) {
+    //     _isLoading.value = false;
+    //   }
+    //   widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.native, null);
+    //   return;
+    // }
+    // if () {
+    //   if (_isLoading.value) {
+    //     _isLoading.value = false;
+    //   }
+    //   widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.native, null);
+    //   return;
+    // }
     if (!_isLoading.value) {
       _isLoading.value = true;
     }
@@ -164,6 +200,15 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
     ConsentManager.ins.handleRequestUmp(
       onPostExecute: () {
         if (ConsentManager.ins.canRequestAds) {
+          if (widget.factoryId.toLowerCase().contains('language')) {
+            EventLogLib.logEvent("native_language_true");
+          } else if (widget.factoryId.toLowerCase().contains('permission')) {
+            EventLogLib.logEvent("native_permission_true");
+          } else if (widget.factoryId.toLowerCase().contains('interest')) {
+            EventLogLib.logEvent("native_interest_true");
+          } else if (widget.factoryId.toLowerCase().contains('wb')) {
+            EventLogLib.logEvent("native_wb_true");
+          }
           _initAd();
         } else {
           _isLoading.value = false;
@@ -193,10 +238,12 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
       case AppLifecycleState.resumed:
         if (widget.reloadResume) {
           print("debug-libraries: widget.reloadResume");
-          print('check_native: _prepareAd --- didChangeAppLifecycleState - resume');
+          print(
+              'check_native: _prepareAd --- didChangeAppLifecycleState - resume');
           _prepareAd();
           widget.setReloadNative(false);
-        }else if(state == AppLifecycleState.inactive || state == AppLifecycleState.paused){
+        } else if (state == AppLifecycleState.inactive ||
+            state == AppLifecycleState.paused) {
           _stopTimer();
         }
         // if (isClicked) {
@@ -306,6 +353,12 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
       factoryId: widget.factoryId,
       listId: widget.listId,
       onAdClicked: (adNetwork, adUnitType, data) {
+
+        if (widget.factoryId.toLowerCase().contains('language')) {
+          EventLogLib.logEvent(
+              "native_language_click_${PreferencesUtilLib.getCountOpenApp() - 1}");
+        }
+
         widget.onAdClicked?.call(adNetwork, adUnitType, data);
         isClicked = widget.reloadOnClick;
         // Fluttertoast.showToast(msg: 'onAdClicked');
@@ -380,6 +433,12 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
         _logger.logInfo('native ad: onPaidEvent');
         if (mounted) {
           setState(() {});
+        }
+      },
+      onAdImpression: (adNetwork, adUnitType, data) {
+        if (widget.factoryId.toLowerCase().contains('language')) {
+          EventLogLib.logEvent(
+              "native_language_impression_${PreferencesUtilLib.getCountOpenApp() - 1}");
         }
       },
     );

@@ -24,6 +24,7 @@ class AdmobNativeAd extends AdsBase {
     super.onAdDismissed,
     super.onEarnedReward,
     super.onPaidEvent,
+    super.onAdImpression,
   });
 
   NativeAd? _nativeAd;
@@ -98,6 +99,7 @@ class AdmobNativeAd extends AdsBase {
         onAdImpression: (Ad ad) {
           AdmobAds.instance.onAdShowedMethod(adNetwork, adUnitType, ad);
           onAdShowed?.call(adNetwork, adUnitType, ad);
+          onAdImpression?.call(adNetwork, adUnitType, ad);
         },
         onPaidEvent: (ad, revenue, type, currencyCode) {
           AdmobAds.instance.onPaidEventMethod(
@@ -131,7 +133,6 @@ class AdmobNativeAd extends AdsBase {
     EdgeInsetsGeometry? padding,
     EdgeInsetsGeometry? margin,
   }) {
-
     if (!AdmobAds.instance.isShowAllAds) {
       return const SizedBox(
         height: 1,
@@ -145,7 +146,8 @@ class AdmobNativeAd extends AdsBase {
         width: 1,
       );
     }
-    print('check_show_native: 3. ad: $ads, isAdLoaded: $isAdLoaded , _isAdLoading: $_isAdLoading');
+    print(
+        'check_show_native: 3. ad: $ads, isAdLoaded: $isAdLoaded , _isAdLoading: $_isAdLoading');
     _logger.logInfo('ad: $ads, isAdLoaded: $isAdLoaded');
     return Container(
       decoration: BoxDecoration(
