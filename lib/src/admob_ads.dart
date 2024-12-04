@@ -176,6 +176,10 @@ class AdmobAds {
       enableLogger: enableLogger,
       onInitialized: (canRequestAds) {},
       navigatorKey: navigatorKey,
+      listResumeId: listResumeId,
+      adResumeConfig: adResumeConfig,
+      child: child,
+      isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds
     );
 
     final tasksFuture = Future.wait([
@@ -243,16 +247,14 @@ class AdmobAds {
       appId: appId,
       packageName: packageName,
       onResponse: () {
-        initAdsResumeAndSplash(
-            keyRateAOA: keyRateAOA,
-            keyOpenSplash: keyOpenSplash,
-            keyInterSplash: keyInterSplash,
-            onNextAction: onNextAction,
-            listResumeId: listResumeId,
-            adResumeConfig: adResumeConfig,
-            nameAdsOpenSplash: nameAdsOpenSplash,
-            nameAdsInterSplash: nameAdsInterSplash,
-            navigatorKey: navigatorKey);
+        initAdsSplash(
+          keyRateAOA: keyRateAOA,
+          keyOpenSplash: keyOpenSplash,
+          keyInterSplash: keyInterSplash,
+          onNextAction: onNextAction,
+          nameAdsOpenSplash: nameAdsOpenSplash,
+          nameAdsInterSplash: nameAdsInterSplash,
+        );
       },
       onError: (p0) {
         countOpenApp();
@@ -262,13 +264,11 @@ class AdmobAds {
         .timeout(
       const Duration(seconds: 4),
       onTimeout: () {
-        initAdsResumeAndSplash(
+        initAdsSplash(
             keyRateAOA: keyRateAOA,
             keyOpenSplash: keyOpenSplash,
             keyInterSplash: keyInterSplash,
             onNextAction: onNextAction,
-            listResumeId: listResumeId,
-            adResumeConfig: adResumeConfig,
             nameAdsOpenSplash: nameAdsOpenSplash,
             nameAdsInterSplash: nameAdsInterSplash);
         return;
@@ -277,30 +277,25 @@ class AdmobAds {
   }
 
   //init ads resume and ads splash
-  Future<void> initAdsResumeAndSplash({
+  Future<void> initAdsSplash({
     required String keyRateAOA,
     required String keyOpenSplash,
     required String keyInterSplash,
     required String nameAdsOpenSplash,
     required String nameAdsInterSplash,
     required Function() onNextAction,
-    Widget? child,
-    bool isShowWelComeScreenAfterAds = true,
-    required List<String> listResumeId,
-    required bool adResumeConfig,
-    GlobalKey<NavigatorState>? navigatorKey,
   }) async {
-    ///khởi tạo ads resume
-    if (navigatorKey != null) {
-      appLifecycleReactor = AppLifecycleReactor(
-          navigatorKey: navigatorKey,
-          listId: listResumeId,
-          config: adResumeConfig,
-          adNetwork: AdNetwork.admob,
-          child: child,
-          isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds);
-      appLifecycleReactor!.listenToAppStateChanges();
-    }
+    // ///khởi tạo ads resume
+    // if (navigatorKey != null) {
+    //   appLifecycleReactor = AppLifecycleReactor(
+    //       navigatorKey: navigatorKey,
+    //       listId: listResumeId,
+    //       config: adResumeConfig,
+    //       adNetwork: AdNetwork.admob,
+    //       child: child,
+    //       isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds);
+    //   appLifecycleReactor!.listenToAppStateChanges();
+    // }
 
     ///showAds inter/open Splash
     showAdsSplash(
@@ -321,6 +316,10 @@ class AdmobAds {
     Future<dynamic> Function(bool canRequestAds)? initMediationCallback,
     required Function(bool canRequestAds) onInitialized,
     GlobalKey<NavigatorState>? navigatorKey,
+    required List<String> listResumeId,
+    required bool adResumeConfig,
+    Widget? child,
+    bool isShowWelComeScreenAfterAds = true,
   }) async {
     VisibilityDetectorController.instance.updateInterval = Duration.zero;
     if (enableLogger) _logger.enable(enableLogger);
@@ -344,6 +343,18 @@ class AdmobAds {
       admobAdSize =
           await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
               MediaQuery.sizeOf(navigatorKey!.currentContext!).width.toInt());
+    }
+
+    ///khởi tạo ads resume
+    if (navigatorKey != null) {
+      appLifecycleReactor = AppLifecycleReactor(
+          navigatorKey: navigatorKey,
+          listId: listResumeId,
+          config: adResumeConfig,
+          adNetwork: AdNetwork.admob,
+          child: child,
+          isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds);
+      appLifecycleReactor!.listenToAppStateChanges();
     }
   }
 
