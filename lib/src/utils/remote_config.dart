@@ -23,22 +23,24 @@ class RemoteConfigLib {
         }else{
           print('check_remote_config: no update remote');
         }
+        getRemoteConfig();
       },);
     } catch (e) {
       print('Remote Config init error: $e');
+      getRemoteConfigDefault();
     }
   }
 
   static void getRemoteConfig() {
-    var showAds = RemoteConfigKeyLib.getKeyByName('show_ads').defaultValue;
+    var showAds = _remoteConfig.getBool(RemoteConfigKeyLib.getKeyByName('show_ads').name);
     print('CHECK_REMOTE_CONFIG: 1. showAds - $showAds');
 
-    try {
-      showAds = _remoteConfig.getBool(RemoteConfigKeyLib.getKeyByName('show_ads').name);
-      print('CHECK_REMOTE_CONFIG: 2. showAds - $showAds');
-    } catch (e) {
-      print('CHECK_REMOTE_CONFIG: 3. showAds - $showAds');
-    }
+    // try {
+    //   showAds = _remoteConfig.getBool(RemoteConfigKeyLib.getKeyByName('show_ads').name);
+    //   print('CHECK_REMOTE_CONFIG: 2. showAds - $showAds');
+    // } catch (e) {
+    //   print('CHECK_REMOTE_CONFIG: 3. showAds - $showAds');
+    // }
 
     for (var key in RemoteConfigKeyLib.listRemoteConfigKey) {
       try {
@@ -63,6 +65,37 @@ class RemoteConfigLib {
       if (kDebugMode) {
         print(
             'CHECK_REMOTE_CONFIG, key: ${key.name} - value: ${configs[key.name]}');
+      }
+    }
+  }
+
+  static void getRemoteConfigDefault() {
+    var showAds = RemoteConfigKeyLib.getKeyByName('show_ads').defaultValue;
+    print('CHECK_REMOTE_CONFIG: 1. showAds - $showAds');
+
+    for (var key in RemoteConfigKeyLib.listRemoteConfigKey) {
+      try {
+        switch (key.valueType) {
+          case const (String):
+            configs[key.name] = RemoteConfigKeyLib.getKeyByName(key.name).defaultValue;
+            break;
+          case const (int):
+            configs[key.name] = RemoteConfigKeyLib.getKeyByName(key.name).defaultValue;
+            break;
+          case const (bool):
+            configs[key.name] = RemoteConfigKeyLib.getKeyByName(key.name).defaultValue && showAds;
+            break;
+        }
+      } catch (e) {
+        if (key.valueType == bool) {
+          configs[key.name] = key.defaultValue && showAds;
+        } else {
+          configs[key.name] = key.defaultValue;
+        }
+      }
+      if (kDebugMode) {
+        print(
+            'CHECK_REMOTE_CONFIG_Default, key: ${key.name} - value: ${configs[key.name]}');
       }
     }
   }

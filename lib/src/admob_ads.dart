@@ -147,7 +147,7 @@ class AdmobAds {
     Future<void> initRemoteConfig =
         RemoteConfigLib.init(remoteConfigKeys: remoteConfigKeys).then(
       (value) {
-        RemoteConfigLib.getRemoteConfig();
+        // RemoteConfigLib.getRemoteConfig();
       },
     );
 
