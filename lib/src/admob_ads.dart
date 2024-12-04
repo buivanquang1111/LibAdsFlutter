@@ -120,6 +120,7 @@ class AdmobAds {
     String? appId,
     String? packageName,
     bool isIap = false,
+    GlobalKey<NavigatorState>? navigatorKey,
   }) async {
     _timer = Timer.periodic(
       const Duration(seconds: 1),
@@ -174,6 +175,7 @@ class AdmobAds {
       debugUmp: debugUmp,
       enableLogger: enableLogger,
       onInitialized: (canRequestAds) {},
+      navigatorKey: navigatorKey,
     );
 
     final tasksFuture = Future.wait([
@@ -249,7 +251,8 @@ class AdmobAds {
             listResumeId: listResumeId,
             adResumeConfig: adResumeConfig,
             nameAdsOpenSplash: nameAdsOpenSplash,
-            nameAdsInterSplash: nameAdsInterSplash);
+            nameAdsInterSplash: nameAdsInterSplash,
+            navigatorKey: navigatorKey);
       },
       onError: (p0) {
         countOpenApp();
@@ -285,11 +288,12 @@ class AdmobAds {
     bool isShowWelComeScreenAfterAds = true,
     required List<String> listResumeId,
     required bool adResumeConfig,
+    GlobalKey<NavigatorState>? navigatorKey,
   }) async {
     ///khởi tạo ads resume
     if (navigatorKey != null) {
       appLifecycleReactor = AppLifecycleReactor(
-          navigatorKey: navigatorKey!,
+          navigatorKey: navigatorKey,
           listId: listResumeId,
           config: adResumeConfig,
           adNetwork: AdNetwork.admob,
@@ -316,6 +320,7 @@ class AdmobAds {
     bool debugUmp = false,
     Future<dynamic> Function(bool canRequestAds)? initMediationCallback,
     required Function(bool canRequestAds) onInitialized,
+    GlobalKey<NavigatorState>? navigatorKey,
   }) async {
     VisibilityDetectorController.instance.updateInterval = Duration.zero;
     if (enableLogger) _logger.enable(enableLogger);
