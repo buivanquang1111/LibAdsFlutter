@@ -31,10 +31,14 @@ class RemoteConfigLib {
 
   static void getRemoteConfig() {
     var showAds = RemoteConfigKeyLib.getKeyByName('show_ads').defaultValue;
+    print('CHECK_REMOTE_CONFIG: 1. showAds - $showAds');
 
     try {
       showAds = _remoteConfig.getBool(RemoteConfigKeyLib.getKeyByName('show_ads').name);
-    } catch (e) {}
+      print('CHECK_REMOTE_CONFIG: 2. showAds - $showAds');
+    } catch (e) {
+      print('CHECK_REMOTE_CONFIG: 3. showAds - $showAds');
+    }
 
     for (var key in RemoteConfigKeyLib.listRemoteConfigKey) {
       try {
