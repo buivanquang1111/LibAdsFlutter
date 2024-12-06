@@ -104,7 +104,7 @@ class AdmobAds {
     required String adjustToken,
     Widget? child,
     bool isShowWelComeScreenAfterAds = true,
-    required List<String> listResumeId,
+    required String nameAdsResume,
     required String keyResumeConfig,
     required Function() onSetRemoteConfigOrganic,
     required Function() onStartLoadBannerSplash,
@@ -254,7 +254,7 @@ class AdmobAds {
           nameAdsOpenSplash: nameAdsOpenSplash,
           nameAdsInterSplash: nameAdsInterSplash,
           keyResumeConfig: keyResumeConfig,
-          listResumeId: listResumeId,
+          listResumeId: NetworkRequest.instance.getListIDByName(nameAdsResume),
           child: child,
           isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds,
         );
@@ -275,7 +275,7 @@ class AdmobAds {
           nameAdsOpenSplash: nameAdsOpenSplash,
           nameAdsInterSplash: nameAdsInterSplash,
           keyResumeConfig: keyResumeConfig,
-          listResumeId: listResumeId,
+          listResumeId: NetworkRequest.instance.getListIDByName(nameAdsResume),
           child: child,
           isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds,
         );
