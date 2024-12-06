@@ -172,18 +172,13 @@ class AdmobAds {
 
     ///call UMP
     Future<void> initUMP = initUMPAndAdmob(
-        adMobAdRequest: const AdRequest(httpTimeoutMillis: 30000),
-        admobConfiguration: admobConfiguration,
-        initMediationCallback: initMediationCallback,
-        debugUmp: debugUmp,
-        enableLogger: enableLogger,
-        onInitialized: (canRequestAds) {},
-        navigatorKey: navigatorKey,
-        listResumeId: listResumeId,
-        adResumeConfig: RemoteConfigLib
-            .configs[RemoteConfigKeyLib.getKeyByName(keyResumeConfig).name],
-        child: child,
-        isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds);
+      adMobAdRequest: const AdRequest(httpTimeoutMillis: 30000),
+      admobConfiguration: admobConfiguration,
+      initMediationCallback: initMediationCallback,
+      debugUmp: debugUmp,
+      enableLogger: enableLogger,
+      onInitialized: (canRequestAds) {},
+    );
 
     final tasksFuture = Future.wait([
       initRemoteConfig,
@@ -199,6 +194,14 @@ class AdmobAds {
         timeoutCompleter.completeError(e);
       }
     });
+
+    initAdsOpenResume(
+        listResumeId: listResumeId,
+        navigatorKey: navigatorKey,
+        adResumeConfig: RemoteConfigLib
+            .configs[RemoteConfigKeyLib.getKeyByName(keyResumeConfig).name],
+        child: child,
+        isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds);
 
     try {
       await Future.any([tasksFuture, timeoutCompleter.future]);
@@ -318,11 +321,6 @@ class AdmobAds {
     bool debugUmp = false,
     Future<dynamic> Function(bool canRequestAds)? initMediationCallback,
     required Function(bool canRequestAds) onInitialized,
-    GlobalKey<NavigatorState>? navigatorKey,
-    required List<String> listResumeId,
-    required bool adResumeConfig,
-    Widget? child,
-    bool isShowWelComeScreenAfterAds = true,
   }) async {
     VisibilityDetectorController.instance.updateInterval = Duration.zero;
     if (enableLogger) _logger.enable(enableLogger);
@@ -347,7 +345,15 @@ class AdmobAds {
           await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
               MediaQuery.sizeOf(navigatorKey!.currentContext!).width.toInt());
     }
+  }
 
+  void initAdsOpenResume({
+    GlobalKey<NavigatorState>? navigatorKey,
+    required List<String> listResumeId,
+    required bool adResumeConfig,
+    Widget? child,
+    bool isShowWelComeScreenAfterAds = true,
+  }) {
     ///khởi tạo ads resume
     if (navigatorKey != null) {
       appLifecycleReactor = AppLifecycleReactor(
