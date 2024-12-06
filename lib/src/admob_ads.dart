@@ -178,6 +178,7 @@ class AdmobAds {
       debugUmp: debugUmp,
       enableLogger: enableLogger,
       onInitialized: (canRequestAds) {},
+      navigatorKey: navigatorKey,
     );
 
     final tasksFuture = Future.wait([
@@ -209,18 +210,6 @@ class AdmobAds {
       countOpenApp();
       onNextAction();
     }
-
-    print('check_call_remote --- name: $keyResumeConfig');
-    print(
-        'check_call_remote --- name: ${RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyResumeConfig).name]}');
-    initAdsOpenResume(
-        listResumeId: listResumeId,
-        navigatorKey: navigatorKey,
-        adResumeConfig: RemoteConfigLib
-            .configs[RemoteConfigKeyLib.getKeyByName(keyResumeConfig).name],
-        child: child,
-        isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds);
-
 
     ///set giá trị remote TH Organic
     bool isOrganic = await organicCompleter.future;
@@ -257,13 +246,17 @@ class AdmobAds {
       appId: appId,
       packageName: packageName,
       onResponse: () {
-        initAdsSplash(
+        initAdsSplashAndAppOpen(
           keyRateAOA: keyRateAOA,
           keyOpenSplash: keyOpenSplash,
           keyInterSplash: keyInterSplash,
           onNextAction: onNextAction,
           nameAdsOpenSplash: nameAdsOpenSplash,
           nameAdsInterSplash: nameAdsInterSplash,
+          keyResumeConfig: keyResumeConfig,
+          listResumeId: listResumeId,
+          child: child,
+          isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds,
         );
       },
       onError: (p0) {
@@ -274,38 +267,46 @@ class AdmobAds {
         .timeout(
       const Duration(seconds: 4),
       onTimeout: () {
-        initAdsSplash(
-            keyRateAOA: keyRateAOA,
-            keyOpenSplash: keyOpenSplash,
-            keyInterSplash: keyInterSplash,
-            onNextAction: onNextAction,
-            nameAdsOpenSplash: nameAdsOpenSplash,
-            nameAdsInterSplash: nameAdsInterSplash);
+        initAdsSplashAndAppOpen(
+          keyRateAOA: keyRateAOA,
+          keyOpenSplash: keyOpenSplash,
+          keyInterSplash: keyInterSplash,
+          onNextAction: onNextAction,
+          nameAdsOpenSplash: nameAdsOpenSplash,
+          nameAdsInterSplash: nameAdsInterSplash,
+          keyResumeConfig: keyResumeConfig,
+          listResumeId: listResumeId,
+          child: child,
+          isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds,
+        );
         return;
       },
     );
   }
 
   //init ads resume and ads splash
-  Future<void> initAdsSplash({
+  Future<void> initAdsSplashAndAppOpen({
     required String keyRateAOA,
     required String keyOpenSplash,
     required String keyInterSplash,
     required String nameAdsOpenSplash,
     required String nameAdsInterSplash,
     required Function() onNextAction,
+    required String keyResumeConfig,
+    required List<String> listResumeId,
+    Widget? child,
+    bool isShowWelComeScreenAfterAds = true,
   }) async {
-    // ///khởi tạo ads resume
-    // if (navigatorKey != null) {
-    //   appLifecycleReactor = AppLifecycleReactor(
-    //       navigatorKey: navigatorKey,
-    //       listId: listResumeId,
-    //       config: adResumeConfig,
-    //       adNetwork: AdNetwork.admob,
-    //       child: child,
-    //       isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds);
-    //   appLifecycleReactor!.listenToAppStateChanges();
-    // }
+    print('check_call_remote --- name: $keyResumeConfig');
+    print(
+        'check_call_remote --- name: ${RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyResumeConfig).name]}');
+    initAdsOpenResume(
+        listResumeId: listResumeId,
+        navigatorKey: navigatorKey,
+        adResumeConfig: RemoteConfigLib
+            .configs[RemoteConfigKeyLib.getKeyByName(keyResumeConfig).name],
+        child: child,
+        isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds);
 
     ///showAds inter/open Splash
     showAdsSplash(
@@ -325,6 +326,7 @@ class AdmobAds {
     bool debugUmp = false,
     Future<dynamic> Function(bool canRequestAds)? initMediationCallback,
     required Function(bool canRequestAds) onInitialized,
+    GlobalKey<NavigatorState>? navigatorKey,
   }) async {
     VisibilityDetectorController.instance.updateInterval = Duration.zero;
     if (enableLogger) _logger.enable(enableLogger);
