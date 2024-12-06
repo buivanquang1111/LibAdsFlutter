@@ -105,7 +105,7 @@ class AdmobAds {
     Widget? child,
     bool isShowWelComeScreenAfterAds = true,
     required List<String> listResumeId,
-    required bool adResumeConfig,
+    required String keyResumeConfig,
     required Function() onSetRemoteConfigOrganic,
     required Function() onStartLoadBannerSplash,
     required Function() onNextAction,
@@ -172,18 +172,18 @@ class AdmobAds {
 
     ///call UMP
     Future<void> initUMP = initUMPAndAdmob(
-      adMobAdRequest: const AdRequest(httpTimeoutMillis: 30000),
-      admobConfiguration: admobConfiguration,
-      initMediationCallback: initMediationCallback,
-      debugUmp: debugUmp,
-      enableLogger: enableLogger,
-      onInitialized: (canRequestAds) {},
-      navigatorKey: navigatorKey,
-      listResumeId: listResumeId,
-      adResumeConfig: adResumeConfig,
-      child: child,
-      isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds
-    );
+        adMobAdRequest: const AdRequest(httpTimeoutMillis: 30000),
+        admobConfiguration: admobConfiguration,
+        initMediationCallback: initMediationCallback,
+        debugUmp: debugUmp,
+        enableLogger: enableLogger,
+        onInitialized: (canRequestAds) {},
+        navigatorKey: navigatorKey,
+        listResumeId: listResumeId,
+        adResumeConfig: RemoteConfigLib
+            .configs[RemoteConfigKeyLib.getKeyByName(keyResumeConfig).name],
+        child: child,
+        isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds);
 
     final tasksFuture = Future.wait([
       initRemoteConfig,
