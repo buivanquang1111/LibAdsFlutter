@@ -257,6 +257,7 @@ class AdmobAds {
           listResumeId: NetworkRequest.instance.getListIDByName(nameAdsResume),
           child: child,
           isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds,
+          navigatorKey: navigatorKey,
         );
       },
       onError: (p0) {
@@ -278,6 +279,7 @@ class AdmobAds {
           listResumeId: NetworkRequest.instance.getListIDByName(nameAdsResume),
           child: child,
           isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds,
+          navigatorKey: navigatorKey,
         );
         return;
       },
@@ -296,6 +298,7 @@ class AdmobAds {
     required List<String> listResumeId,
     Widget? child,
     bool isShowWelComeScreenAfterAds = true,
+    GlobalKey<NavigatorState>? navigatorKey,
   }) async {
     print('check_call_remote --- name: $keyResumeConfig');
     print(
