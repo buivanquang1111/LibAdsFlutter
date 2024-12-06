@@ -195,14 +195,6 @@ class AdmobAds {
       }
     });
 
-    initAdsOpenResume(
-        listResumeId: listResumeId,
-        navigatorKey: navigatorKey,
-        adResumeConfig: RemoteConfigLib
-            .configs[RemoteConfigKeyLib.getKeyByName(keyResumeConfig).name],
-        child: child,
-        isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds);
-
     try {
       await Future.any([tasksFuture, timeoutCompleter.future]);
       print('time_out_call: All tasks completed successfully.');
@@ -217,6 +209,18 @@ class AdmobAds {
       countOpenApp();
       onNextAction();
     }
+
+    print('check_call_remote --- name: $keyResumeConfig');
+    print(
+        'check_call_remote --- name: ${RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyResumeConfig).name]}');
+    initAdsOpenResume(
+        listResumeId: listResumeId,
+        navigatorKey: navigatorKey,
+        adResumeConfig: RemoteConfigLib
+            .configs[RemoteConfigKeyLib.getKeyByName(keyResumeConfig).name],
+        child: child,
+        isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds);
+
 
     ///set giá trị remote TH Organic
     bool isOrganic = await organicCompleter.future;
