@@ -138,7 +138,8 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
       }
 
       //logEvent
-      if (widget.factoryId.toLowerCase().contains('language')) {
+      if (widget.factoryId.toLowerCase().contains('language') ||
+          widget.factoryId.toLowerCase().contains('lang')) {
         EventLogLib.logEvent("native_language_false", parameters: {
           "reason":
               "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.isHaveInternet()}"
@@ -148,7 +149,8 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
           "reason":
               "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.isHaveInternet()}"
         });
-      } else if (widget.factoryId.toLowerCase().contains('permission')) {
+      } else if (widget.factoryId.toLowerCase().contains('permission') ||
+          widget.factoryId.toLowerCase().contains('per')) {
         EventLogLib.logEvent("native_permission_false", parameters: {
           "reason":
               "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.isHaveInternet()}"
@@ -200,9 +202,11 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
     ConsentManager.ins.handleRequestUmp(
       onPostExecute: () {
         if (ConsentManager.ins.canRequestAds) {
-          if (widget.factoryId.toLowerCase().contains('language')) {
+          if (widget.factoryId.toLowerCase().contains('language') ||
+              widget.factoryId.toLowerCase().contains('lang')) {
             EventLogLib.logEvent("native_language_true");
-          } else if (widget.factoryId.toLowerCase().contains('permission')) {
+          } else if (widget.factoryId.toLowerCase().contains('permission') ||
+              widget.factoryId.toLowerCase().contains('per')) {
             EventLogLib.logEvent("native_permission_true");
           } else if (widget.factoryId.toLowerCase().contains('interest')) {
             EventLogLib.logEvent("native_interest_true");
@@ -353,8 +357,8 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
       factoryId: widget.factoryId,
       listId: widget.listId,
       onAdClicked: (adNetwork, adUnitType, data) {
-
-        if (widget.factoryId.toLowerCase().contains('language')) {
+        if (widget.factoryId.toLowerCase().contains('language') ||
+            widget.factoryId.toLowerCase().contains('lang')) {
           EventLogLib.logEvent(
               "native_language_click_${PreferencesUtilLib.getCountOpenApp() - 1}");
         }
@@ -436,7 +440,8 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
         }
       },
       onAdImpression: (adNetwork, adUnitType, data) {
-        if (widget.factoryId.toLowerCase().contains('language')) {
+        if (widget.factoryId.toLowerCase().contains('language') ||
+            widget.factoryId.toLowerCase().contains('lang')) {
           EventLogLib.logEvent(
               "native_language_impression_${PreferencesUtilLib.getCountOpenApp() - 1}");
         }

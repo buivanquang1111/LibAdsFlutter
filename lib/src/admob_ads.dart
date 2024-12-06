@@ -122,6 +122,9 @@ class AdmobAds {
     bool isIap = false,
     GlobalKey<NavigatorState>? navigatorKey,
   }) async {
+    //init remote key
+    RemoteConfigKeyLib.initializeKeys(remoteConfigKeys);
+
     _timer = Timer.periodic(
       const Duration(seconds: 1),
       (timer) {

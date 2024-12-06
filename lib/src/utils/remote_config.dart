@@ -10,7 +10,6 @@ class RemoteConfigLib {
   static Future<void> init(
       {required List<RemoteConfigKeyLib> remoteConfigKeys}) async {
     try {
-      RemoteConfigKeyLib.initializeKeys(remoteConfigKeys);
       await _remoteConfig.setConfigSettings(
         RemoteConfigSettings(
           fetchTimeout: const Duration(seconds: 30),
