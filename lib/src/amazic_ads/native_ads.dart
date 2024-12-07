@@ -31,7 +31,7 @@ class NativeAds extends StatefulWidget {
   final bool config;
 
   final bool reloadOnClick;
-  bool reloadResume;
+  // bool reloadResume;
 
   final String visibilityDetectorKey;
   final ValueNotifier<bool>? visibilityController;
@@ -59,7 +59,7 @@ class NativeAds extends StatefulWidget {
     required this.visibilityDetectorKey,
     this.visibilityController,
     this.reloadOnClick = false,
-    this.reloadResume = false,
+    // this.reloadResume = false,
     this.refreshRateSec = 0,
     Key? key,
     this.onAdImpression,
@@ -68,9 +68,9 @@ class NativeAds extends StatefulWidget {
   @override
   State<NativeAds> createState() => NativeAdsState();
 
-  void setReloadNative(bool reload) {
-    reloadResume = reload;
-  }
+  // void setReloadNative(bool reload) {
+  //   reloadResume = reload;
+  // }
 }
 
 class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
@@ -240,21 +240,26 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.resumed:
-        if (widget.reloadResume) {
-          print("debug-libraries: widget.reloadResume");
-          print(
-              'check_native: _prepareAd --- didChangeAppLifecycleState - resume');
+        print('check_start_ads --- lib: resumed');
+        // if (widget.reloadResume) {
+        //   print("debug-libraries: widget.reloadResume");
+        //   print(
+        //       'check_native: _prepareAd --- didChangeAppLifecycleState - resume');
           _prepareAd();
-          widget.setReloadNative(false);
-        } else if (state == AppLifecycleState.inactive ||
-            state == AppLifecycleState.paused) {
-          _stopTimer();
-        }
+        //   // widget.setReloadNative(false);
+        // } else if (state == AppLifecycleState.inactive ||
+        //     state == AppLifecycleState.paused) {
+        //   _stopTimer();
+        // }
         // if (isClicked) {
         //   isClicked = false;
         //   _prepareAd();
         // }
 
+        break;
+      case AppLifecycleState.paused:
+        print('check_start_ads --- lib: paused');
+        _stopTimer();
         break;
       default:
         break;
