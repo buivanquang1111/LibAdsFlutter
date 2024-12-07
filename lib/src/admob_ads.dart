@@ -413,26 +413,31 @@ class AdmobAds {
       listOpenId: NetworkRequest.instance.getListIDByName(nameAdsOpenSplash),
       listInterId: NetworkRequest.instance.getListIDByName(nameAdsInterSplash),
       onAdShowed: (adNetwork, adUnitType, data) {
+        print('check_start_ads --- onAdShowed');
         EventLogLib.logEvent('inter_splash_showad_time',
             parameters: {'showad_time': 'true_$_second'});
         _timer?.cancel();
       },
       onAdDismissed: (adNetwork, adUnitType, data) {
-        AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
-        countOpenApp();
-        onNextAction();
+        print('check_start_ads --- onAdDismissed');
+        // AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
+        // countOpenApp();
+        // onNextAction();
       },
       onDisabled: () {
+        print('check_start_ads --- onDisabled');
         AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
         countOpenApp();
         onNextAction();
       },
       onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
+        print('check_start_ads --- onAdFailedToLoad');
         AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
         countOpenApp();
         onNextAction();
       },
       onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
+        print('check_start_ads --- onAdFailedToShow');
         EventLogLib.logEvent("inter_splash_showad_time",
             parameters: {'showad_time': 'false_$_second'});
         _timer?.cancel();
@@ -441,13 +446,16 @@ class AdmobAds {
         onNextAction();
       },
       onAdLoaded: (adNetwork, adUnitType, data) {
+        print('check_start_ads --- onAdLoaded');
         EventLogLib.logEvent("inter_splash_true");
       },
       onAdImpression: (adNetwork, adUnitType, data) {
+        print('check_start_ads --- onAdImpression');
         EventLogLib.logEvent(
             "inter_splash_impression_${PreferencesUtilLib.getCountOpenApp()}");
       },
       onAdClicked: (adNetwork, adUnitType, data) {
+        print('check_start_ads --- onAdClicked');
         EventLogLib.logEvent(
             "inter_splash_click_${PreferencesUtilLib.getCountOpenApp()}");
       },
