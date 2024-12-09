@@ -1327,9 +1327,21 @@ class AdmobAds {
     return false;
   }
 
+  Future<bool> checkInternet() async {
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile) {
+      return true;
+    } else if (connectivityResult == ConnectivityResult.wifi) {
+      return true;
+    } else if (connectivityResult == ConnectivityResult.vpn){
+      return true;
+    }
+    return false;
+  }
+
   bool isHaveInternet() {
     bool isNetwork = true;
-    AdmobAds.instance.isDeviceOffline().then(
+    AdmobAds.instance.checkInternet().then(
       (value) {
         isNetwork = value;
       },
