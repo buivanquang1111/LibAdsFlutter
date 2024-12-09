@@ -1049,6 +1049,11 @@ class AdmobAds {
       return;
     }
 
+    _logger.logInfo(
+        'show_value_inter --- time now = ${DateTime.now().millisecondsSinceEpoch}');
+    _logger.logInfo(
+        'show_value_inter --- time minute = ${DateTime.now().millisecondsSinceEpoch - _lastTimeDismissInter}');
+
     ///check timeinterval
     if (isShowAdsSplash == false &&
         DateTime.now().millisecondsSinceEpoch - _lastTimeDismissInter <=
