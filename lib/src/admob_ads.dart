@@ -235,9 +235,12 @@ class AdmobAds {
     ///set time
     setOpenAppTime(DateTime.now().millisecondsSinceEpoch);
     setTimeIntervalBetweenInter(RemoteConfigLib.configs[
-        RemoteConfigKeyLib.getKeyByName(keyIntervalBetweenInterstitial).name]);
+            RemoteConfigKeyLib.getKeyByName(keyIntervalBetweenInterstitial)
+                .name] *
+        1000);
     setTimeIntervalInterFromStart(RemoteConfigLib.configs[
-        RemoteConfigKeyLib.getKeyByName(keyInterstitialFromStart).name]);
+            RemoteConfigKeyLib.getKeyByName(keyInterstitialFromStart).name] *
+        1000);
 
     _logger.logInfo(
         'show_value_inter --- init: setTimeIntervalBetweenInter: ${RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyIntervalBetweenInterstitial).name]}, setTimeIntervalInterFromStart: ${RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyInterstitialFromStart).name]}');
