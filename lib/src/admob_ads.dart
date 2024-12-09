@@ -239,6 +239,9 @@ class AdmobAds {
     setTimeIntervalInterFromStart(RemoteConfigLib.configs[
         RemoteConfigKeyLib.getKeyByName(keyInterstitialFromStart).name]);
 
+    _logger.logInfo(
+        'show_value_inter --- init: setTimeIntervalBetweenInter: ${RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyIntervalBetweenInterstitial).name]}, setTimeIntervalInterFromStart: ${RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyInterstitialFromStart).name]}');
+
     ///call id ads
     await NetworkRequest.instance
         .fetchAdsModel(
@@ -1032,6 +1035,9 @@ class AdmobAds {
     //   return;
     // }
 
+    _logger.logInfo(
+        'show_value_inter --- _timeIntervalFromStart: $_timeIntervalFromStart, _lastTimeDismissInter: $_lastTimeDismissInter, _timeInterval: $_timeInterval}');
+
     ///check nếu là show ads màn Splash thì k cần check interval_interstitial_from_start
     if (isShowAdsSplash == false &&
         DateTime.now().millisecondsSinceEpoch - _openAppTime <
@@ -1098,7 +1104,7 @@ class AdmobAds {
           });
         }
 
-        if(isTrickScreen == true){
+        if (isTrickScreen == true) {
           ///TH cho show màn sau trước khi ads được show
           onDisabled?.call();
         }
@@ -1333,7 +1339,7 @@ class AdmobAds {
       return true;
     } else if (connectivityResult == ConnectivityResult.wifi) {
       return true;
-    } else if (connectivityResult == ConnectivityResult.vpn){
+    } else if (connectivityResult == ConnectivityResult.vpn) {
       return true;
     }
     return false;
