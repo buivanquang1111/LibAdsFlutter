@@ -277,9 +277,11 @@ public class AmazicPlugin
 
     //iap
     private void initializePurchases(List<String> productList, Runnable callback) {
+        android.util.Log.d("check_iap", "start initializePurchases");
         ArrayList<ProductDetailCustom> products = new ArrayList<>();
         for (String productId : productList) {
             products.add(new ProductDetailCustom(productId, IAPManager.typeSub));
+            android.util.Log.d("check_iap", "productId: " + productId);
         }
 
         final boolean[] isCallbackCalled = {false};
@@ -291,6 +293,7 @@ public class AmazicPlugin
                 if (!isCallbackCalled[0]) {
                     isCallbackCalled[0] = true;
                     callback.run();
+                    android.util.Log.d("check_iap", "onBillingServiceDisconnected");
                 }
             }
 
@@ -300,6 +303,7 @@ public class AmazicPlugin
                 if (!isCallbackCalled[0]) {
                     isCallbackCalled[0] = true;
                     callback.run();
+                    android.util.Log.d("check_iap", "onBillingSetupFinished");
                 }
             }
         });
@@ -317,6 +321,7 @@ public class AmazicPlugin
         SpannableString originalPriceString = new SpannableString(
                 isSymbolAtStart ? currencySymbol + formatNumber((int) originalPrice) : formatNumber((int) originalPrice) + currencySymbol
         );
+        android.util.Log.d("check_iap", "originalPriceString: " + originalPriceString + "originalPrice" + formatNumber((int) originalPrice) + "currencySymbol: " + currencySymbol);
 
         result.success(originalPriceString);
     }
