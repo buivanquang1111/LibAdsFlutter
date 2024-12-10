@@ -86,7 +86,7 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     visibilityController = widget.visibilityController ?? ValueNotifier(true);
-    visibilityController.addListener(_listener);
+    // visibilityController.addListener(_listener);
     print('check_native: _prepareAd --- initState');
     _prepareAd();
   }
@@ -191,19 +191,22 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.resumed:
-        if (widget.reloadResume) {
-          print("debug-libraries: widget.reloadResume");
-          print('check_native: _prepareAd --- didChangeAppLifecycleState - resume');
-          _prepareAd();
-          widget.setReloadNative(false);
-        }else if(state == AppLifecycleState.inactive || state == AppLifecycleState.paused){
-          _stopTimer();
-        }
+        // if (widget.reloadResume) {
+        //   print("debug-libraries: widget.reloadResume");
+        //   print('check_native: _prepareAd --- didChangeAppLifecycleState - resume');
+        _prepareAd();
+        //   widget.setReloadNative(false);
+        // }else if(state == AppLifecycleState.inactive || state == AppLifecycleState.paused){
+        //   _stopTimer();
+        // }
         // if (isClicked) {
         //   isClicked = false;
         //   _prepareAd();
         // }
-
+        break;
+      case AppLifecycleState.paused:
+        print('check_start_ads --- lib: paused');
+        _stopTimer();
         break;
       default:
         break;

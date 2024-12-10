@@ -593,6 +593,7 @@ class AdmobAds {
     EasyAdFailedCallback? onAdFailedToShow,
     EasyAdCallback? onAdDismissed,
     EasyAdOnPaidEvent? onPaidEvent,
+    bool? isTrickScreen = true,
   }) async {
     if (!isEnabled || !config) {
       _logger.logInfo('1. isEnabled: $isEnabled, config: $config');
@@ -643,7 +644,11 @@ class AdmobAds {
       onAdDismissed: (adNetwork, adUnitType, data) {
         if (isShowAdsSplash == false)
           _lastTimeDismissInter = DateTime.now().millisecondsSinceEpoch;
-        onAdDismissed?.call(adNetwork, adUnitType, data);
+
+        if (isTrickScreen == false) {
+          ///TH k cho show trước màn sau
+          onAdDismissed?.call(adNetwork, adUnitType, data);
+        }
         AdmobAds.instance.setFullscreenAdShowing(false);
         print(
             'check_full_screen_ads_show: onAdDismiss_Inter - $isFullscreenAdShowing');
@@ -675,6 +680,12 @@ class AdmobAds {
             LoadingChannel.closeAd();
           });
         }
+
+        if(isTrickScreen == true){
+          ///TH cho show màn sau trước khi ads được show
+          onDisabled?.call();
+        }
+
         onAdShowed?.call(adNetwork, adUnitType, data);
       },
       onPaidEvent: onPaidEvent,
