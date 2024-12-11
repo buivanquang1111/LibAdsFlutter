@@ -1,4 +1,6 @@
 // ignore_for_file: public_member_api_docs
+import 'dart:io';
+
 import 'package:amazic_ads_flutter/adjust_config/call_organic_adjust.dart';
 import 'package:flutter/material.dart';
 
@@ -65,19 +67,44 @@ class AppLifecycleReactor {
 
   void showScreenWelCome() {
     setShowScreenWellCome(true);
-    showDialog(
-      barrierDismissible: false,
-      context: navigatorKey.currentContext!,
-      builder: (context) {
-        return child!;
-      },
-    ).then(
-      (value) {
-        if (_onReloadCollapse != null) {
-          _onReloadCollapse!();
-        }
-      },
-    );
+    if (Platform.isAndroid) {
+      showDialog(
+        barrierDismissible: false,
+        context: navigatorKey.currentContext!,
+        builder: (context) {
+          return child!;
+        },
+      ).then(
+        (value) {
+          if (_onReloadCollapse != null) {
+            _onReloadCollapse!();
+          }
+        },
+      );
+    } else {
+      showGeneralDialog(
+          context: navigatorKey.currentContext!,
+          barrierDismissible: false,
+          transitionDuration: const Duration(milliseconds: 300),
+          pageBuilder: (context, animation, secondaryAnimation) {
+            return child!;
+          },
+          transitionBuilder: (context, animation, secondaryAnimation, child) {
+            return SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(0, 1), // Bắt đầu từ dưới lên
+                end: Offset.zero,
+              ).animate(animation),
+              child: child,
+            );
+          }).then(
+        (value) {
+          if (_onReloadCollapse != null) {
+            _onReloadCollapse!();
+          }
+        },
+      );
+    }
   }
 
   void _onAppStateChanged(AppState appState) async {
@@ -187,7 +214,7 @@ class AppLifecycleReactor {
       onDisabled: () {
         EventLogLib.logEvent("open_resume_false", parameters: {
           "reason":
-          "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.isHaveInternet()}"
+              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.isHaveInternet()}"
         });
         onDisabled?.call();
       },
