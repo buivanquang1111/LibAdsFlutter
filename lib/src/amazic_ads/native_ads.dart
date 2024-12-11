@@ -90,7 +90,7 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     visibilityController = widget.visibilityController ?? ValueNotifier(true);
-    // visibilityController.addListener(_listener);
+    visibilityController.addListener(_listener);
     print('check_native: _prepareAd --- initState');
     _prepareAd();
   }
@@ -110,6 +110,7 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
   void _listener() {
     if (_nativeAd?.isAdLoading != true && visibilityController.value) {
       print('check_native: _prepareAd --- _listener');
+      print('check_state --- lib: _listener');
       _prepareAd();
     }
     if (!visibilityController.value) {
@@ -227,7 +228,7 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _nativeAd?.dispose();
-    // visibilityController.removeListener(_listener);
+    visibilityController.removeListener(_listener);
     visibilityController.dispose();
     _isLoading.dispose();
     _stopTimer();
