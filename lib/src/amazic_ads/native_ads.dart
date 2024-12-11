@@ -37,7 +37,6 @@ class NativeAds extends StatefulWidget {
   final String visibilityDetectorKey;
   final ValueNotifier<bool>? visibilityController;
   final int refreshRateSec; //reload ads with time
-  final AppLifecycleState? appLifecycleState;//check stat cha
 
   NativeAds({
     this.adNetwork = AdNetwork.admob,
@@ -65,7 +64,6 @@ class NativeAds extends StatefulWidget {
     this.refreshRateSec = 0,
     Key? key,
     this.onAdImpression,
-    this.appLifecycleState,
   }) : super(key: key);
 
   @override
@@ -240,22 +238,6 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
 
   bool isClicked = false;
 
-  @override
-  void didUpdateWidget(covariant NativeAds oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    switch(widget.appLifecycleState){
-      case AppLifecycleState.resumed:
-        print('check_state --- lib: resumed lop cha');
-        break;
-
-      case AppLifecycleState.inactive:
-      case AppLifecycleState.paused:
-      print('check_state --- lib: paused lop cha');
-        break;
-      default:
-        break;
-    }
-  }
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
