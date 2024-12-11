@@ -31,6 +31,7 @@ class NativeAds extends StatefulWidget {
   final bool config;
 
   final bool reloadOnClick;
+
   // bool reloadResume;
 
   final String visibilityDetectorKey;
@@ -68,9 +69,9 @@ class NativeAds extends StatefulWidget {
   @override
   State<NativeAds> createState() => NativeAdsState();
 
-  // void setReloadNative(bool reload) {
-  //   reloadResume = reload;
-  // }
+// void setReloadNative(bool reload) {
+//   reloadResume = reload;
+// }
 }
 
 class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
@@ -241,6 +242,7 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
     switch (state) {
       case AppLifecycleState.resumed:
         print('check_start_ads --- lib: resumed');
+        print('check_state --- lib: resumed');
         // if (widget.reloadResume) {
         //   print("debug-libraries: widget.reloadResume");
         //   print(
@@ -257,8 +259,10 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
         // }
 
         break;
+      case AppLifecycleState.inactive:
       case AppLifecycleState.paused:
         print('check_start_ads --- lib: paused');
+        print('check_state --- lib: paused');
         _stopTimer();
         break;
       default:
