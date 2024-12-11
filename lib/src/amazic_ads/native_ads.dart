@@ -110,7 +110,7 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
   void _listener() {
     if (_nativeAd?.isAdLoading != true && visibilityController.value) {
       print('check_native: _prepareAd --- _listener');
-      print('check_state --- lib: _listener');
+      print('check_state --- lib: _listener ${widget.visibilityDetectorKey}');
       _prepareAd();
     }
     if (!visibilityController.value) {
@@ -243,7 +243,7 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
     switch (state) {
       case AppLifecycleState.resumed:
         print('check_start_ads --- lib: resumed');
-        print('check_state --- lib: resumed');
+        print('check_state --- lib: resumed ${widget.visibilityDetectorKey}');
         // if (widget.reloadResume) {
         //   print("debug-libraries: widget.reloadResume");
         //   print(
@@ -263,7 +263,7 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
       case AppLifecycleState.inactive:
       case AppLifecycleState.paused:
         print('check_start_ads --- lib: paused');
-        print('check_state --- lib: paused');
+        print('check_state --- lib: paused ${widget.visibilityDetectorKey}');
         _stopTimer();
         break;
       default:
