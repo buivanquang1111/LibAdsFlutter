@@ -151,6 +151,9 @@ class AdmobAds {
     Future<void> initRemoteConfig =
         RemoteConfigLib.init(remoteConfigKeys: remoteConfigKeys).then(
       (value) {
+        for(var key in RemoteConfigKeyLib.listRemoteConfigKey) {
+          print('CHECK_REMOTE --- ${key.name}: ${key.defaultValue}');
+        }
         // RemoteConfigLib.getRemoteConfig();
       },
     );
