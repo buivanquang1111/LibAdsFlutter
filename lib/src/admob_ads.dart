@@ -133,6 +133,7 @@ class AdmobAds {
     );
 
     final Completer<bool> organicCompleter = Completer<bool>();
+    final Completer<bool> umpCompleter = Completer<bool>();
 
     const timeoutDuration = Duration(seconds: 12);
 
@@ -177,7 +178,17 @@ class AdmobAds {
       initMediationCallback: initMediationCallback,
       debugUmp: debugUmp,
       enableLogger: enableLogger,
-      onInitialized: (canRequestAds) {},
+      onInitialized: (canRequestAds) {
+        if(canRequestAds){
+          if(!umpCompleter.isCompleted){
+            umpCompleter.complete(true);
+          }
+        }else{
+          if(!umpCompleter.isCompleted){
+            umpCompleter.complete(false);
+          }
+        }
+      },
       navigatorKey: navigatorKey,
     );
 
@@ -186,6 +197,7 @@ class AdmobAds {
       initOrganicAdjust,
       initUMP,
       organicCompleter.future,
+      umpCompleter.future,
     ]).then((_) {
       if (!timeoutCompleter.isCompleted) {
         timeoutCompleter.complete();
