@@ -140,6 +140,7 @@ class AppLifecycleReactor {
 
         if (listId.isNotEmpty != true) return;
 
+        print('check_app_resume --- 1.isShowWelComeScreenAfterAds: $isShowWelComeScreenAfterAds');
         if (isShowWelComeScreenAfterAds) {
           AdmobAds.instance.showAppOpen(
               listId: listId,
@@ -186,13 +187,16 @@ class AppLifecycleReactor {
                 }
               });
         } else {
+          print('check_app_resume --- child: $child');
           if (child != null) {
             if (!_isShowScreenWellCome) {
+              print('check_app_resume --- 2._isShowScreenWellCome: $_isShowScreenWellCome');
               showScreenWelCome();
             }
           }
         }
       } else {
+        print('check_app_resume --- _isExcludeScreen: $_isExcludeScreen');
         _isExcludeScreen = false;
       }
     }
@@ -208,10 +212,20 @@ class AppLifecycleReactor {
     AdmobAds.instance.showAppOpen(
       listId: listId,
       config: config,
-      onAdDismissed: onAdDismissed,
-      onAdFailedToLoad: onAdFailedToLoad,
-      onAdFailedToShow: onAdFailedToShow,
+      onAdDismissed: (adNetwork, adUnitType, data) {
+        setShowScreenWellCome(false);
+        onAdDismissed?.call(adNetwork,adUnitType,data);
+      },
+      onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
+        setShowScreenWellCome(false);
+        onAdFailedToLoad?.call(adNetwork,adUnitType,data,errorMessage);
+      },
+      onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
+        setShowScreenWellCome(false);
+        onAdFailedToShow?.call(adNetwork,adUnitType,data,errorMessage);
+      },
       onDisabled: () {
+        setShowScreenWellCome(false);
         EventLogLib.logEvent("open_resume_false", parameters: {
           "reason":
               "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.isHaveInternet()}"
@@ -219,6 +233,7 @@ class AppLifecycleReactor {
         onDisabled?.call();
       },
       onDismissCollapse: () {
+        setShowScreenWellCome(false);
         if (onDismissCollapse != null) {
           onDismissCollapse();
         }
