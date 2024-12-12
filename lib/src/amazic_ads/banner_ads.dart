@@ -171,6 +171,7 @@ class _BannerAdsState extends State<BannerAds> with WidgetsBindingObserver {
       return;
     }
     if (_bannerAd?.isAdLoading != true && visibilityController.value) {
+      print('check_ads_banner --- _listener ${widget.visibilityDetectorKey}');
       _prepareAd();
       return;
     }
@@ -189,6 +190,7 @@ class _BannerAdsState extends State<BannerAds> with WidgetsBindingObserver {
 
   @override
   void didChangeDependencies() {
+    print('check_ads_banner --- didChangeDependencies ${widget.visibilityDetectorKey}');
     _prepareAd();
     super.didChangeDependencies();
   }
@@ -208,6 +210,7 @@ class _BannerAdsState extends State<BannerAds> with WidgetsBindingObserver {
     switch (state) {
       case AppLifecycleState.resumed:
         if (widget.reloadResume && widget.onSplashScreen == false) {
+          print('check_ads_banner --- resumed ${widget.visibilityDetectorKey}');
           _prepareAd();
         }
 
