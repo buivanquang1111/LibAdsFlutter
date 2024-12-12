@@ -252,6 +252,7 @@ class AdmobAds {
       appId: appId,
       packageName: packageName,
       onResponse: () {
+        print('check_next_splash --- onResponse onTimeout');
         initAdsSplashAndAppOpen(
           keyRateAOA: keyRateAOA,
           keyOpenSplash: keyOpenSplash,
@@ -267,6 +268,7 @@ class AdmobAds {
         );
       },
       onError: (p0) {
+        print('check_next_splash --- fetchAdsModel, onError $p0');
         countOpenApp();
         onNextAction();
       },
@@ -274,6 +276,7 @@ class AdmobAds {
         .timeout(
       const Duration(seconds: 4),
       onTimeout: () {
+        print('check_next_splash --- fetchAdsModel onTimeout');
         initAdsSplashAndAppOpen(
           keyRateAOA: keyRateAOA,
           keyOpenSplash: keyOpenSplash,
