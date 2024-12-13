@@ -248,7 +248,7 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
         //   print("debug-libraries: widget.reloadResume");
         //   print(
         //       'check_native: _prepareAd --- didChangeAppLifecycleState - resume');
-          _prepareAd();
+        _prepareAd();
         //   // widget.setReloadNative(false);
         // } else if (state == AppLifecycleState.inactive ||
         //     state == AppLifecycleState.paused) {
@@ -393,7 +393,8 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
         loadFailedCount++;
         widget.onAdFailedToLoad
             ?.call(adNetwork, adUnitType, data, errorMessage);
-        _logger.logInfo('native ad: onAdFailedToLoad');
+        _logger.logInfo(
+            'native ad: onAdFailedToLoad , listId: ${widget.listId[0]}, AdmobAds.instance.isShowAllAds: ${AdmobAds.instance.isShowAllAds}, widget.config: ${widget.config}, ConsentManager.ins.canRequestAds: ${ConsentManager.ins.canRequestAds}');
         if (mounted) {
           setState(() {});
         }
