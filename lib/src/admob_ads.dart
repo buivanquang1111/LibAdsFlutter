@@ -645,8 +645,12 @@ class AdmobAds {
         if (isShowAdsSplash == false)
           _lastTimeDismissInter = DateTime.now().millisecondsSinceEpoch;
 
-        if (isTrickScreen == false) {
-          ///TH k cho show trước màn sau
+        if (Platform.isAndroid) {
+          if (isTrickScreen == false) {
+            ///TH k cho show trước màn sau
+            onAdDismissed?.call(adNetwork, adUnitType, data);
+          }
+        } else if (Platform.isIOS) {
           onAdDismissed?.call(adNetwork, adUnitType, data);
         }
         AdmobAds.instance.setFullscreenAdShowing(false);
@@ -681,7 +685,7 @@ class AdmobAds {
           });
         }
 
-        if(isTrickScreen == true){
+        if (isTrickScreen == true) {
           ///TH cho show màn sau trước khi ads được show
           onDisabled?.call();
         }
