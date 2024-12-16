@@ -10,6 +10,7 @@ class BannerAds extends StatefulWidget {
   final AdNetwork adNetwork;
   final List<String> listId;
   final AdsBannerType type;
+  final AdSize? adSize;
 
   final EasyAdCallback? onAdLoaded;
   final EasyAdCallback? onAdShowed;
@@ -50,6 +51,7 @@ class BannerAds extends StatefulWidget {
     this.shouldReload = true,
     this.reloadResume = true,
     this.onSplashScreen = false,
+    this.adSize,
     Key? key,
   }) : super(key: key);
 
@@ -248,6 +250,7 @@ class _BannerAdsState extends State<BannerAds> with WidgetsBindingObserver {
     }
 
     _bannerAd ??= AdmobAds.instance.createBanner(
+      adSize: widget.adSize,
       adNetwork: widget.adNetwork,
       listId: widget.listId,
       type: widget.type,
