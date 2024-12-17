@@ -113,6 +113,7 @@ class AdmobAds {
     required String keyOpenSplash,
     required String keyInterSplash,
     required String keyIntervalBetweenInterstitial,
+    String? keyOrganicIntervalBetweenInterstitial,
     required String keyInterstitialFromStart,
     required String nameAdsOpenSplash,
     required String nameAdsInterSplash,
@@ -163,6 +164,14 @@ class AdmobAds {
         CallOrganicAdjust.instance.initOrganicAdjust(
             onOrganic: () {
               if (!organicCompleter.isCompleted) {
+                // set time interval between inter organic
+                if (keyOrganicIntervalBetweenInterstitial != null) {
+                  setTimeIntervalBetweenInter(RemoteConfigLib.configs[
+                  RemoteConfigKeyLib.getKeyByName(
+                      keyOrganicIntervalBetweenInterstitial)
+                      .name] *
+                      1000);
+                }
                 organicCompleter.complete(true);
               }
             },
@@ -249,10 +258,20 @@ class AdmobAds {
 
     ///set time
     setOpenAppTime(DateTime.now().millisecondsSinceEpoch);
-    setTimeIntervalBetweenInter(RemoteConfigLib.configs[
-            RemoteConfigKeyLib.getKeyByName(keyIntervalBetweenInterstitial)
-                .name] *
-        1000);
+    if (keyOrganicIntervalBetweenInterstitial != null && isOrganic) {
+      setTimeIntervalBetweenInter(RemoteConfigLib.configs[
+              RemoteConfigKeyLib.getKeyByName(
+                      keyOrganicIntervalBetweenInterstitial)
+                  .name] *
+          1000);
+    } else {
+      setTimeIntervalBetweenInter(RemoteConfigLib.configs[
+              RemoteConfigKeyLib.getKeyByName(
+                      keyIntervalBetweenInterstitial)
+                  .name] *
+          1000);
+    }
+
     setTimeIntervalInterFromStart(RemoteConfigLib.configs[
             RemoteConfigKeyLib.getKeyByName(keyInterstitialFromStart).name] *
         1000);
