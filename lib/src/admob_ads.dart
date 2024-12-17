@@ -164,14 +164,6 @@ class AdmobAds {
         CallOrganicAdjust.instance.initOrganicAdjust(
             onOrganic: () {
               if (!organicCompleter.isCompleted) {
-                // set time interval between inter organic
-                if (keyOrganicIntervalBetweenInterstitial != null) {
-                  setTimeIntervalBetweenInter(RemoteConfigLib.configs[
-                  RemoteConfigKeyLib.getKeyByName(
-                      keyOrganicIntervalBetweenInterstitial)
-                      .name] *
-                      1000);
-                }
                 organicCompleter.complete(true);
               }
             },
