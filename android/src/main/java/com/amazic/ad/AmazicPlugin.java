@@ -100,6 +100,7 @@ public class AmazicPlugin
                         "IABTCF_PurposeConsents",
                         ""
                 );
+                print("check_purposeConsents --- "+purposeConsents);
 
                 // Purposes are zero-indexed. Index 0 contains information about Purpose 1.
                 if (!purposeConsents.isEmpty()) {
