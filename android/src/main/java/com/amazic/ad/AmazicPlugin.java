@@ -100,7 +100,8 @@ public class AmazicPlugin
                         "IABTCF_PurposeConsents",
                         ""
                 );
-                print("check_purposeConsents --- "+purposeConsents);
+                android.util.Log.d("check_purposeConsents", "purposeConsents: " + purposeConsents);
+
 
                 // Purposes are zero-indexed. Index 0 contains information about Purpose 1.
                 if (!purposeConsents.isEmpty()) {
