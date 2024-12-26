@@ -4,8 +4,17 @@ import 'package:flutter/foundation.dart';
 
 class RemoteConfigLib {
   static final _remoteConfig = FirebaseRemoteConfig.instance;
+
   // static List<RemoteConfigKey> listRemoteConfigKey = [];
   static Map<String, dynamic> configs = {};
+
+  static bool getConfig({required String name, bool defaultValue = true}) {
+    try {
+      return configs[RemoteConfigKeyLib.getKeyByName(name).name];
+    } catch (e) {
+      return defaultValue;
+    }
+  }
 
   static Future<void> init(
       {required List<RemoteConfigKeyLib> remoteConfigKeys}) async {
@@ -16,14 +25,16 @@ class RemoteConfigLib {
           minimumFetchInterval: const Duration(seconds: 15),
         ),
       );
-      await _remoteConfig.fetchAndActivate().then((update) {
-        if(update){
-          print('check_remote_config: update remote');
-        }else{
-          print('check_remote_config: no update remote');
-        }
-        getRemoteConfig();
-      },);
+      await _remoteConfig.fetchAndActivate().then(
+        (update) {
+          if (update) {
+            print('check_remote_config: update remote');
+          } else {
+            print('check_remote_config: no update remote');
+          }
+          getRemoteConfig();
+        },
+      );
     } catch (e) {
       print('Remote Config init error: $e');
       getRemoteConfigDefault();
@@ -31,7 +42,8 @@ class RemoteConfigLib {
   }
 
   static void getRemoteConfig() {
-    var showAds = _remoteConfig.getBool(RemoteConfigKeyLib.getKeyByName('show_ads').name);
+    var showAds =
+        _remoteConfig.getBool(RemoteConfigKeyLib.getKeyByName('show_ads').name);
     print('CHECK_REMOTE_CONFIG: 1. showAds - $showAds');
 
     // try {
@@ -76,13 +88,17 @@ class RemoteConfigLib {
       try {
         switch (key.valueType) {
           case const (String):
-            configs[key.name] = RemoteConfigKeyLib.getKeyByName(key.name).defaultValue;
+            configs[key.name] =
+                RemoteConfigKeyLib.getKeyByName(key.name).defaultValue;
             break;
           case const (int):
-            configs[key.name] = RemoteConfigKeyLib.getKeyByName(key.name).defaultValue;
+            configs[key.name] =
+                RemoteConfigKeyLib.getKeyByName(key.name).defaultValue;
             break;
           case const (bool):
-            configs[key.name] = RemoteConfigKeyLib.getKeyByName(key.name).defaultValue && showAds;
+            configs[key.name] =
+                RemoteConfigKeyLib.getKeyByName(key.name).defaultValue &&
+                    showAds;
             break;
         }
       } catch (e) {
