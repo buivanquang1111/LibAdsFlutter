@@ -1362,12 +1362,16 @@ class AdmobAds {
   Future<bool> checkInternet() async {
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile) {
+      print('check_have_internet --- mobile');
       return true;
     } else if (connectivityResult == ConnectivityResult.wifi) {
+      print('check_have_internet --- wifi');
       return true;
     } else if (connectivityResult == ConnectivityResult.vpn) {
+      print('check_have_internet --- vpn');
       return true;
     }
+    print('check_have_internet --- none');
     return false;
   }
 
@@ -1376,7 +1380,7 @@ class AdmobAds {
     checkInternet().then(
       (value) {
         isNetwork = value;
-        print('check_have_internet --- $isNetwork');
+        print('check_have_internet --- result $isNetwork');
       },
     );
     return isNetwork;
