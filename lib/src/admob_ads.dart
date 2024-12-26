@@ -26,6 +26,7 @@ import 'amazic_admob/admob_interstitial_ad.dart';
 import 'amazic_admob/admob_native_ad.dart';
 import 'amazic_admob/admob_rewarded_ad.dart';
 import 'amazic_ads/splash_ad_with_interstitial_and_app_open.dart';
+import 'package:http/http.dart' as http;
 
 part 'utils/ads_extension.dart';
 
@@ -151,7 +152,7 @@ class AdmobAds {
     Future<void> initRemoteConfig =
         RemoteConfigLib.init(remoteConfigKeys: remoteConfigKeys).then(
       (value) {
-        for(var key in RemoteConfigKeyLib.listRemoteConfigKey) {
+        for (var key in RemoteConfigKeyLib.listRemoteConfigKey) {
           print('CHECK_REMOTE --- ${key.name}: ${key.defaultValue}');
         }
         // RemoteConfigLib.getRemoteConfig();
@@ -182,12 +183,12 @@ class AdmobAds {
       debugUmp: debugUmp,
       enableLogger: enableLogger,
       onInitialized: (canRequestAds) {
-        if(canRequestAds){
-          if(!umpCompleter.isCompleted){
+        if (canRequestAds) {
+          if (!umpCompleter.isCompleted) {
             umpCompleter.complete(true);
           }
-        }else{
-          if(!umpCompleter.isCompleted){
+        } else {
+          if (!umpCompleter.isCompleted) {
             umpCompleter.complete(false);
           }
         }
@@ -1350,50 +1351,58 @@ class AdmobAds {
   }
 
   Future<bool> isDeviceOffline() async {
-    // final connectivityResult = await Connectivity().checkConnectivity();
-    // if (connectivityResult != ConnectivityResult.wifi &&
-    //     connectivityResult != ConnectivityResult.mobile &&
-    //     connectivityResult != ConnectivityResult.vpn) {
-    //   return true;
-    // }
-    // return false;
-    var connectivityResult = await (Connectivity().checkConnectivity());
-    if (connectivityResult == ConnectivityResult.none) {
-      print('check_have_internet --- none');
-      return false;
+    final connectivityResult = await Connectivity().checkConnectivity();
+    if (connectivityResult != ConnectivityResult.wifi &&
+        connectivityResult != ConnectivityResult.mobile &&
+        connectivityResult != ConnectivityResult.vpn) {
+      return true;
     }
-    try {
-      final result = await InternetAddress.lookup('google.com');
-      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        print('check_have_internet --- real internet available');
-        return true;
-      }
-    } catch (e) {
-      print('check_have_internet --- no real internet');
-      return false;
-    }
-
     return false;
+    // var connectivityResult = await (Connectivity().checkConnectivity());
+    // if (connectivityResult == ConnectivityResult.none) {
+    //   print('check_have_internet --- none');
+    //   return false;
+    // }
+    // try {
+    //   final result = await InternetAddress.lookup('google.com');
+    //   if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+    //     print('check_have_internet --- real internet available');
+    //     return true;
+    //   }
+    // } catch (e) {
+    //   print('check_have_internet --- no real internet');
+    //   return false;
+    // }
+    //
+    // return false;
   }
 
   Future<bool> checkInternet() async {
-    var connectivityResult = await (Connectivity().checkConnectivity());
-    if (connectivityResult == ConnectivityResult.none) {
-      print('check_have_internet --- none');
-      return false;
-    }
+    // var connectivityResult = await (Connectivity().checkConnectivity());
+    // if (connectivityResult == ConnectivityResult.none) {
+    //   print('check_have_internet --- none');
+    //   return false;
+    // }
+    // try {
+    //   final result = await InternetAddress.lookup('google.com');
+    //   if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+    //     print('check_have_internet --- real internet available');
+    //     return true;
+    //   }
+    // } catch (e) {
+    //   print('check_have_internet --- no real internet');
+    //   return false;
+    // }
+    //
+    // return false;
     try {
-      final result = await InternetAddress.lookup('google.com');
-      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        print('check_have_internet --- real internet available');
-        return true;
-      }
-    } catch (e) {
-      print('check_have_internet --- no real internet');
+      final response = await http
+          .get(Uri.parse('https://www.google.com'))
+          .timeout(const Duration(seconds: 2));
+      return response.statusCode == 200;
+    } catch (_) {
       return false;
     }
-
-    return false;
   }
 
   bool isHaveInternet() {
