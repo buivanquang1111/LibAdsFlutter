@@ -8,7 +8,23 @@ class RemoteConfigLib {
   // static List<RemoteConfigKey> listRemoteConfigKey = [];
   static Map<String, dynamic> configs = {};
 
-  static bool getConfig({required String name, bool defaultValue = true}) {
+  static bool getConfigBool({required String name, bool defaultValue = true}) {
+    try {
+      return configs[RemoteConfigKeyLib.getKeyByName(name).name];
+    } catch (e) {
+      return defaultValue;
+    }
+  }
+
+  static int getConfigInt({required String name, int defaultValue = 0}) {
+    try {
+      return configs[RemoteConfigKeyLib.getKeyByName(name).name];
+    } catch (e) {
+      return defaultValue;
+    }
+  }
+
+  static String getConfigString({required String name, String defaultValue = '30_70'}) {
     try {
       return configs[RemoteConfigKeyLib.getKeyByName(name).name];
     } catch (e) {
@@ -19,6 +35,7 @@ class RemoteConfigLib {
   static Future<void> init(
       {required List<RemoteConfigKeyLib> remoteConfigKeys}) async {
     try {
+      print('check_remote_config: init');
       await _remoteConfig.setConfigSettings(
         RemoteConfigSettings(
           fetchTimeout: const Duration(seconds: 30),
@@ -36,7 +53,7 @@ class RemoteConfigLib {
         },
       );
     } catch (e) {
-      print('Remote Config init error: $e');
+      print('check_remote_config: Remote Config init error: $e');
       getRemoteConfigDefault();
     }
   }
