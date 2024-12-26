@@ -119,7 +119,7 @@ class CollapseBannerAdsState extends State<CollapseBannerAds>
       widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.banner, null);
       return;
     }
-    if (await AdmobAds.instance.isDeviceOffline()) {
+    if (!(await AdmobAds.instance.checkInternet())) {
       widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.banner, null);
       return;
     }

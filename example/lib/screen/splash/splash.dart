@@ -57,8 +57,6 @@ class SplashState extends State<SplashScreen> {
               valueType: int),
         ],
         adjustToken: '',
-        listResumeId: [],
-        adResumeConfig: true,
         onSetRemoteConfigOrganic: () {},
         onStartLoadBannerSplash: () {},
         onNextAction: () {
@@ -70,7 +68,9 @@ class SplashState extends State<SplashScreen> {
         keyIntervalBetweenInterstitial: 'interval_between_interstitial',
         keyInterstitialFromStart: 'interstitial_from_start',
         nameAdsInterSplash: 'open_splash',
-        nameAdsOpenSplash: 'inter_splash');
+        nameAdsOpenSplash: 'inter_splash',
+        nameAdsResume: '',
+        keyResumeConfig: '');
   }
 
   Future<void> handleNavigate() async {

@@ -402,13 +402,13 @@ class AdmobAds {
   }
 
   ///show Ads inter/open Splash
-  void showAdsSplash(
+  Future<void> showAdsSplash(
       {required String keyRateAOA,
       required String keyOpenSplash,
       required String keyInterSplash,
       required String nameAdsOpenSplash,
       required String nameAdsInterSplash,
-      required Function() onNextAction}) {
+      required Function() onNextAction}) async{
     final String rateAoa = RemoteConfigLib
         .configs[RemoteConfigKeyLib.getKeyByName(keyRateAOA).name];
     final bool isShowOpen = RemoteConfigLib
@@ -422,10 +422,10 @@ class AdmobAds {
 
     EventLogLib.logEvent("inter_splash_tracking", parameters: {
       'splash_detail':
-          '${ConsentManager.ins.canRequestAds}_${CallOrganicAdjust.instance.isOrganic()}_${isHaveInternet()}_${AdmobAds.instance.isShowAllAds}_${idAdsCheck}_$rateAoa',
+          '${ConsentManager.ins.canRequestAds}_${CallOrganicAdjust.instance.isOrganic()}_${await AdmobAds.instance.checkInternet()}_${AdmobAds.instance.isShowAllAds}_${idAdsCheck}_$rateAoa',
       'ump': '${ConsentManager.ins.canRequestAds}',
       'organic': '${CallOrganicAdjust.instance.isOrganic()}',
-      'haveinternet': '${isHaveInternet()}',
+      'haveinternet': '${await AdmobAds.instance.checkInternet()}',
       'showallad': '${AdmobAds.instance.isShowAllAds}',
       'idcheck': '$idAdsCheck',
       'interremote_openremote_aoavalue': '${isShowInter}_${isShowOpen}_$rateAoa'
@@ -677,18 +677,18 @@ class AdmobAds {
     EasyAdOnPaidEvent? onPaidEvent,
   }) async {
     if (!AdmobAds.instance.isShowAllAds ||
-        await AdmobAds.instance.isDeviceOffline() ||
+        !(await AdmobAds.instance.checkInternet()) ||
         !config ||
         !ConsentManager.ins.canRequestAds) {
       if (factoryId.toLowerCase().contains("intro_full")) {
         EventLogLib.logEvent("native_intro_full_false", parameters: {
           "reason":
-              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.isHaveInternet()}"
+              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.checkInternet()}"
         });
       } else {
         EventLogLib.logEvent("native_intro_false", parameters: {
           "reason":
-              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.isHaveInternet()}"
+              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.checkInternet()}"
         });
       }
       return null;
@@ -923,7 +923,7 @@ class AdmobAds {
     if (!isShowAllAds ||
         !config ||
         _isFullscreenAdShowing ||
-        await isDeviceOffline() ||
+        !(await AdmobAds.instance.checkInternet()) ||
         !ConsentManager.ins.canRequestAds) {
       onDisabled?.call();
       return;
@@ -1030,13 +1030,13 @@ class AdmobAds {
     if (!isShowAllAds ||
         !config ||
         _isFullscreenAdShowing ||
-        await isDeviceOffline() ||
+        !(await AdmobAds.instance.checkInternet()) ||
         !ConsentManager.ins.canRequestAds) {
       _logger.logInfo('1. isEnabled: $isShowAllAds, config: $config');
 
       EventLogLib.logEvent("inter_intro_false", parameters: {
         "reason":
-            "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.isHaveInternet()}"
+            "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.checkInternet()}"
       });
       onDisabled?.call();
       return;
@@ -1183,7 +1183,7 @@ class AdmobAds {
       onDisabled?.call();
       return;
     }
-    if (await isDeviceOffline()) {
+    if (!(await AdmobAds.instance.checkInternet())) {
       onDisabled?.call();
       return;
     }
@@ -1285,7 +1285,7 @@ class AdmobAds {
       onDisabled?.call();
       return;
     }
-    if (await isDeviceOffline()) {
+    if (!(await AdmobAds.instance.checkInternet())) {
       onDisabled?.call();
       return;
     }
@@ -1358,43 +1358,9 @@ class AdmobAds {
       return true;
     }
     return false;
-    // var connectivityResult = await (Connectivity().checkConnectivity());
-    // if (connectivityResult == ConnectivityResult.none) {
-    //   print('check_have_internet --- none');
-    //   return false;
-    // }
-    // try {
-    //   final result = await InternetAddress.lookup('google.com');
-    //   if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-    //     print('check_have_internet --- real internet available');
-    //     return true;
-    //   }
-    // } catch (e) {
-    //   print('check_have_internet --- no real internet');
-    //   return false;
-    // }
-    //
-    // return false;
   }
 
   Future<bool> checkInternet() async {
-    // var connectivityResult = await (Connectivity().checkConnectivity());
-    // if (connectivityResult == ConnectivityResult.none) {
-    //   print('check_have_internet --- none');
-    //   return false;
-    // }
-    // try {
-    //   final result = await InternetAddress.lookup('google.com');
-    //   if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-    //     print('check_have_internet --- real internet available');
-    //     return true;
-    //   }
-    // } catch (e) {
-    //   print('check_have_internet --- no real internet');
-    //   return false;
-    // }
-    //
-    // return false;
     try {
       final response = await http
           .get(Uri.parse('https://www.google.com'))
@@ -1403,18 +1369,6 @@ class AdmobAds {
     } catch (_) {
       return false;
     }
-  }
-
-  bool isHaveInternet() {
-    bool isNetwork = true;
-    checkInternet().then(
-      (value) {
-        isNetwork = value;
-        print('check_have_internet --- 1.result $isNetwork');
-      },
-    );
-    print('check_have_internet --- 2.result $isNetwork');
-    return isNetwork;
   }
 
   Future<bool?> getConsentResult() async {

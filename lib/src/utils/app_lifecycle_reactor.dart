@@ -131,7 +131,7 @@ class AppLifecycleReactor {
         if (!AdmobAds.instance.isShowAllAds) {
           return;
         }
-        if (await AdmobAds.instance.isDeviceOffline()) {
+        if (!(await AdmobAds.instance.checkInternet())) {
           return;
         }
         if (!ConsentManager.ins.canRequestAds) {
@@ -169,10 +169,10 @@ class AppLifecycleReactor {
                   }
                 }
               },
-              onDisabled: () {
+              onDisabled: () async{
                 EventLogLib.logEvent("open_resume_false", parameters: {
                   "reason":
-                      "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.isHaveInternet()}"
+                      "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.checkInternet()}"
                 });
 
                 if (child != null) {
@@ -224,11 +224,11 @@ class AppLifecycleReactor {
         setShowScreenWellCome(false);
         onAdFailedToShow?.call(adNetwork,adUnitType,data,errorMessage);
       },
-      onDisabled: () {
+      onDisabled: () async{
         setShowScreenWellCome(false);
         EventLogLib.logEvent("open_resume_false", parameters: {
           "reason":
-              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.isHaveInternet()}"
+              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.checkInternet()}"
         });
         onDisabled?.call();
       },

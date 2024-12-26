@@ -15,19 +15,7 @@ class RemoteConfigKeyLib {
   static List<RemoteConfigKeyLib> listRemoteConfigKey = [];
 
   static void initializeKeys(List<RemoteConfigKeyLib> keys) {
-    print('check_remote_config: initializeKeys');
     listRemoteConfigKey = keys;
-    print('check_remote_config: listRemoteConfigKey');
-    for (var element in listRemoteConfigKey) {
-      print(
-          'check_remote_config: initializeKeys - ${element.name}, ${element.defaultValue}');
-    }
-
-    // print('check_remote_config: keys');
-    // for (var element in keys) {
-    //   print(
-    //       'check_remote_config: initializeKeys - ${element.name}, ${element.defaultValue}');
-    // }
   }
 
   static void ensureInitialized() {
