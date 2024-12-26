@@ -30,6 +30,16 @@ class NativePreloadAds extends StatefulWidget {
 }
 
 class _NativePreloadAdsState extends State<NativePreloadAds> {
+
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     print(
@@ -58,9 +68,9 @@ class _NativePreloadAdsState extends State<NativePreloadAds> {
                   borderRadius: widget.borderRadius,
                   child: SizedBox(
                     height: widget.height,
-                    child: LoadingAds(
-                      height: widget.height,
-                    ),
+                    // child: LoadingAds(
+                    //   height: widget.height,
+                    // ),
                   ),
                 ),
               ));
