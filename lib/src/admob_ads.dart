@@ -1026,6 +1026,7 @@ class AdmobAds {
     EasyAdCallback? onAdDismissed,
     EasyAdOnPaidEvent? onPaidEvent,
     bool? isTrickScreen = true,
+    bool? isShowAdsOnboard = false,
   }) async {
     if (!isShowAllAds ||
         !config ||
@@ -1086,7 +1087,9 @@ class AdmobAds {
       return;
     }
 
-    EventLogLib.logEvent("inter_intro_true");
+    if(isShowAdsOnboard == true) {
+      EventLogLib.logEvent("inter_intro_true");
+    }
 
     final interstitialAd = createInterstitial(
       adNetwork: adNetwork,
