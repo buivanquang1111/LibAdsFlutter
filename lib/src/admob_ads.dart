@@ -1401,9 +1401,10 @@ class AdmobAds {
     checkInternet().then(
       (value) {
         isNetwork = value;
-        print('check_have_internet --- result $isNetwork');
+        print('check_have_internet --- 1.result $isNetwork');
       },
     );
+    print('check_have_internet --- 2.result $isNetwork');
     return isNetwork;
   }
 
