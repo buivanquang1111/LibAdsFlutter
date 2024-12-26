@@ -1361,17 +1361,21 @@ class AdmobAds {
 
   Future<bool> checkInternet() async {
     var connectivityResult = await (Connectivity().checkConnectivity());
-    if (connectivityResult == ConnectivityResult.mobile) {
-      print('check_have_internet --- mobile');
-      return true;
-    } else if (connectivityResult == ConnectivityResult.wifi) {
-      print('check_have_internet --- wifi');
-      return true;
-    } else if (connectivityResult == ConnectivityResult.vpn) {
-      print('check_have_internet --- vpn');
-      return true;
+    if (connectivityResult == ConnectivityResult.none) {
+      print('check_have_internet --- none');
+      return false;
     }
-    print('check_have_internet --- none');
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        print('check_have_internet --- real internet available');
+        return true;
+      }
+    } catch (e) {
+      print('check_have_internet --- no real internet');
+      return false;
+    }
+
     return false;
   }
 
