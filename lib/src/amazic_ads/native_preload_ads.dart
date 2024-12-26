@@ -30,13 +30,17 @@ class NativePreloadAds extends StatefulWidget {
 }
 
 class _NativePreloadAdsState extends State<NativePreloadAds> {
-
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-
+      AdmobAds.instance.checkInternet().then(
+        (value) {
+          isLoading = value;
+        },
+      );
     });
   }
 
@@ -68,9 +72,11 @@ class _NativePreloadAdsState extends State<NativePreloadAds> {
                   borderRadius: widget.borderRadius,
                   child: SizedBox(
                     height: widget.height,
-                    // child: LoadingAds(
-                    //   height: widget.height,
-                    // ),
+                    child: isLoading
+                        ? LoadingAds(
+                            height: widget.height,
+                          )
+                        : Container(),
                   ),
                 ),
               ));
