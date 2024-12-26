@@ -37,19 +37,19 @@ class RemoteConfigLib {
   static Future<void> init(
       {required List<RemoteConfigKeyLib> remoteConfigKeys}) async {
     try {
-      print('check_remote_config: init');
-      await _remoteConfig.setConfigSettings(
-        RemoteConfigSettings(
-          fetchTimeout: const Duration(seconds: 30),
-          minimumFetchInterval: const Duration(seconds: 15),
-        ),
-      );
-      print('check_remote_config: set up config');
       if (!AdmobAds.instance.isHaveInternet()) {
         print('check_remote_config: no internet');
         getRemoteConfigDefault();
       } else {
-        print('check_remote_config: have internet');
+        print('check_remote_config: have internet init');
+        await _remoteConfig.setConfigSettings(
+          RemoteConfigSettings(
+            fetchTimeout: const Duration(seconds: 30),
+            minimumFetchInterval: const Duration(seconds: 15),
+          ),
+        );
+        print('check_remote_config: set up config');
+
         await _remoteConfig.fetchAndActivate().then(
           (update) {
             if (update) {

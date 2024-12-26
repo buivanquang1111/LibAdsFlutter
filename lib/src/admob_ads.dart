@@ -1350,12 +1350,29 @@ class AdmobAds {
   }
 
   Future<bool> isDeviceOffline() async {
-    final connectivityResult = await Connectivity().checkConnectivity();
-    if (connectivityResult != ConnectivityResult.wifi &&
-        connectivityResult != ConnectivityResult.mobile &&
-        connectivityResult != ConnectivityResult.vpn) {
-      return true;
+    // final connectivityResult = await Connectivity().checkConnectivity();
+    // if (connectivityResult != ConnectivityResult.wifi &&
+    //     connectivityResult != ConnectivityResult.mobile &&
+    //     connectivityResult != ConnectivityResult.vpn) {
+    //   return true;
+    // }
+    // return false;
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.none) {
+      print('check_have_internet --- none');
+      return false;
     }
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        print('check_have_internet --- real internet available');
+        return true;
+      }
+    } catch (e) {
+      print('check_have_internet --- no real internet');
+      return false;
+    }
+
     return false;
   }
 
