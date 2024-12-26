@@ -23,11 +23,11 @@ class RemoteConfigKeyLib {
           'check_remote_config: initializeKeys - ${element.name}, ${element.defaultValue}');
     }
 
-    print('check_remote_config: keys');
-    for (var element in keys) {
-      print(
-          'check_remote_config: initializeKeys - ${element.name}, ${element.defaultValue}');
-    }
+    // print('check_remote_config: keys');
+    // for (var element in keys) {
+    //   print(
+    //       'check_remote_config: initializeKeys - ${element.name}, ${element.defaultValue}');
+    // }
   }
 
   static void ensureInitialized() {

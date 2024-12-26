@@ -1,3 +1,4 @@
+import 'package:amazic_ads_flutter/admob_ads_flutter.dart';
 import 'package:amazic_ads_flutter/src/utils/remote_config_key.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
@@ -24,7 +25,8 @@ class RemoteConfigLib {
     }
   }
 
-  static String getConfigString({required String name, String defaultValue = '30_70'}) {
+  static String getConfigString(
+      {required String name, String defaultValue = '30_70'}) {
     try {
       return configs[RemoteConfigKeyLib.getKeyByName(name).name];
     } catch (e) {
@@ -42,16 +44,23 @@ class RemoteConfigLib {
           minimumFetchInterval: const Duration(seconds: 15),
         ),
       );
-      await _remoteConfig.fetchAndActivate().then(
-        (update) {
-          if (update) {
-            print('check_remote_config: update remote');
-          } else {
-            print('check_remote_config: no update remote');
-          }
-          getRemoteConfig();
-        },
-      );
+      print('check_remote_config: set up config');
+      if (!AdmobAds.instance.isHaveInternet()) {
+        print('check_remote_config: no internet');
+        getRemoteConfigDefault();
+      } else {
+        print('check_remote_config: have internet');
+        await _remoteConfig.fetchAndActivate().then(
+          (update) {
+            if (update) {
+              print('check_remote_config: update remote');
+            } else {
+              print('check_remote_config: no update remote');
+            }
+            getRemoteConfig();
+          },
+        );
+      }
     } catch (e) {
       print('check_remote_config: Remote Config init error: $e');
       getRemoteConfigDefault();
