@@ -1373,9 +1373,10 @@ class AdmobAds {
 
   bool isHaveInternet() {
     bool isNetwork = true;
-    AdmobAds.instance.checkInternet().then(
+    checkInternet().then(
       (value) {
         isNetwork = value;
+        print('check_have_internet --- $isNetwork');
       },
     );
     return isNetwork;
