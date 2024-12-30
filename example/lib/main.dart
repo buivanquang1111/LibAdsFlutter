@@ -1,4 +1,5 @@
 import 'package:example/app/app.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,13 +8,12 @@ import 'package:example/ads/ad_helper.dart';
 import 'package:example/ads/app_ad_id_manager.dart';
 import 'package:example/dependecy_injection.dart' as dependecy_injection;
 import 'package:example/utils/preferences_util.dart';
-import 'package:example/utils/remote_config.dart';
 
 late AppAdIdManager adIdManager;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await Firebase.initializeApp();
+  await Firebase.initializeApp();
   // AdjustConfig config = AdjustConfig(
   //     'mdud78xjmtxc',
   //     appFlavor == "prod"
@@ -23,13 +23,7 @@ Future<void> main() async {
   _hideSystemUI();
   initCrashlytics();
   AdHelper.init();
-  // RemoteConfig.init().then(
-  //       (_) async {
-  //     RemoteConfig.getRemoteConfig();
-  //     await dependecy_injection.init();
-  //   },
-  // ).whenComplete(() => runApp(const App()));
-  RemoteConfig.getRemoteConfig();
+
   await dependecy_injection.init();
   runApp(const App());
 }

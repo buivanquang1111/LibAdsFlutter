@@ -11,7 +11,6 @@ import 'package:example/utils/connectivity.dart';
 import 'package:example/utils/event_log.dart';
 import 'package:example/utils/language_ultis.dart';
 import 'package:example/utils/preferences_util.dart';
-import 'package:example/utils/remote_config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

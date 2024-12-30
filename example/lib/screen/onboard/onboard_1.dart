@@ -12,7 +12,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-import '../../utils/remote_config.dart';
 
 class OnboardScreen1 extends StatefulWidget {
   const OnboardScreen1({super.key});

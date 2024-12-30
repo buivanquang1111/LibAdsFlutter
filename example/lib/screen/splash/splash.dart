@@ -44,6 +44,10 @@ class SplashState extends State<SplashScreen> {
           RemoteConfigKeyLib(
               name: 'inter_splash', defaultValue: true, valueType: bool),
           RemoteConfigKeyLib(
+              name: 'open_resume', defaultValue: true, valueType: bool),
+          RemoteConfigKeyLib(
+              name: 'banner_splash', defaultValue: true, valueType: bool),
+          RemoteConfigKeyLib(
               name: 'rate_aoa_inter_splash',
               defaultValue: '10_90',
               valueType: String),
@@ -58,10 +62,18 @@ class SplashState extends State<SplashScreen> {
         ],
         adjustToken: '',
         onSetRemoteConfigOrganic: () {},
-        onStartLoadBannerSplash: () {},
-        onNextAction: () {
-          handleNavigate();
+        onStartLoadBannerSplash: () {
+          setState(() {
+            NetworkRequest.instance.listAdsId.putIfAbsent(
+              'banner_splash',
+              () => ['ca-app-pub-3940256099942544/6300978111'],
+            );
+          });
         },
+        onNextAction: () {
+          // handleNavigate();
+        },
+        navigatorKey: Get.key,
         keyRateAOA: 'rate_aoa_inter_splash',
         keyOpenSplash: 'open_splash',
         keyInterSplash: 'inter_splash',
@@ -69,8 +81,8 @@ class SplashState extends State<SplashScreen> {
         keyInterstitialFromStart: 'interstitial_from_start',
         nameAdsInterSplash: 'open_splash',
         nameAdsOpenSplash: 'inter_splash',
-        nameAdsResume: '',
-        keyResumeConfig: '');
+        nameAdsResume: 'open_resume',
+        keyResumeConfig: 'open_resume');
   }
 
   Future<void> handleNavigate() async {
@@ -167,44 +179,61 @@ class SplashState extends State<SplashScreen> {
         width: Get.width,
         height: Get.height,
         color: Colors.white,
-        child: Stack(
-          alignment: Alignment.center,
+        child: Column(
           children: [
-            Column(
-              children: [
-                SizedBox(height: 210.h),
-                Container(
-                  width: 120.w,
-                  height: 120.h,
-                  color: Colors.red,
-                ),
-                SizedBox(height: 24.h),
-                Text(
-                  GlobalConstants.kAppName,
-                  style: GlobalTextStyles.font32w700.copyWith(
-                    color: Colors.white,
+            Expanded(
+              child: Column(
+                children: [
+                  SizedBox(height: 210.h),
+                  Container(
+                    width: 120.w,
+                    height: 120.h,
+                    color: Colors.red,
                   ),
-                ),
-                const Spacer(),
-                SizedBox(
-                  width: 233.w,
-                  height: 4.h,
-                  child: LinearProgressIndicator(
-                    backgroundColor: GlobalColors.darkBlue,
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(63.r),
+                  SizedBox(height: 24.h),
+                  Text(
+                    GlobalConstants.kAppName,
+                    style: GlobalTextStyles.font32w700.copyWith(
+                      color: Colors.white,
+                    ),
                   ),
-                ),
-                SizedBox(height: 16.h),
-                Text(
-                  L.descSplash.tr,
-                  style: GlobalTextStyles.font14w400.copyWith(
-                    color: Colors.green,
+                  const Spacer(),
+                  SizedBox(
+                    width: 233.w,
+                    height: 4.h,
+                    child: LinearProgressIndicator(
+                      backgroundColor: GlobalColors.darkBlue,
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(63.r),
+                    ),
                   ),
-                ),
-                SizedBox(height: 30.h),
-              ],
+                  SizedBox(height: 16.h),
+                  Text(
+                    L.descSplash.tr,
+                    style: GlobalTextStyles.font14w400.copyWith(
+                      color: Colors.green,
+                    ),
+                  ),
+                  SizedBox(height: 30.h),
+                ],
+              ),
             ),
+            ConsentManager.ins.canRequestAds == true
+                ? BannerSplash(
+                    listIdAds: NetworkRequest.instance
+                        .getListIDByName('banner_splash'),
+                    remoteConfig: RemoteConfigLib.configs[
+                        RemoteConfigKeyLib.getKeyByName('banner_splash').name],
+                    visibilityDetectorKey: 'banner_splash',
+                    onTestAdSuccess: () {
+                      print('check_detect_test_ad --- ok');
+                    },
+                    onTestAdError: (p0) {
+                      print('check_detect_test_ad --- false');
+                    },
+                    onNext: () {},
+                  )
+                : Container(),
           ],
         ),
       ),

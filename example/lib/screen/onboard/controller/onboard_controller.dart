@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../main.dart';
-import '../../../utils/remote_config.dart';
 
 class OnboardController extends GetxController {
   final pgCtrl = PageController(initialPage: 0);
