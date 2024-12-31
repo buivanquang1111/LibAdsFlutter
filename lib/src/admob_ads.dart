@@ -651,7 +651,9 @@ class AdmobAds {
             onAdDismissed?.call(adNetwork, adUnitType, data);
           }
         } else if (Platform.isIOS) {
-          onAdDismissed?.call(adNetwork, adUnitType, data);
+          if (isTrickScreen == false) {
+            onAdDismissed?.call(adNetwork, adUnitType, data);
+          }
         }
         AdmobAds.instance.setFullscreenAdShowing(false);
         print(
