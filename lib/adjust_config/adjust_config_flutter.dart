@@ -157,7 +157,7 @@ class AdjustConfigFlutter {
     print('[Adjust]: start ');
   }
 
-  void trackRevenue(AdEvent event) {
+  void trackRevenue({required AdEvent event, String? eventTracking}) {
     final Map<String, dynamic>? data = event.data as Map<String, dynamic>?;
 
     final num? revenue = data?['revenue'];
@@ -178,9 +178,12 @@ class AdjustConfigFlutter {
       adRevenue.adRevenueUnit = unit;
       adRevenue.adRevenuePlacement = placement;
       Adjust.trackAdRevenueNew(adRevenue);
-      // final adjustEvent = AdjustEvent("f5l43s");
-      // adjustEvent.setRevenue(revenue, currencyCode);
-      // Adjust.trackEvent(adjustEvent);
+
+      if(eventTracking != null) {
+        final adjustEvent = AdjustEvent(eventTracking);
+        adjustEvent.setRevenue(revenue, currencyCode);
+        Adjust.trackEvent(adjustEvent);
+      }
     }
   }
 }
