@@ -253,8 +253,10 @@ class AdmobAds {
     setOpenAppTime(DateTime.now().millisecondsSinceEpoch);
     setTimeIntervalBetweenInter(RemoteConfigLib.configs[
             RemoteConfigKeyLib.getKeyByName(
-                keyIntervalBetweenInterstitialOrganic ??
-                        keyIntervalBetweenInterstitial)
+                    (keyIntervalBetweenInterstitialOrganic == null &&
+                            !PreferencesUtilLib.isOrganicAdjust())
+                        ? keyIntervalBetweenInterstitial
+                        : keyIntervalBetweenInterstitialOrganic!)
                 .name] *
         1000);
     setTimeIntervalInterFromStart(RemoteConfigLib.configs[
@@ -262,7 +264,7 @@ class AdmobAds {
         1000);
 
     _logger.logInfo(
-        'show_value_inter --- init: setTimeIntervalBetweenInter: ${RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyIntervalBetweenInterstitialOrganic ?? keyIntervalBetweenInterstitial).name]}, setTimeIntervalInterFromStart: ${RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyInterstitialFromStart).name]}');
+        'show_value_inter --- init: setTimeIntervalBetweenInter: ${RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName((keyIntervalBetweenInterstitialOrganic == null && !PreferencesUtilLib.isOrganicAdjust()) ? keyIntervalBetweenInterstitial : keyIntervalBetweenInterstitialOrganic!).name]}, setTimeIntervalInterFromStart: ${RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyInterstitialFromStart).name]}');
 
     ///call id ads
     await NetworkRequest.instance
@@ -411,7 +413,7 @@ class AdmobAds {
       required String keyInterSplash,
       required String nameAdsOpenSplash,
       required String nameAdsInterSplash,
-      required Function() onNextAction}) async{
+      required Function() onNextAction}) async {
     final String rateAoa = RemoteConfigLib
         .configs[RemoteConfigKeyLib.getKeyByName(keyRateAOA).name];
     final bool isShowOpen = RemoteConfigLib
@@ -1090,7 +1092,7 @@ class AdmobAds {
       return;
     }
 
-    if(isShowAdsOnboard == true) {
+    if (isShowAdsOnboard == true) {
       EventLogLib.logEvent("inter_intro_true");
     }
 
