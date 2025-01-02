@@ -114,6 +114,7 @@ class AdmobAds {
     required String keyOpenSplash,
     required String keyInterSplash,
     required String keyIntervalBetweenInterstitial,
+    String? keyIntervalBetweenInterstitialOrganic,
     required String keyInterstitialFromStart,
     required String nameAdsOpenSplash,
     required String nameAdsInterSplash,
@@ -251,7 +252,9 @@ class AdmobAds {
     ///set time
     setOpenAppTime(DateTime.now().millisecondsSinceEpoch);
     setTimeIntervalBetweenInter(RemoteConfigLib.configs[
-            RemoteConfigKeyLib.getKeyByName(keyIntervalBetweenInterstitial)
+            RemoteConfigKeyLib.getKeyByName(
+                keyIntervalBetweenInterstitialOrganic ??
+                        keyIntervalBetweenInterstitial)
                 .name] *
         1000);
     setTimeIntervalInterFromStart(RemoteConfigLib.configs[
@@ -259,7 +262,7 @@ class AdmobAds {
         1000);
 
     _logger.logInfo(
-        'show_value_inter --- init: setTimeIntervalBetweenInter: ${RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyIntervalBetweenInterstitial).name]}, setTimeIntervalInterFromStart: ${RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyInterstitialFromStart).name]}');
+        'show_value_inter --- init: setTimeIntervalBetweenInter: ${RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyIntervalBetweenInterstitialOrganic ?? keyIntervalBetweenInterstitial).name]}, setTimeIntervalInterFromStart: ${RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyInterstitialFromStart).name]}');
 
     ///call id ads
     await NetworkRequest.instance
