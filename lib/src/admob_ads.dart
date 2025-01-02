@@ -252,11 +252,10 @@ class AdmobAds {
     ///set time
     setOpenAppTime(DateTime.now().millisecondsSinceEpoch);
     setTimeIntervalBetweenInter(RemoteConfigLib.configs[
-            RemoteConfigKeyLib.getKeyByName(
-                    (keyIntervalBetweenInterstitialOrganic == null &&
-                            !PreferencesUtilLib.isOrganicAdjust())
-                        ? keyIntervalBetweenInterstitial
-                        : keyIntervalBetweenInterstitialOrganic!)
+            RemoteConfigKeyLib.getKeyByName(PreferencesUtilLib.isOrganicAdjust()
+                    ? keyIntervalBetweenInterstitialOrganic ??
+                        keyIntervalBetweenInterstitial
+                    : keyIntervalBetweenInterstitial)
                 .name] *
         1000);
     setTimeIntervalInterFromStart(RemoteConfigLib.configs[
@@ -264,7 +263,7 @@ class AdmobAds {
         1000);
 
     _logger.logInfo(
-        'show_value_inter --- init: setTimeIntervalBetweenInter: ${RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName((keyIntervalBetweenInterstitialOrganic == null && !PreferencesUtilLib.isOrganicAdjust()) ? keyIntervalBetweenInterstitial : keyIntervalBetweenInterstitialOrganic!).name]}, setTimeIntervalInterFromStart: ${RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyInterstitialFromStart).name]}');
+        'show_value_inter --- init: setTimeIntervalBetweenInter: ${RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(PreferencesUtilLib.isOrganicAdjust() ? keyIntervalBetweenInterstitialOrganic ?? keyIntervalBetweenInterstitial : keyIntervalBetweenInterstitial).name]}, setTimeIntervalInterFromStart: ${RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyInterstitialFromStart).name]}');
 
     ///call id ads
     await NetworkRequest.instance
