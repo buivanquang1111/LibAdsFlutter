@@ -602,6 +602,7 @@ class AdmobAds {
     required AdNetwork adNetwork,
     required List<String> listId,
     required AdsBannerType type,
+    AdSize? adSize,
     EasyAdCallback? onAdLoaded,
     EasyAdCallback? onAdShowed,
     EasyAdCallback? onAdClicked,
@@ -637,9 +638,9 @@ class AdmobAds {
         );
       }
 
-      AdSize adSize = getAdmobAdSize(
-        type: type,
-      );
+      // AdSize adSize = getAdmobAdSize(
+      //   type: type,
+      // );
 
       // final String id = AdmobAds.instance.isDevMode
       //     ? (type == AdsBannerType.collapsible_bottom ||
@@ -650,7 +651,7 @@ class AdmobAds {
 
       ad = AdmobBannerAd(
         listId: listId,
-        adSize: adSize,
+        adSize: adSize ?? getAdmobAdSize(type: type),
         adRequest: adRequest,
         onAdLoaded: onAdLoaded,
         onAdShowed: onAdShowed,
