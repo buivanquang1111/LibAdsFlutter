@@ -43,42 +43,42 @@ class AdsSplash {
         listId: listOpenId,
         config: configAdsOpen!,
         onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
-          onAdFailedToShow?.call(adNetwork,adUnitType,data,errorMessage);
+          onAdFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);
         },
         onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
-          onAdFailedToLoad?.call(adNetwork,adUnitType,data,errorMessage);
+          onAdFailedToLoad?.call(adNetwork, adUnitType, data, errorMessage);
         },
         onDisabled: () {
           onDisabled?.call();
         },
         onAdDismissed: (adNetwork, adUnitType, data) {
-          onAdDismissed?.call(adNetwork,adUnitType,data);
+          onAdDismissed?.call(adNetwork, adUnitType, data);
         },
         onAdShowed: (adNetwork, adUnitType, data) {
-          onAdShowed?.call(adNetwork,adUnitType,data);
+          onAdShowed?.call(adNetwork, adUnitType, data);
         },
       );
     } else if (getState() == StateAdSplash.inter) {
       AdmobAds.instance.showInterstitialAd(
           listId: listInterId,
           config: configAdsInter!,
-        isShowAdsSplash: true,
-        onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
-          onAdFailedToShow?.call(adNetwork,adUnitType,data,errorMessage);
-        },
-        onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
-          onAdFailedToLoad?.call(adNetwork,adUnitType,data,errorMessage);
-        },
-        onDisabled: () {
-          onDisabled?.call();
-        },
-        onAdDismissed: (adNetwork, adUnitType, data) {
-         onAdDismissed?.call(adNetwork,adUnitType,data);
-        },
-        onAdShowed: (adNetwork, adUnitType, data) {
-          onAdShowed?.call(adNetwork,adUnitType,data);
-        }
-      );
+          isShowAdsSplash: true,
+          isTrickScreen: true,
+          onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
+            onAdFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);
+          },
+          onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
+            onAdFailedToLoad?.call(adNetwork, adUnitType, data, errorMessage);
+          },
+          onDisabled: () {
+            onDisabled?.call();
+          },
+          onAdDismissed: (adNetwork, adUnitType, data) {
+            onAdDismissed?.call(adNetwork, adUnitType, data);
+          },
+          onAdShowed: (adNetwork, adUnitType, data) {
+            onAdShowed?.call(adNetwork, adUnitType, data);
+          });
     } else {
       onDisabled?.call();
     }
@@ -88,7 +88,7 @@ class AdsSplash {
     final int rateInter;
     final int rateOpen;
 
-    if(isValidFormat(rate)) {
+    if (isValidFormat(rate)) {
       rateOpen = int.tryParse(rate.split('_')[0]) ?? 30;
       rateInter = int.tryParse(rate.split('_')[1]) ?? 70;
       print('rateOpen: $rateOpen');
@@ -100,7 +100,7 @@ class AdsSplash {
       } else {
         setState(StateAdSplash.noAds);
       }
-    }else{
+    } else {
       setState(StateAdSplash.noAds);
     }
   }

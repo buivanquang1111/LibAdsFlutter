@@ -593,7 +593,7 @@ class AdmobAds {
     EasyAdFailedCallback? onAdFailedToShow,
     EasyAdCallback? onAdDismissed,
     EasyAdOnPaidEvent? onPaidEvent,
-    bool? isTrickScreen = true,
+    bool? isTrickScreen = false,
   }) async {
     if (!isEnabled || !config) {
       _logger.logInfo('1. isEnabled: $isEnabled, config: $config');
