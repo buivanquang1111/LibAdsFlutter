@@ -72,7 +72,10 @@ class AppLifecycleReactor {
         barrierDismissible: false,
         context: navigatorKey.currentContext!,
         builder: (context) {
-          return child!;
+          return PopScope(
+            canPop: false,
+            child: child!,
+          );
         },
       ).then(
         (value) {
@@ -140,7 +143,8 @@ class AppLifecycleReactor {
 
         if (listId.isNotEmpty != true) return;
 
-        print('check_app_resume --- 1.isShowWelComeScreenAfterAds: $isShowWelComeScreenAfterAds');
+        print(
+            'check_app_resume --- 1.isShowWelComeScreenAfterAds: $isShowWelComeScreenAfterAds');
         if (isShowWelComeScreenAfterAds) {
           AdmobAds.instance.showAppOpen(
               listId: listId,
@@ -169,7 +173,7 @@ class AppLifecycleReactor {
                   }
                 }
               },
-              onDisabled: () async{
+              onDisabled: () async {
                 EventLogLib.logEvent("open_resume_false", parameters: {
                   "reason":
                       "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.checkInternet()}"
@@ -190,7 +194,8 @@ class AppLifecycleReactor {
           print('check_app_resume --- child: $child');
           if (child != null) {
             if (!_isShowScreenWellCome) {
-              print('check_app_resume --- 2._isShowScreenWellCome: $_isShowScreenWellCome');
+              print(
+                  'check_app_resume --- 2._isShowScreenWellCome: $_isShowScreenWellCome');
               showScreenWelCome();
             }
           }
@@ -214,17 +219,17 @@ class AppLifecycleReactor {
       config: config,
       onAdDismissed: (adNetwork, adUnitType, data) {
         setShowScreenWellCome(false);
-        onAdDismissed?.call(adNetwork,adUnitType,data);
+        onAdDismissed?.call(adNetwork, adUnitType, data);
       },
       onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
         setShowScreenWellCome(false);
-        onAdFailedToLoad?.call(adNetwork,adUnitType,data,errorMessage);
+        onAdFailedToLoad?.call(adNetwork, adUnitType, data, errorMessage);
       },
       onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
         setShowScreenWellCome(false);
-        onAdFailedToShow?.call(adNetwork,adUnitType,data,errorMessage);
+        onAdFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);
       },
-      onDisabled: () async{
+      onDisabled: () async {
         setShowScreenWellCome(false);
         EventLogLib.logEvent("open_resume_false", parameters: {
           "reason":
