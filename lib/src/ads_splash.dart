@@ -79,6 +79,7 @@ class AdsSplash {
         listId: listInterId,
         config: configAdsInter!,
         isShowAdsSplash: true,
+        isTrickScreen: true,
         onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
           onAdFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);
         },

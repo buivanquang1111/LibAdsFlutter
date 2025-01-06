@@ -1030,7 +1030,7 @@ class AdmobAds {
     EasyAdFailedCallback? onAdFailedToShow,
     EasyAdCallback? onAdDismissed,
     EasyAdOnPaidEvent? onPaidEvent,
-    bool? isTrickScreen = true,
+    bool? isTrickScreen = false,
     bool? isShowAdsOnboard = false,
   }) async {
     if (!isShowAllAds ||
