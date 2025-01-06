@@ -30,7 +30,6 @@ class NativePreloadAds extends StatefulWidget {
 }
 
 class _NativePreloadAdsState extends State<NativePreloadAds> {
-
   @override
   void initState() {
     super.initState();
@@ -39,36 +38,36 @@ class _NativePreloadAdsState extends State<NativePreloadAds> {
   @override
   Widget build(BuildContext context) {
     print(
-        'load_native: lib --- ${widget.preloadedAd} --- ${widget.preloadedAd != null} --- ${widget.preloadedAd?.show(height: widget.height) != null}');
+        'load_native: lib --- preloadedAd: ${widget.preloadedAd != null} --- config: ${widget.config} --- canRequestAds: ${ConsentManager.ins.canRequestAds}');
     return Visibility(
-        visible: widget.config && ConsentManager.ins.canRequestAds,
-        child: widget.preloadedAd != null &&
-                widget.preloadedAd?.show(height: widget.height) != null
-            ? widget.preloadedAd?.show(
-                height: widget.height,
+      visible: widget.config && ConsentManager.ins.canRequestAds,
+      child: widget.preloadedAd != null
+          ? widget.preloadedAd?.show(
+              height: widget.height,
+              borderRadius: widget.borderRadius,
+              color: widget.color,
+              border: widget.border,
+              padding: widget.padding,
+              margin: widget.margin,
+            )
+          : Container(
+              decoration: BoxDecoration(
                 borderRadius: widget.borderRadius,
-                color: widget.color,
                 border: widget.border,
-                padding: widget.padding,
-                margin: widget.margin,
-              )
-            : Container(
-                decoration: BoxDecoration(
-                  borderRadius: widget.borderRadius,
-                  border: widget.border,
-                  color: widget.color,
-                ),
-                padding: widget.padding,
-                margin: widget.margin,
-                child: ClipRRect(
-                  borderRadius: widget.borderRadius,
-                  child: SizedBox(
+                color: widget.color,
+              ),
+              padding: widget.padding,
+              margin: widget.margin,
+              child: ClipRRect(
+                borderRadius: widget.borderRadius,
+                child: SizedBox(
+                  height: widget.height,
+                  child: LoadingAds(
                     height: widget.height,
-                    child: LoadingAds(
-                      height: widget.height,
-                    ),
                   ),
                 ),
-              ));
+              ),
+            ),
+    );
   }
 }
