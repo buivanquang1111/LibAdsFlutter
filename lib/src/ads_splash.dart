@@ -15,26 +15,41 @@ class AdsSplash {
 
   StateAdSplash state = StateAdSplash.noAds;
 
-  bool? configAdsOpen;
-  bool? configAdsInter;
-
   init(bool showInter, bool showOpen, String rate) {
-    configAdsOpen = showOpen;
-    configAdsInter = showInter;
     if (showInter && showOpen) {
-      checkShowInterOrOpenSplash(rate);
-    } else if (showInter) {
-      setState(StateAdSplash.inter);
-    } else if (showOpen) {
-      setState(StateAdSplash.open);
+      if(isValidFormat(rateAoa: rate)){
+        if(getRandomOpenRate(rateAoa: rate)){
+          if(showOpen){
+            setState(StateAdSplash.open);
+          }else{
+            setState(StateAdSplash.noAds);
+          }
+        }else{
+          if(showInter){
+            setState(StateAdSplash.inter);
+          }else{
+            setState(StateAdSplash.noAds);
+          }
+        }
+      }else{
+        setState(StateAdSplash.noAds);
+      }
     } else {
-      setState(StateAdSplash.noAds);
+      if (showOpen) {
+        setState(StateAdSplash.open);
+      } else if (showInter) {
+        setState(StateAdSplash.inter);
+      } else {
+        setState(StateAdSplash.noAds);
+      }
     }
   }
 
   void showAdSplash({
     required List<String> listOpenId,
     required List<String> listInterId,
+    required bool configAdsOpen,
+    required bool configAdsInter,
     EasyAdFailedCallback? onAdFailedToShow,
     EasyAdFailedCallback? onAdFailedToLoad,
     Function()? onDisabled,
@@ -47,7 +62,7 @@ class AdsSplash {
     if (getState() == StateAdSplash.open) {
       AdmobAds.instance.showAppOpen(
         listId: listOpenId,
-        config: configAdsOpen!,
+        config: configAdsOpen,
         onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
           onAdFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);
         },
@@ -77,7 +92,7 @@ class AdsSplash {
     } else if (getState() == StateAdSplash.inter) {
       AdmobAds.instance.showInterstitialAd(
         listId: listInterId,
-        config: configAdsInter!,
+        config: configAdsInter,
         isShowAdsSplash: true,
         isTrickScreen: true,
         onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
@@ -111,54 +126,35 @@ class AdsSplash {
     }
   }
 
-  void checkShowInterOrOpenSplash(String rate) {
-    final int rateInter;
-    final int rateOpen;
+  bool isValidFormat({required String rateAoa}) {
+    final split = rateAoa.split('_');
+    final int openRate;
+    final int interRate;
 
-    if (isValidFormat(rate)) {
-      rateOpen = int.tryParse(rate.split('_')[0]) ?? 30;
-      rateInter = int.tryParse(rate.split('_')[1]) ?? 70;
-      print('rateOpen: $rateOpen');
-      print('rateInter: $rateInter');
-
-      if (rateInter >= 0 && rateOpen >= 0 && (rateInter + rateOpen) == 100) {
-        bool isShowOpenSplash = Random().nextInt(100) + 1 < rateOpen;
-        setState(isShowOpenSplash ? StateAdSplash.open : StateAdSplash.inter);
-      } else {
-        setState(StateAdSplash.noAds);
-      }
+    if (split.length != 2) {
+      openRate = 30;
+      interRate = 70;
     } else {
-      setState(StateAdSplash.noAds);
+      openRate = int.tryParse(split[0]) ?? 30;
+      interRate = int.tryParse(split[1]) ?? 70;
     }
+
+    return (openRate + interRate == 100) && openRate >= 0 && openRate >= 0;
   }
 
-  bool isValidFormat(String input) {
-    // Kiểm tra độ dài chuỗi phải ít nhất là 4 ký tự (ví dụ: "x_yy")
-    if (input.length < 4) {
-      return false;
+  bool getRandomOpenRate({required String rateAoa}) {
+    final split = rateAoa.split('_');
+    final int openRate;
+
+    if (split.length != 2) {
+      openRate = 30;
+    } else {
+      openRate = int.tryParse(split[0]) ?? 30;
     }
 
-    // Tách chuỗi thành mảng các phần tử bởi dấu "_"
-    List<String> parts = input.split('_');
-
-    // Kiểm tra xem có đúng hai phần tử được tách ra hay không
-    if (parts.length != 2) {
-      return false;
-    }
-
-    // Chuyển đổi từng phần tử thành số
-    int firstNumber;
-    int secondNumber;
-    try {
-      firstNumber = int.parse(parts[0]);
-      secondNumber = int.parse(parts[1]);
-    } catch (e) {
-      // Nếu có lỗi khi chuyển đổi thành số, trả về false
-      return false;
-    }
-
-    // Kiểm tra điều kiện: số trước "_" cộng với số sau "_" bằng 100
-    if (firstNumber + secondNumber == 100) {
+    Random random = Random();
+    int randomNumber = random.nextInt(100);
+    if (randomNumber < openRate) {
       return true;
     } else {
       return false;

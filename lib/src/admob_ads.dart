@@ -441,6 +441,8 @@ class AdmobAds {
     AdsSplash.instance.showAdSplash(
       listOpenId: NetworkRequest.instance.getListIDByName(nameAdsOpenSplash),
       listInterId: NetworkRequest.instance.getListIDByName(nameAdsInterSplash),
+      configAdsOpen: isShowOpen,
+      configAdsInter: isShowInter,
       onAdShowed: (adNetwork, adUnitType, data) {
         print('check_start_ads --- onAdShowed');
         EventLogLib.logEvent('inter_splash_showad_time',

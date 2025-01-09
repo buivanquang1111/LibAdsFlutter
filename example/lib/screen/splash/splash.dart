@@ -71,7 +71,7 @@ class SplashState extends State<SplashScreen> {
           });
         },
         onNextAction: () {
-          // handleNavigate();
+          handleNavigate();
         },
         navigatorKey: Get.key,
         keyRateAOA: 'rate_aoa_inter_splash',
