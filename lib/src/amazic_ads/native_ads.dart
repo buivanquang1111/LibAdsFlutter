@@ -37,6 +37,7 @@ class NativeAds extends StatefulWidget {
   final String visibilityDetectorKey;
   final ValueNotifier<bool>? visibilityController;
   final int refreshRateSec; //reload ads with time
+  final bool isReloadWhenHideView; // reload when hide view
 
   NativeAds({
     this.adNetwork = AdNetwork.admob,
@@ -64,6 +65,7 @@ class NativeAds extends StatefulWidget {
     this.refreshRateSec = 0,
     Key? key,
     this.onAdImpression,
+    this.isReloadWhenHideView = true,
   }) : super(key: key);
 
   @override
@@ -90,7 +92,9 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     visibilityController = widget.visibilityController ?? ValueNotifier(true);
-    visibilityController.addListener(_listener);
+    if (widget.isReloadWhenHideView) {
+      visibilityController.addListener(_listener);
+    }
     print('check_native: _prepareAd --- initState');
     _prepareAd();
   }
@@ -167,10 +171,10 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
           "reason":
               "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.checkInternet()}"
         });
-      } else if(widget.factoryId.toLowerCase().contains('welcome')){
+      } else if (widget.factoryId.toLowerCase().contains('welcome')) {
         EventLogLib.logEvent("native_welcome_false", parameters: {
           "reason":
-          "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.checkInternet()}"
+              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.checkInternet()}"
         });
       }
       //end
@@ -219,7 +223,7 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
             EventLogLib.logEvent("native_interest_true");
           } else if (widget.factoryId.toLowerCase().contains('wb')) {
             EventLogLib.logEvent("native_wb_true");
-          } else if(widget.factoryId.toLowerCase().contains('welcome')){
+          } else if (widget.factoryId.toLowerCase().contains('welcome')) {
             EventLogLib.logEvent("native_welcome_true");
           }
           _initAd();
