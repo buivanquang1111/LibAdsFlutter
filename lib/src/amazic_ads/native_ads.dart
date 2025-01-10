@@ -38,6 +38,7 @@ class NativeAds extends StatefulWidget {
   final ValueNotifier<bool>? visibilityController;
   final int refreshRateSec; //reload ads with time
   final bool isReloadWhenHideView; // reload when hide view
+  final bool isReloadWhenResume;
 
   NativeAds({
     this.adNetwork = AdNetwork.admob,
@@ -66,6 +67,7 @@ class NativeAds extends StatefulWidget {
     Key? key,
     this.onAdImpression,
     this.isReloadWhenHideView = true,
+    this.isReloadWhenResume = true,
   }) : super(key: key);
 
   @override
@@ -259,7 +261,9 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
         //   print("debug-libraries: widget.reloadResume");
         //   print(
         //       'check_native: _prepareAd --- didChangeAppLifecycleState - resume');
-        _prepareAd();
+        if (widget.isReloadWhenResume) {
+          _prepareAd();
+        }
         //   // widget.setReloadNative(false);
         // } else if (state == AppLifecycleState.inactive ||
         //     state == AppLifecycleState.paused) {

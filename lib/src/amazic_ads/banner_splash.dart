@@ -90,48 +90,48 @@ class _BannerSplashState extends State<BannerSplash> {
     }
   }
 
-  void callOrganicAdjust() {
-    print('Banner_Splash: Use call Organic Adjust');
-    if (!CallOrganicAdjust.instance.isOrganic()) {
-      CallOrganicAdjust.instance.getAdvertisingId().then(
-        (value) {
-          print('advertisingId: $value');
-          if (value != null) {
-            CallOrganicAdjust.instance
-                .getOrganic(
-                    bearerToken: widget.bearToken,
-                    appToken: widget.appToken,
-                    advertisingId: value)
-                .then(
-              (value) {
-                if (value) {
-                  if (widget.onTestAdSuccess != null && widget.onNext != null) {
-                    widget.onTestAdSuccess!();
-                    widget.onNext!();
-                  }
-                } else {
-                  if (widget.onTestAdError != null && widget.onNext != null) {
-                    widget.onTestAdError!('not organic');
-                    widget.onNext!();
-                  }
-                }
-              },
-            );
-          } else {
-            if (widget.onTestAdError != null && widget.onNext != null) {
-              widget.onTestAdError!('can not get advertisingId');
-              widget.onNext!();
-            }
-          }
-        },
-      );
-    } else {
-      if (widget.onTestAdSuccess != null && widget.onNext != null) {
-        widget.onTestAdSuccess!();
-        widget.onNext!();
-      }
-    }
-  }
+  // void callOrganicAdjust() {
+  //   print('Banner_Splash: Use call Organic Adjust');
+  //   if (!CallOrganicAdjust.instance.isOrganic()) {
+  //     CallOrganicAdjust.instance.getAdvertisingId().then(
+  //       (value) {
+  //         print('advertisingId: $value');
+  //         if (value != null) {
+  //           CallOrganicAdjust.instance
+  //               .getOrganic(
+  //                   bearerToken: widget.bearToken,
+  //                   appToken: widget.appToken,
+  //                   advertisingId: value)
+  //               .then(
+  //             (value) {
+  //               if (value) {
+  //                 if (widget.onTestAdSuccess != null && widget.onNext != null) {
+  //                   widget.onTestAdSuccess!();
+  //                   widget.onNext!();
+  //                 }
+  //               } else {
+  //                 if (widget.onTestAdError != null && widget.onNext != null) {
+  //                   widget.onTestAdError!('not organic');
+  //                   widget.onNext!();
+  //                 }
+  //               }
+  //             },
+  //           );
+  //         } else {
+  //           if (widget.onTestAdError != null && widget.onNext != null) {
+  //             widget.onTestAdError!('can not get advertisingId');
+  //             widget.onNext!();
+  //           }
+  //         }
+  //       },
+  //     );
+  //   } else {
+  //     if (widget.onTestAdSuccess != null && widget.onNext != null) {
+  //       widget.onTestAdSuccess!();
+  //       widget.onNext!();
+  //     }
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {

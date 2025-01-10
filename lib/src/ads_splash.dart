@@ -22,16 +22,19 @@ class AdsSplash {
           if(showOpen){
             setState(StateAdSplash.open);
           }else{
+            EventLogLib.logEvent('rate_aoa_no_ads');
             setState(StateAdSplash.noAds);
           }
         }else{
           if(showInter){
             setState(StateAdSplash.inter);
           }else{
+            EventLogLib.logEvent('rate_aoa_no_ads');
             setState(StateAdSplash.noAds);
           }
         }
       }else{
+        EventLogLib.logEvent('rate_aoa_no_ads');
         setState(StateAdSplash.noAds);
       }
     } else {
@@ -40,6 +43,7 @@ class AdsSplash {
       } else if (showInter) {
         setState(StateAdSplash.inter);
       } else {
+        EventLogLib.logEvent('rate_aoa_no_ads');
         setState(StateAdSplash.noAds);
       }
     }
@@ -64,12 +68,15 @@ class AdsSplash {
         listId: listOpenId,
         config: configAdsOpen,
         onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
+          EventLogLib.logEvent('rate_aoa_failed_to_show_open');
           onAdFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);
         },
         onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
+          EventLogLib.logEvent('rate_aoa_failed_to_load_open');
           onAdFailedToLoad?.call(adNetwork, adUnitType, data, errorMessage);
         },
         onDisabled: () {
+          EventLogLib.logEvent('rate_aoa_disabled_open');
           onDisabled?.call();
         },
         onAdDismissed: (adNetwork, adUnitType, data) {
@@ -96,12 +103,15 @@ class AdsSplash {
         isShowAdsSplash: true,
         isTrickScreen: true,
         onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
+          EventLogLib.logEvent('rate_aoa_failed_to_show_inter');
           onAdFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);
         },
         onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
+          EventLogLib.logEvent('rate_aoa_failed_to_load_inter');
           onAdFailedToLoad?.call(adNetwork, adUnitType, data, errorMessage);
         },
         onDisabled: () {
+          EventLogLib.logEvent('rate_aoa_disabled_inter');
           onDisabled?.call();
         },
         onAdDismissed: (adNetwork, adUnitType, data) {

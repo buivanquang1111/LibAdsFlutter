@@ -124,6 +124,9 @@ class AdmobAds {
     bool isIap = false,
     GlobalKey<NavigatorState>? navigatorKey,
   }) async {
+    if(await AdmobAds.instance.checkInternet()) {
+      EventLogLib.logEvent('splash_have_internet');
+    }
     //init remote key
     RemoteConfigKeyLib.initializeKeys(remoteConfigKeys);
 

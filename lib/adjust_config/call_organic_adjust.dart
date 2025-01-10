@@ -23,7 +23,7 @@ class CallOrganicAdjust {
       required String appToken,
       String bearToken = 'mpBYiG4WNndUpojp7pez'}) async {
     await PreferencesUtilLib.init();
-    if (!CallOrganicAdjust.instance.isOrganic()) {
+    if (!isOrganic()) {
       CallOrganicAdjust.instance.getAdvertisingId().then(
         (value) {
           print('advertisingId: $value');
