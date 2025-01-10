@@ -221,7 +221,7 @@ class AdmobAds {
       print('time_out_call: All tasks completed successfully.');
     } on TimeoutException catch (e) {
       print('time_out_call: Timeout ${e.message}');
-      EventLogLib.logEvent("inter_splash_id_timeout");
+      EventLogLib.logEvent("Timeout_Splash_12s");
       countOpenApp();
       onNextAction();
     } catch (e) {
@@ -448,9 +448,6 @@ class AdmobAds {
       configAdsInter: isShowInter,
       onAdShowed: (adNetwork, adUnitType, data) {
         print('check_start_ads --- onAdShowed');
-        EventLogLib.logEvent('inter_splash_showad_time',
-            parameters: {'showad_time': 'true_$_second'});
-        _timer?.cancel();
       },
       onAdDismissed: (adNetwork, adUnitType, data) {
         print('check_start_ads --- onAdDismissed');
@@ -481,12 +478,15 @@ class AdmobAds {
       },
       onAdLoaded: (adNetwork, adUnitType, data) {
         print('check_start_ads --- onAdLoaded');
-        EventLogLib.logEvent("inter_splash_true");
+        // EventLogLib.logEvent("inter_splash_true");
       },
       onAdImpression: (adNetwork, adUnitType, data) {
         print('check_start_ads --- onAdImpression');
         EventLogLib.logEvent(
             "inter_splash_impression_${PreferencesUtilLib.getCountOpenApp()}");
+        EventLogLib.logEvent('inter_splash_showad_time',
+            parameters: {'showad_time': 'true_$_second'});
+        _timer?.cancel();
       },
       onAdClicked: (adNetwork, adUnitType, data) {
         print('check_start_ads --- onAdClicked');
@@ -809,6 +809,7 @@ class AdmobAds {
   AdsBase? createInterstitial({
     required AdNetwork adNetwork,
     required List<String> listId,
+    bool isShowAdsSplash = false,
     EasyAdCallback? onAdLoaded,
     EasyAdCallback? onAdShowed,
     EasyAdCallback? onAdImpression,
@@ -827,6 +828,7 @@ class AdmobAds {
         ad = AdmobInterstitialAd(
           listId: listId,
           adRequest: _adRequest,
+          isShowAdsSplash: isShowAdsSplash,
           onAdLoaded: onAdLoaded,
           onAdShowed: onAdShowed,
           onAdClicked: onAdClicked,
@@ -880,6 +882,7 @@ class AdmobAds {
   AdsBase? createAppOpenAd({
     required AdNetwork adNetwork,
     required List<String> listId,
+    bool isShowAdsSplash = false,
     EasyAdCallback? onAdLoaded,
     EasyAdCallback? onAdShowed,
     EasyAdCallback? onAdImpression,
@@ -898,6 +901,7 @@ class AdmobAds {
         ad = AdmobAppOpenAd(
           listId: listId,
           adRequest: _adRequest,
+          isShowAdsSplash: isShowAdsSplash,
           onAdLoaded: onAdLoaded,
           onAdShowed: onAdShowed,
           onAdClicked: onAdClicked,
@@ -929,6 +933,7 @@ class AdmobAds {
     EasyAdOnPaidEvent? onPaidEvent,
     Function? onDismissCollapse,
     Function? onCanRequestLogEvent,
+    bool isShowAdsSplash = false,
   }) async {
     if (!isShowAllAds ||
         !config ||
@@ -957,6 +962,7 @@ class AdmobAds {
     final appOpen = createAppOpenAd(
       adNetwork: adNetwork,
       listId: listId,
+      isShowAdsSplash: isShowAdsSplash,
       onAdClicked: onAdClicked,
       onAdDismissed: (adNetwork, adUnitType, data) async {
         onAdDismissed?.call(adNetwork, adUnitType, data);
@@ -1026,7 +1032,7 @@ class AdmobAds {
     required List<String> listId,
     Function()? onDisabled,
     required bool config,
-    bool? isShowAdsSplash = false,
+    bool isShowAdsSplash = false,
     EasyAdCallback? onAdLoaded,
     EasyAdCallback? onAdShowed,
     EasyAdCallback? onAdImpression,
@@ -1104,6 +1110,7 @@ class AdmobAds {
     final interstitialAd = createInterstitial(
       adNetwork: adNetwork,
       listId: listId,
+      isShowAdsSplash: isShowAdsSplash,
       onAdClicked: onAdClicked,
       onAdDismissed: (adNetwork, adUnitType, data) {
         if (isShowAdsSplash == false)

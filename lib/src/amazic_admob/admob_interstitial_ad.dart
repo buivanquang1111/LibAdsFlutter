@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:nativewrappers/_internal/vm/lib/ffi_allocation_patch.dart';
+
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -10,10 +13,12 @@ import '../utils/amazic_logger.dart';
 
 class AdmobInterstitialAd extends AdsBase {
   final AdRequest adRequest;
+  final bool isShowAdsSplash;
 
   AdmobInterstitialAd({
     required super.listId,
     required this.adRequest,
+    required this.isShowAdsSplash,
     super.onAdLoaded,
     super.onAdShowed,
     super.onAdClicked,
@@ -29,6 +34,8 @@ class AdmobInterstitialAd extends AdsBase {
   bool _isAdLoaded = false;
   bool _isAdLoading = false;
   bool _isAdLoadedFailed = false;
+
+  Timer? _adShowTimeoutTimer;
 
   final AmazicLogger _logger = AmazicLogger();
 
@@ -54,6 +61,7 @@ class AdmobInterstitialAd extends AdsBase {
     _isAdLoadedFailed = false;
     _interstitialAd?.dispose();
     _interstitialAd = null;
+    _adShowTimeoutTimer = null;
   }
 
   @override
@@ -61,6 +69,19 @@ class AdmobInterstitialAd extends AdsBase {
     _logger.logInfo('1.load inter');
     if (_isAdLoaded) return;
     _isAdLoading = true;
+    if (isShowAdsSplash) {
+      EventLogLib.logEvent("inter_splash_true");
+      _adShowTimeoutTimer?.cancel();
+      _adShowTimeoutTimer = Timer(
+        const Duration(seconds: 20),
+        () {
+          EventLogLib.logEvent('inter_splash_id_timeout');
+          _logger.logInfo('Ad Timeout: Timeout 20s ads Inter');
+          onAdFailedToShow?.call(
+              adNetwork, adUnitType, _interstitialAd, 'Ad timeout 20s');
+        },
+      );
+    }
     await InterstitialAd.load(
       adUnitId: listId.isNotEmpty ? listId[0] : '',
       request: adRequest,
@@ -98,6 +119,7 @@ class AdmobInterstitialAd extends AdsBase {
             load();
           } else {
             _logger.logInfo('5.load inter onAdFailedToLoadMethod');
+            _adShowTimeoutTimer?.cancel();
             _interstitialAd = null;
             _isAdLoaded = false;
             _isAdLoading = false;
@@ -126,6 +148,7 @@ class AdmobInterstitialAd extends AdsBase {
 
     ad.fullScreenContentCallback = FullScreenContentCallback(
       onAdShowedFullScreenContent: (InterstitialAd ad) {
+        _adShowTimeoutTimer?.cancel();
         AdmobAds.instance.onAdShowedMethod(adNetwork, adUnitType, ad);
         onAdShowed?.call(adNetwork, adUnitType, ad);
       },
@@ -136,6 +159,7 @@ class AdmobInterstitialAd extends AdsBase {
         ad.dispose();
       },
       onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
+        _adShowTimeoutTimer?.cancel();
         AdmobAds.instance.onAdFailedToShowMethod(
             adNetwork, adUnitType, ad, error.toString());
         onAdFailedToShow?.call(adNetwork, adUnitType, ad, error.toString());
@@ -147,6 +171,7 @@ class AdmobInterstitialAd extends AdsBase {
         onAdClicked?.call(adNetwork, adUnitType, ad);
       },
       onAdImpression: (ad) {
+        _adShowTimeoutTimer?.cancel();
         onAdImpression?.call(adNetwork, adUnitType, ad);
       },
     );

@@ -1,13 +1,18 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../admob_ads_flutter.dart';
+import '../utils/amazic_logger.dart';
 
 class AdmobAppOpenAd extends AdsBase {
   final AdRequest adRequest;
+  final bool isShowAdsSplash;
 
   AdmobAppOpenAd({
     required super.listId,
     required this.adRequest,
+    required this.isShowAdsSplash,
     super.onAdLoaded,
     super.onAdShowed,
     super.onAdClicked,
@@ -24,6 +29,9 @@ class AdmobAppOpenAd extends AdsBase {
   bool _isAdLoaded = false;
   bool _isAdLoading = false;
   bool _isAdLoadedFailed = false;
+
+  Timer? _adShowTimeoutTimer;
+  final AmazicLogger _logger = AmazicLogger();
 
   @override
   AdNetwork get adNetwork => AdNetwork.admob;
@@ -47,6 +55,7 @@ class AdmobAppOpenAd extends AdsBase {
     _isAdLoaded = false;
     _isAdLoading = false;
     _isAdLoadedFailed = false;
+    _adShowTimeoutTimer?.cancel();
   }
 
   @override
@@ -54,6 +63,16 @@ class AdmobAppOpenAd extends AdsBase {
     if (isAdLoaded) return Future.value();
     if (listId.isEmpty) return Future.value();
     _isAdLoading = true;
+    if(isShowAdsSplash){
+      EventLogLib.logEvent("inter_splash_true");
+      _adShowTimeoutTimer?.cancel();
+      _adShowTimeoutTimer = Timer(const Duration(seconds: 20), () {
+        EventLogLib.logEvent('inter_splash_id_timeout');
+        _logger.logInfo('Ad Timeout: Timeout 20s ads Open');
+        onAdFailedToShow?.call(
+            adNetwork, adUnitType, _appOpenAd, 'Ad timeout 20s');
+      },);
+    }
     return AppOpenAd.load(
       adUnitId: listId.isNotEmpty ? listId[0] : '',
       request: adRequest,
@@ -88,6 +107,7 @@ class AdmobAppOpenAd extends AdsBase {
             listId.removeAt(0);
             load();
           } else {
+            _adShowTimeoutTimer?.cancel();
             _appOpenAd = null;
             _isAdLoading = false;
             _isAdLoadedFailed = true;
@@ -126,6 +146,7 @@ class AdmobAppOpenAd extends AdsBase {
 
     _appOpenAd!.fullScreenContentCallback = FullScreenContentCallback(
       onAdShowedFullScreenContent: (AppOpenAd ad) {
+        _adShowTimeoutTimer?.cancel();
         _isShowingAd = true;
 
         AdmobAds.instance.onAdShowedMethod(adNetwork, adUnitType, ad);
@@ -140,6 +161,7 @@ class AdmobAppOpenAd extends AdsBase {
         _appOpenAd = null;
       },
       onAdFailedToShowFullScreenContent: (AppOpenAd ad, AdError error) {
+        _adShowTimeoutTimer?.cancel();
         _isShowingAd = false;
 
         AdmobAds.instance.onAdFailedToShowMethod(
@@ -154,6 +176,7 @@ class AdmobAppOpenAd extends AdsBase {
         onAdClicked?.call(adNetwork, adUnitType, ad);
       },
       onAdImpression: (ad) {
+        _adShowTimeoutTimer?.cancel();
         onAdImpression?.call(adNetwork, adUnitType, ad);
       },
     );
