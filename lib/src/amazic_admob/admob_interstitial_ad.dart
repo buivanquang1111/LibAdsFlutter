@@ -70,7 +70,7 @@ class AdmobInterstitialAd extends AdsBase {
       EventLogLib.logEvent("inter_splash_true");
       _adShowTimeoutTimer?.cancel();
       _adShowTimeoutTimer = Timer(
-        const Duration(seconds: 20),
+        const Duration(seconds: 3),
         () {
           EventLogLib.logEvent('inter_splash_id_timeout');
           _logger.logInfo('Ad Timeout: Timeout 20s ads Inter');
