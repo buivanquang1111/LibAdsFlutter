@@ -66,7 +66,7 @@ class AdmobAppOpenAd extends AdsBase {
     if(isShowAdsSplash){
       EventLogLib.logEvent("inter_splash_true");
       _adShowTimeoutTimer?.cancel();
-      _adShowTimeoutTimer = Timer(const Duration(seconds: 3), () {
+      _adShowTimeoutTimer = Timer(const Duration(seconds: 20), () {
         EventLogLib.logEvent('inter_splash_id_timeout');
         _logger.logInfo('Ad Timeout: Timeout 20s ads Open');
         onAdFailedToShow?.call(
