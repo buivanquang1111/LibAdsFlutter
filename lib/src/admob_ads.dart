@@ -611,6 +611,7 @@ class AdmobAds {
     EasyAdCallback? onAdLoaded,
     EasyAdCallback? onAdShowed,
     EasyAdCallback? onAdClicked,
+    EasyAdCallback? onAdImpression,
     EasyAdFailedCallback? onAdFailedToLoad,
     EasyAdFailedCallback? onAdFailedToShow,
     EasyAdCallback? onAdDismissed,
@@ -666,6 +667,7 @@ class AdmobAds {
         onAdDismissed: onAdDismissed,
         onEarnedReward: onEarnedReward,
         onPaidEvent: onPaidEvent,
+        onAdImpression: onAdImpression,
       );
     }
     return ad;
@@ -1381,14 +1383,23 @@ class AdmobAds {
   }
 
   Future<bool> checkInternet() async {
-    try {
-      final response = await http
-          .get(Uri.parse('https://www.google.com'))
-          .timeout(const Duration(seconds: 2));
-      return response.statusCode == 200;
-    } catch (_) {
-      return false;
+    // try {
+    //   final response = await http
+    //       .get(Uri.parse('https://www.google.com'))
+    //       .timeout(const Duration(seconds: 2));
+    //   return response.statusCode == 200;
+    // } catch (_) {
+    //   return false;
+    // }
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile) {
+      return true;
+    } else if (connectivityResult == ConnectivityResult.wifi) {
+      return true;
+    } else if (connectivityResult == ConnectivityResult.vpn) {
+      return true;
     }
+    return false;
   }
 
   Future<bool?> getConsentResult() async {

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:amazic_ads_flutter/adjust_config/call_organic_adjust.dart';
 import 'package:amazic_ads_flutter/admob_ads_flutter.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/rendering.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
 
@@ -38,11 +39,11 @@ class BannerSplash extends StatefulWidget {
 class _BannerSplashState extends State<BannerSplash> {
   ScreenshotController screenshotController = ScreenshotController();
   bool checkAdsShow = false;
+  GlobalKey adWidgetKey = GlobalKey();
 
   void detectTestAd(double pixelRatio) {
-    print('Banner_Splash: Use Detect Test Ad');
-    if (!DetectTestAd.instance.isTestAd()) {
-      print('check_detect_test_ad --- 1');
+    // if (!DetectTestAd.instance.isTestAd()) {
+    //   print('check_detect_test_ad --- 1');
       screenshotController
           .capture(
               pixelRatio: pixelRatio, delay: const Duration(milliseconds: 10))
@@ -54,18 +55,18 @@ class _BannerSplashState extends State<BannerSplash> {
           final imageFile =
               await File('${directory.path}/$fileName.png').create();
           await imageFile.writeAsBytes(capturedImage);
-          print('check_detect_test_ad --- 1. $fileName');
+          // print('check_detect_test_ad --- 1. $fileName');
           DetectTestAd.instance.detectImageToText(
             imageFile: imageFile,
             onSuccess: () {
-              print('check_detect_test_ad --- 1.1');
+              print('check_detect_test_ad --- true');
               if (widget.onTestAdSuccess != null && widget.onNext != null) {
                 widget.onTestAdSuccess!();
                 widget.onNext!();
               }
             },
             onError: (p0) {
-              print('check_detect_test_ad --- 1.2 $p0');
+              print('check_detect_test_ad --- false $p0');
               if (widget.onTestAdError != null && widget.onNext != null) {
                 widget.onTestAdError!(p0);
                 widget.onNext!();
@@ -74,20 +75,20 @@ class _BannerSplashState extends State<BannerSplash> {
           );
         }
       }).catchError((e) {
-        print('check_detect_test_ad --- 1.3 $e');
+        print('check_detect_test_ad --- error $e');
         if (widget.onTestAdError != null && widget.onNext != null) {
           widget.onTestAdError!(e.toString());
           widget.onNext!();
         }
       });
-    } else {
-      print('check_detect_test_ad --- 2');
-      if (widget.onTestAdSuccess != null && widget.onNext != null) {
-        print('check_detect_test_ad --- 2.1');
-        widget.onTestAdSuccess!();
-        widget.onNext!();
-      }
-    }
+    // } else {
+    //   print('check_detect_test_ad --- 2');
+    //   if (widget.onTestAdSuccess != null && widget.onNext != null) {
+    //     print('check_detect_test_ad --- 2.1');
+    //     widget.onTestAdSuccess!();
+    //     widget.onNext!();
+    //   }
+    // }
   }
 
   // void callOrganicAdjust() {
@@ -133,17 +134,49 @@ class _BannerSplashState extends State<BannerSplash> {
   //   }
   // }
 
+  void logAdContentInWidget(GlobalKey adWidgetKey) {
+    final context = adWidgetKey.currentContext;
+    if (context != null) {
+      // Lấy các widget con của widget cha
+      context.visitChildElements((element) {
+        final widget = element.widget;
+
+        // Kiểm tra nếu widget là Text
+        if (widget is Text) {
+          print("log_banner --- Found Ad Content Text: ${widget.data}");
+        }
+
+        // Kiểm tra nếu widget là Image
+        else if (widget is Image) {
+          print("log_banner --- Found Ad Content Image: ${widget.image}");
+        }
+
+        // Kiểm tra nếu widget là bất kỳ widget nào khác (có thể là phần tử trong quảng cáo)
+        else {
+          print("log_banner --- Other Widget detected: $widget");
+        }
+      });
+    } else {
+      print("log_banner --- No context found for the provided key.");
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     double pixelRatio = MediaQuery.of(context).devicePixelRatio;
     return Screenshot(
       controller: screenshotController,
       child: BannerAds(
+        key: adWidgetKey,
         onSplashScreen: true,
         type: AdsBannerType.adaptive,
         listId: widget.listIdAds,
         config: widget.remoteConfig,
         visibilityDetectorKey: widget.visibilityDetectorKey,
+        onAdLoaded: (adNetwork, adUnitType, data) {
+
+        },
         onAdDisabled: (adNetwork, adUnitType, data) {
           if (widget.onNext != null) {
             widget.onNext!();
@@ -171,10 +204,13 @@ class _BannerSplashState extends State<BannerSplash> {
           //     widget.onNext!();
           //   }
           // }
+          print('check_detect_test_ad --- onAdShowed');
           if (widget.isDetectTestAd == true) {
-            print('check_detect_test_ad --- show');
             detectTestAd(pixelRatio);
           }
+        },
+        onAdImpression: (adNetwork, adUnitType, data) {
+          // logAdContentInWidget(adWidgetKey);
         },
       ),
     );

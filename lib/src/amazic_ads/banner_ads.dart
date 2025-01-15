@@ -15,6 +15,7 @@ class BannerAds extends StatefulWidget {
   final EasyAdCallback? onAdLoaded;
   final EasyAdCallback? onAdShowed;
   final EasyAdCallback? onAdClicked;
+  final EasyAdCallback? onAdImpression;
   final EasyAdFailedCallback? onAdFailedToLoad;
   final EasyAdFailedCallback? onAdFailedToShow;
   final EasyAdCallback? onAdDismissed;
@@ -38,6 +39,7 @@ class BannerAds extends StatefulWidget {
     this.onAdLoaded,
     this.onAdShowed,
     this.onAdClicked,
+    this.onAdImpression,
     this.onAdFailedToLoad,
     this.onAdFailedToShow,
     this.onAdDismissed,
@@ -295,6 +297,9 @@ class _BannerAdsState extends State<BannerAds> with WidgetsBindingObserver {
         if (mounted) {
           setState(() {});
         }
+      },
+      onAdImpression: (adNetwork, adUnitType, data) {
+        widget.onAdImpression?.call(adNetwork, adUnitType, data);
       },
       onPaidEvent: ({
         required AdNetwork adNetwork,

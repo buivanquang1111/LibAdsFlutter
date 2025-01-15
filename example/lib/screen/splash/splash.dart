@@ -71,7 +71,7 @@ class SplashState extends State<SplashScreen> {
           });
         },
         onNextAction: () {
-          handleNavigate();
+          // handleNavigate();
         },
         navigatorKey: Get.key,
         keyRateAOA: 'rate_aoa_inter_splash',
@@ -225,6 +225,7 @@ class SplashState extends State<SplashScreen> {
                     remoteConfig: RemoteConfigLib.configs[
                         RemoteConfigKeyLib.getKeyByName('banner_splash').name],
                     visibilityDetectorKey: 'banner_splash',
+                    isDetectTestAd: true,
                     onTestAdSuccess: () {
                       print('check_detect_test_ad --- ok');
                     },

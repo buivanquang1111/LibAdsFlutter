@@ -32,6 +32,7 @@ dependencies:
   firebase_analytics: ^11.0.0
   firebase_remote_config: ^5.0.0
   google_mlkit_text_recognition: ^0.14.0
+  win32: ^5.0.0
 
 dev_dependencies:
   flutter_test:
