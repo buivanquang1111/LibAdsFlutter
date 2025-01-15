@@ -11,6 +11,7 @@ import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 
+import com.amazic.ad.ads.AdsPlatformViewFactory;
 import com.amazic.ad.ui.FullscreenLoadingDialog;
 
 import io.flutter.FlutterInjector;
@@ -80,6 +81,14 @@ public class AmazicPlugin
         methodChannel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), CHANNEL_IAP);
         methodChannel.setMethodCallHandler(this);
         iapManager = new IAPManager();
+
+        // Đăng ký Native View
+        flutterPluginBinding
+                .getPlatformViewRegistry()
+                .registerViewFactory(
+                        "com.yourcompany.ads/banner",
+                        new AdsPlatformViewFactory(flutterPluginBinding.getApplicationContext())
+                );
     }
 
     @Override

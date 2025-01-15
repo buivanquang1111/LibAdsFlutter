@@ -30,7 +30,7 @@ class AdmobBannerAd extends AdsBase {
   bool _isAdLoaded = false;
   bool _isAdLoading = false;
   bool _isAdLoadedFailed = false;
-  GlobalKey adWidgetKey = GlobalKey();
+  // GlobalKey adWidgetKey = GlobalKey();
 
   @override
   AdUnitType get adUnitType => AdUnitType.banner;
@@ -105,7 +105,7 @@ class AdmobBannerAd extends AdsBase {
             },
           );
           onAdImpression?.call(adNetwork, adUnitType, ad);
-          logAdContentInWidget(adWidgetKey);
+          // logAdContentInWidget(adWidgetKey);
         },
         onPaidEvent: (ad, revenue, type, currencyCode) {
           AdmobAds.instance.onPaidEventMethod(
@@ -167,7 +167,7 @@ class AdmobBannerAd extends AdsBase {
           children: [
             if (ad != null && isAdLoaded)
               AdWidget(
-                key: adWidgetKey,
+                // key: adWidgetKey,
                 ad: ad,
               ),
             if (_isAdLoading)
@@ -183,43 +183,43 @@ class AdmobBannerAd extends AdsBase {
     );
   }
 
-  void logAdContentInWidget(GlobalKey adWidgetKey) {
-    final context = adWidgetKey.currentContext;
-    if (context != null) {
-      // Lấy các widget con của widget cha
-      context.visitChildElements((element) {
-        final widget = element.widget;
-
-        // Kiểm tra nếu widget là PlatformViewLink
-        if (widget is PlatformViewLink) {
-          print("log_banner --- Found PlatformViewLink: $widget");
-
-          // Kiểm tra các thành phần con bên trong PlatformViewLink
-          element.visitChildElements((childElement) {
-            final childWidget = childElement.widget;
-            print("log_banner --- Found child widget of PlatformViewLink: $childWidget");
-          });
-        }
-
-        // Kiểm tra nếu widget là Text
-        else if (widget is Text) {
-          print("log_banner --- Found Ad Content Text: ${widget.data}");
-        }
-
-        // Kiểm tra nếu widget là Image
-        else if (widget is Image) {
-          print("log_banner --- Found Ad Content Image: ${widget.image}");
-        }
-
-        // Kiểm tra nếu widget là bất kỳ widget nào khác
-        else {
-          print("log_banner --- Other Widget detected: $widget");
-        }
-      });
-    } else {
-      print("log_banner --- No context found for the provided key.");
-    }
-  }
+  // void logAdContentInWidget(GlobalKey adWidgetKey) {
+  //   final context = adWidgetKey.currentContext;
+  //   if (context != null) {
+  //     // Lấy các widget con của widget cha
+  //     context.visitChildElements((element) {
+  //       final widget = element.widget;
+  //
+  //       // Kiểm tra nếu widget là PlatformViewLink
+  //       if (widget is PlatformViewLink) {
+  //         print("log_banner --- Found PlatformViewLink: $widget");
+  //
+  //         // Kiểm tra các thành phần con bên trong PlatformViewLink
+  //         element.visitChildElements((childElement) {
+  //           final childWidget = childElement.widget;
+  //           print("log_banner --- Found child widget of PlatformViewLink: $childWidget");
+  //         });
+  //       }
+  //
+  //       // Kiểm tra nếu widget là Text
+  //       else if (widget is Text) {
+  //         print("log_banner --- Found Ad Content Text: ${widget.data}");
+  //       }
+  //
+  //       // Kiểm tra nếu widget là Image
+  //       else if (widget is Image) {
+  //         print("log_banner --- Found Ad Content Image: ${widget.image}");
+  //       }
+  //
+  //       // Kiểm tra nếu widget là bất kỳ widget nào khác
+  //       else {
+  //         print("log_banner --- Other Widget detected: $widget");
+  //       }
+  //     });
+  //   } else {
+  //     print("log_banner --- No context found for the provided key.");
+  //   }
+  // }
 
 
 }

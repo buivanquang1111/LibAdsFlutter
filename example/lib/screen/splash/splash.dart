@@ -218,23 +218,36 @@ class SplashState extends State<SplashScreen> {
                 ],
               ),
             ),
-            ConsentManager.ins.canRequestAds == true
-                ? BannerSplash(
-                    listIdAds: NetworkRequest.instance
-                        .getListIDByName('banner_splash'),
-                    remoteConfig: RemoteConfigLib.configs[
-                        RemoteConfigKeyLib.getKeyByName('banner_splash').name],
-                    visibilityDetectorKey: 'banner_splash',
-                    isDetectTestAd: true,
-                    onTestAdSuccess: () {
-                      print('check_detect_test_ad --- ok');
-                    },
-                    onTestAdError: (p0) {
-                      print('check_detect_test_ad --- false');
-                    },
-                    onNext: () {},
-                  )
-                : Container(),
+            SizedBox(
+              width: double.infinity,
+              height: 60,
+              // child: ConsentManager.ins.canRequestAds == true
+              //     ? BannerSplash(
+              //         listIdAds: NetworkRequest.instance
+              //             .getListIDByName('banner_splash'),
+              //         remoteConfig: RemoteConfigLib.configs[
+              //             RemoteConfigKeyLib.getKeyByName('banner_splash').name],
+              //         visibilityDetectorKey: 'banner_splash',
+              //         isDetectTestAd: true,
+              //         onTestAdSuccess: () {
+              //           print('check_detect_test_ad --- ok');
+              //         },
+              //         onTestAdError: (p0) {
+              //           print('check_detect_test_ad --- false');
+              //         },
+              //         onNext: () {},
+              //       )
+              //     : Container(),
+              child: ConsentManager.ins.canRequestAds == true
+                  ? BannerSplashPlatform(
+                      listIdAds: NetworkRequest.instance
+                          .getListIDByName('banner_splash'),
+                      remoteConfig: RemoteConfigLib.configs[
+                          RemoteConfigKeyLib.getKeyByName('banner_splash')
+                              .name],
+                    )
+                  : Container(),
+            ),
           ],
         ),
       ),

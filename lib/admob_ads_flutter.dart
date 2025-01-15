@@ -12,6 +12,7 @@ export 'package:amazic_ads_flutter/src/amazic_ads/native_ads.dart';
 export 'package:amazic_ads_flutter/src/amazic_ads/interstitial_ads.dart';
 export 'package:amazic_ads_flutter/src/amazic_ads/native_ads_reload.dart';
 export 'package:amazic_ads_flutter/src/amazic_ads/banner_splash.dart';
+export 'package:amazic_ads_flutter/src/amazic_ads/banner_splash_platform.dart';
 export 'package:amazic_ads_flutter/src/enums/ad_event_type.dart';
 export 'package:amazic_ads_flutter/src/enums/ad_network.dart';
 export 'package:amazic_ads_flutter/src/enums/ad_unit_type.dart';

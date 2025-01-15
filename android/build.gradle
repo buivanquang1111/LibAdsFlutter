@@ -61,4 +61,8 @@ dependencies {
     //billing
     implementation "com.android.billingclient:billing:7.1.1"
     implementation 'com.google.guava:guava:31.1-jre'
+
+    //ads
+    implementation 'com.google.android.gms:play-services-ads:22.4.0'
+
 }
