@@ -23,6 +23,7 @@ import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
+import io.flutter.plugin.common.EventChannel;
 
 import android.text.SpannableString;
 import android.util.Log;
@@ -83,11 +84,15 @@ public class AmazicPlugin
         iapManager = new IAPManager();
 
         // Đăng ký Native View
+        MethodChannel methodChannel = new MethodChannel(
+                flutterPluginBinding.getBinaryMessenger(),
+                "com.yourcompany.ads/banner"
+        );
         flutterPluginBinding
                 .getPlatformViewRegistry()
                 .registerViewFactory(
                         "com.yourcompany.ads/banner",
-                        new AdsPlatformViewFactory(flutterPluginBinding.getApplicationContext())
+                        new AdsPlatformViewFactory(flutterPluginBinding.getApplicationContext(), methodChannel)
                 );
     }
 
