@@ -16,10 +16,10 @@ public class AmazicPlugin: NSObject, FlutterPlugin {
             loadingChannel = FlutterMethodChannel(name: "loadingChannel", binaryMessenger: registrar.messenger())
         }
 
-        registrar.register(
-                    AdsPlatformViewFactory(messenger: registrar.messenger()),
-                    withId: "com.yourcompany.ads/banner"
-                )
+//         registrar.register(
+//                     AdsPlatformViewFactory(messenger: registrar.messenger()),
+//                     withId: "com.yourcompany.ads/banner"
+//                 )
     }
 
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
