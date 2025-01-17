@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:amazic_ads_flutter/admob_ads_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -84,6 +86,7 @@ class _BannerSplashPlatformState extends State<BannerSplashPlatform> {
       ),
       child: Stack(
         children: [
+          if(Platform.isAndroid)
           AndroidView(
             viewType: 'com.yourcompany.ads/banner',
             creationParams: {
@@ -96,7 +99,25 @@ class _BannerSplashPlatformState extends State<BannerSplashPlatform> {
               }
             },
             creationParamsCodec: const StandardMessageCodec(),
-          ),
+          )
+          else if(Platform.isIOS)
+            UiKitView(
+              viewType: 'com.yourcompany.ads/banner',
+              creationParams: {
+                'adUnitId': widget.listIdAds[0],
+                'adSize': {
+                  'width': widget.adSize?.width ??
+                      AdmobAds.instance
+                          .getAdmobAdSize(type: widget.type)
+                          .width,
+                  'height': widget.adSize?.height ??
+                      AdmobAds.instance
+                          .getAdmobAdSize(type: widget.type)
+                          .height
+                }
+              },
+              creationParamsCodec: const StandardMessageCodec(),
+            ),
           if (!isShowAd)
             LoadingAds(
               height: widget.adSize?.height.toDouble() ?? 60,

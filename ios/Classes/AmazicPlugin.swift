@@ -15,6 +15,11 @@ public class AmazicPlugin: NSObject, FlutterPlugin {
             print("FullscreenLoadingDialog", "init loadingChannel")
             loadingChannel = FlutterMethodChannel(name: "loadingChannel", binaryMessenger: registrar.messenger())
         }
+
+        registrar.register(
+                    AdsPlatformViewFactory(messenger: registrar.messenger()),
+                    withId: "com.yourcompany.ads/banner"
+                )
     }
 
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
