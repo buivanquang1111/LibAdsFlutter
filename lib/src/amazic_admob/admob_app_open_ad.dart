@@ -2,17 +2,20 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../../adjust_config/call_organic_adjust.dart';
 import '../../admob_ads_flutter.dart';
 import '../utils/amazic_logger.dart';
 
 class AdmobAppOpenAd extends AdsBase {
   final AdRequest adRequest;
   final bool isShowAdsSplash;
+  final String? nameAds;
 
   AdmobAppOpenAd({
     required super.listId,
     required this.adRequest,
     required this.isShowAdsSplash,
+    required this.nameAds,
     super.onAdLoaded,
     super.onAdShowed,
     super.onAdClicked,
@@ -64,14 +67,23 @@ class AdmobAppOpenAd extends AdsBase {
     if (listId.isEmpty) return Future.value();
     _isAdLoading = true;
     if(isShowAdsSplash){
-      EventLogLib.logEvent("inter_splash_true");
+      EventLogLib.logEvent("open_splash_true");
       _adShowTimeoutTimer?.cancel();
       _adShowTimeoutTimer = Timer(const Duration(seconds: 20), () {
-        EventLogLib.logEvent('inter_splash_id_timeout');
+        EventLogLib.logEvent('open_splash_id_timeout');
         _logger.logInfo('Ad Timeout: Timeout 20s ads Open');
         onAdFailedToShow?.call(
             adNetwork, adUnitType, _appOpenAd, 'Ad timeout 20s');
       },);
+    }else{
+      if(nameAds != null) {
+        EventLogLib.logEvent('${nameAds}_true', parameters: {
+          'reason':
+          'ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust
+              .instance.isOrganic()}_internet_${AdmobAds.instance
+              .checkInternet()}'
+        });
+      }
     }
     return AppOpenAd.load(
       adUnitId: listId.isNotEmpty ? listId[0] : '',

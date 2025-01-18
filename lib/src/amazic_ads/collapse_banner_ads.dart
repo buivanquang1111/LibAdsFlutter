@@ -169,6 +169,7 @@ class CollapseBannerAdsState extends State<CollapseBannerAds>
     }
 
     _bannerAd = AdmobAds.instance.createBanner(
+      visibilityDetectorKey: widget.visibilityDetectorKey,
       adNetwork: widget.adNetwork,
       listId: widget.listId,
       type: type,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
+import '../../adjust_config/call_organic_adjust.dart';
 import '../../admob_ads_flutter.dart';
 import '../admob_ads.dart';
 import '../enums/ad_network.dart';
@@ -8,10 +9,12 @@ import '../enums/ad_unit_type.dart';
 
 class AdmobRewardedAd extends AdsBase {
   final AdRequest adRequest;
+  final String? nameAds;
 
   AdmobRewardedAd({
     required super.listId,
     required this.adRequest,
+    required this.nameAds,
     super.onAdLoaded,
     super.onAdShowed,
     super.onAdClicked,
@@ -55,6 +58,14 @@ class AdmobRewardedAd extends AdsBase {
   Future<void> load() async {
     if (_isAdLoaded) return;
     _isAdLoading = true;
+    if(nameAds != null) {
+      EventLogLib.logEvent('${nameAds}_true', parameters: {
+        'reason':
+        'ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust
+            .instance.isOrganic()}_internet_${AdmobAds.instance
+            .checkInternet()}'
+      });
+    }
     await RewardedAd.load(
       adUnitId: listId.isNotEmpty ? listId[0] : '',
       request: adRequest,

@@ -16,11 +16,13 @@ class InterstitialAds extends StatefulWidget {
   final EasyAdFailedCallback? onAdFailedToShow;
   final EasyAdCallback? onAdDismissed;
   final EasyAdOnPaidEvent? onPaidEvent;
+  final String nameAds;
 
   const InterstitialAds({
     Key? key,
     required this.adNetwork,
     required this.listId,
+    required this.nameAds,
     this.onAdLoaded,
     this.onAdShowed,
     this.onAdClicked,
@@ -44,11 +46,13 @@ class InterstitialAds extends StatefulWidget {
     EasyAdFailedCallback? onAdFailedToShow,
     EasyAdCallback? onAdDismissed,
     EasyAdOnPaidEvent? onPaidEvent,
+    required String nameAds,
   }) {
     currentRoute = null;
     currentRoute = DialogRoute(
       context: context,
       builder: (context) => InterstitialAds(
+        nameAds: nameAds,
         listId: listId,
         adNetwork: adNetwork,
         onAdLoaded: onAdLoaded,
@@ -171,6 +175,7 @@ class _InterstitialAdsState extends State<InterstitialAds>
 
   void _initAd() {
     _interstitialAd = AdmobAds.instance.createInterstitial(
+      nameAds: widget.nameAds,
       adNetwork: widget.adNetwork,
       listId: widget.listId,
       onAdClicked: (adNetwork, adUnitType, data) {

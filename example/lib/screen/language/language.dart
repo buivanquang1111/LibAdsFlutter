@@ -97,6 +97,7 @@ class LanguageScreenState extends State<LanguageScreen>
                     //       const Duration(milliseconds: 800),
                     //       () {
                     AdmobAds.instance.showInterstitialAd(
+                      nameAds: 'inter_intro',
                       listId: NetworkRequest.instance
                           .getListIDByName('inter_intro'),
                       config: true,

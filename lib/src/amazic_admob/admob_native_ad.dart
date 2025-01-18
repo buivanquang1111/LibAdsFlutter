@@ -3,6 +3,7 @@ import 'package:amazic_ads_flutter/src/enums/ad_unit_type.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
+import '../../adjust_config/call_organic_adjust.dart';
 import '../../admob_ads_flutter.dart';
 import '../amazic_ads/loading_ads.dart';
 import '../admob_ads.dart';
@@ -11,11 +12,13 @@ import '../utils/amazic_logger.dart';
 class AdmobNativeAd extends AdsBase {
   final AdRequest adRequest;
   final String factoryId;
+  final String visibilityDetectorKey;
 
   AdmobNativeAd({
     required super.listId,
     required this.adRequest,
     required this.factoryId,
+    required this.visibilityDetectorKey,
     super.onAdLoaded,
     super.onAdShowed,
     super.onAdClicked,
@@ -57,6 +60,10 @@ class AdmobNativeAd extends AdsBase {
   @override
   Future<void> load() async {
     if (_isAdLoaded) return;
+    EventLogLib.logEvent('${visibilityDetectorKey}_true', parameters: {
+      'reason':
+          'ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.checkInternet()}'
+    });
     _nativeAd = NativeAd(
       adUnitId: listId.isNotEmpty ? listId[0] : '',
       factoryId: factoryId,

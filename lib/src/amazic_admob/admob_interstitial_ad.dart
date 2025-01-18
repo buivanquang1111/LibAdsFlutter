@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
+import '../../adjust_config/call_organic_adjust.dart';
 import '../../admob_ads_flutter.dart';
 import '../admob_ads.dart';
 import '../enums/ad_network.dart';
@@ -11,11 +12,13 @@ import '../utils/amazic_logger.dart';
 class AdmobInterstitialAd extends AdsBase {
   final AdRequest adRequest;
   final bool isShowAdsSplash;
+  final String? nameAds;
 
   AdmobInterstitialAd({
     required super.listId,
     required this.adRequest,
     required this.isShowAdsSplash,
+    required this.nameAds,
     super.onAdLoaded,
     super.onAdShowed,
     super.onAdClicked,
@@ -78,6 +81,15 @@ class AdmobInterstitialAd extends AdsBase {
               adNetwork, adUnitType, _interstitialAd, 'Ad timeout 20s');
         },
       );
+    }else{
+      if(nameAds != null) {
+        EventLogLib.logEvent('${nameAds}_true', parameters: {
+          'reason':
+          'ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust
+              .instance.isOrganic()}_internet_${AdmobAds.instance
+              .checkInternet()}'
+        });
+      }
     }
     await InterstitialAd.load(
       adUnitId: listId.isNotEmpty ? listId[0] : '',

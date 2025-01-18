@@ -13,23 +13,24 @@ class AppLifecycleReactor {
   final AdNetwork adNetwork;
   final Widget? child;
   final bool
-      isShowWelComeScreenAfterAds; //hiển thị màn Welcome sau quảng cáo resume
+  isShowWelComeScreenAfterAds; //hiển thị màn Welcome sau quảng cáo resume
 
   bool _onSplashScreen = true;
   bool _isExcludeScreen = false;
   bool config;
+  String nameConfig;
   bool _isDisplayAppOpenResume = true;
   bool _isShowScreenWellCome = false;
   Function()? _onDismissCollapse;
   Function()? _onReloadCollapse;
 
-  AppLifecycleReactor(
-      {required this.navigatorKey,
-      required this.listId,
-      this.config = true,
-      required this.adNetwork,
-      this.child,
-      required this.isShowWelComeScreenAfterAds});
+  AppLifecycleReactor({required this.navigatorKey,
+    required this.listId,
+    this.config = true,
+    required this.nameConfig,
+    required this.adNetwork,
+    this.child,
+    required this.isShowWelComeScreenAfterAds});
 
   void listenToAppStateChanges() {
     AppStateEventNotifier.startListening();
@@ -78,7 +79,7 @@ class AppLifecycleReactor {
           );
         },
       ).then(
-        (value) {
+            (value) {
           if (_onReloadCollapse != null) {
             _onReloadCollapse!();
           }
@@ -101,7 +102,7 @@ class AppLifecycleReactor {
               child: child,
             );
           }).then(
-        (value) {
+            (value) {
           if (_onReloadCollapse != null) {
             _onReloadCollapse!();
           }
@@ -147,11 +148,9 @@ class AppLifecycleReactor {
             'check_app_resume --- 1.isShowWelComeScreenAfterAds: $isShowWelComeScreenAfterAds');
         if (isShowWelComeScreenAfterAds) {
           AdmobAds.instance.showAppOpen(
+              nameAds: nameConfig,
               listId: listId,
               config: config,
-              onCanRequestLogEvent: () {
-                EventLogLib.logEvent("open_resume_true");
-              },
               onAdDismissed: (adNetwork, adUnitType, data) {
                 if (child != null) {
                   if (!_isShowScreenWellCome) {
@@ -176,7 +175,10 @@ class AppLifecycleReactor {
               onDisabled: () async {
                 EventLogLib.logEvent("open_resume_false", parameters: {
                   "reason":
-                      "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.checkInternet()}"
+                  "ump_${ConsentManager.ins
+                      .canRequestAds}_org_${CallOrganicAdjust.instance
+                      .isOrganic()}_internet_${await AdmobAds.instance
+                      .checkInternet()}"
                 });
 
                 if (child != null) {
@@ -215,6 +217,7 @@ class AppLifecycleReactor {
     Function? onDismissCollapse,
   }) {
     AdmobAds.instance.showAppOpen(
+      nameAds: nameConfig,
       listId: listId,
       config: config,
       onAdDismissed: (adNetwork, adUnitType, data) {
@@ -233,7 +236,9 @@ class AppLifecycleReactor {
         setShowScreenWellCome(false);
         EventLogLib.logEvent("open_resume_false", parameters: {
           "reason":
-              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.checkInternet()}"
+          "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust
+              .instance.isOrganic()}_internet_${await AdmobAds.instance
+              .checkInternet()}"
         });
         onDisabled?.call();
       },
@@ -245,9 +250,6 @@ class AppLifecycleReactor {
         if (_onDismissCollapse != null) {
           _onDismissCollapse!();
         }
-      },
-      onCanRequestLogEvent: () {
-        EventLogLib.logEvent("open_resume_true");
       },
     );
   }

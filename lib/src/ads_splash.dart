@@ -65,6 +65,7 @@ class AdsSplash {
   }) {
     if (getState() == StateAdSplash.open) {
       AdmobAds.instance.showAppOpen(
+        nameAds: null,
         listId: listOpenId,
         config: configAdsOpen,
         isShowAdsSplash: true,
@@ -99,6 +100,7 @@ class AdsSplash {
       );
     } else if (getState() == StateAdSplash.inter) {
       AdmobAds.instance.showInterstitialAd(
+        nameAds: null,
         listId: listInterId,
         config: configAdsInter,
         isShowAdsSplash: true,

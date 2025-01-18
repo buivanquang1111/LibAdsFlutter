@@ -7,6 +7,7 @@ import '../../admob_ads_flutter.dart';
 class RewardAds extends StatefulWidget {
   final AdNetwork adNetwork;
   final List<String> listId;
+  final String nameAds;
   final EasyAdCallback? onAdLoaded;
   final EasyAdCallback? onAdShowed;
   final EasyAdCallback? onAdClicked;
@@ -20,6 +21,7 @@ class RewardAds extends StatefulWidget {
     Key? key,
     required this.adNetwork,
     required this.listId,
+    required this.nameAds,
     this.onAdLoaded,
     this.onAdShowed,
     this.onAdClicked,
@@ -125,6 +127,7 @@ class _RewardAdsState extends State<RewardAds>
 
   void _initAd() {
     _rewardAd = AdmobAds.instance.createReward(
+      nameAds: widget.nameAds,
       adNetwork: widget.adNetwork,
       listId: widget.listId,
       onAdClicked: (adNetwork, adUnitType, data) {

@@ -52,6 +52,7 @@ class OnBoardState1 extends State<OnboardScreen1> {
     print('check_load_native_intro: load');
     AdmobAds.instance
         .loadNativeAds(
+      visibilityDetectorKey: 'native_intro',
       config: true,
       adNetwork: AdNetwork.admob,
       factoryId: adIdManager.nativeIntroFactory,

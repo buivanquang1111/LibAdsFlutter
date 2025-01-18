@@ -36,6 +36,7 @@ class SplashState extends State<SplashScreen> {
     super.initState();
     adIdManager = DevAdIdManager();
     AdmobAds.instance.initAllDataSplash(
+      turnOnOrganic: true,
         remoteConfigKeys: [
           RemoteConfigKeyLib(
               name: 'show_ads', defaultValue: true, valueType: bool),
@@ -71,7 +72,7 @@ class SplashState extends State<SplashScreen> {
           });
         },
         onNextAction: () {
-          // handleNavigate();
+          handleNavigate();
         },
         navigatorKey: Get.key,
         keyRateAOA: 'rate_aoa_inter_splash',

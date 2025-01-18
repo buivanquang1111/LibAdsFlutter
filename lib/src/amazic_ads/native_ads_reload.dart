@@ -166,6 +166,7 @@ class _NativeAdsReloadState extends State<NativeAdsReload> with WidgetsBindingOb
     }
 
     _nativeAd = AdmobAds.instance.createNative(
+      visibilityDetectorKey: widget.visibilityDetectorKey,
       adNetwork: widget.adNetwork,
       listId: widget.listId,
       onAdLoaded: (adNetwork, adUnitType, data) {

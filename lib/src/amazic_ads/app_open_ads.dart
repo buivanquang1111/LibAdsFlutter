@@ -7,6 +7,7 @@ import '../../admob_ads_flutter.dart';
 class AppOpenAds extends StatefulWidget {
   final AdNetwork adNetwork;
   final List<String> listId;
+  final String nameAds;
   final EasyAdCallback? onAdLoaded;
   final EasyAdCallback? onAdShowed;
   final EasyAdCallback? onAdClicked;
@@ -20,6 +21,7 @@ class AppOpenAds extends StatefulWidget {
     Key? key,
     this.adNetwork = AdNetwork.admob,
     required this.listId,
+    required this.nameAds,
     this.onAdLoaded,
     this.onAdShowed,
     this.onAdClicked,
@@ -36,6 +38,7 @@ class AppOpenAds extends StatefulWidget {
   static DialogRoute getRoute({
     required BuildContext context,
     required List<String> listId,
+    required String nameAds,
     AdNetwork adNetwork = AdNetwork.admob,
     EasyAdCallback? onAdLoaded,
     EasyAdCallback? onAdShowed,
@@ -50,6 +53,7 @@ class AppOpenAds extends StatefulWidget {
     currentRoute = DialogRoute(
       context: context,
       builder: (context) => AppOpenAds(
+        nameAds: nameAds,
         listId: listId,
         adNetwork: adNetwork,
         onAdLoaded: onAdLoaded,
@@ -137,6 +141,7 @@ class _AppOpenAdsState extends State<AppOpenAds> with WidgetsBindingObserver {
 
   void initAndLoadAd() {
     _appOpenAd = AdmobAds.instance.createAppOpenAd(
+      nameAds: widget.nameAds,
       adNetwork: widget.adNetwork,
       listId: widget.listId,
       onAdLoaded: (adNetwork, adUnitType, data) {

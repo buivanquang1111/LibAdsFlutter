@@ -146,34 +146,34 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
       }
 
       //logEvent
-      if (widget.factoryId.toLowerCase().contains('language') ||
-          widget.factoryId.toLowerCase().contains('lang')) {
+      if (widget.visibilityDetectorKey.toLowerCase().contains('language') ||
+          widget.visibilityDetectorKey.toLowerCase().contains('lang')) {
         EventLogLib.logEvent("native_language_false", parameters: {
           "reason":
               "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.checkInternet()}"
         });
-      } else if (widget.factoryId.toLowerCase().contains('intro')) {
+      } else if (widget.visibilityDetectorKey.toLowerCase().contains('intro')) {
         EventLogLib.logEvent("native_intro_false", parameters: {
           "reason":
               "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.checkInternet()}"
         });
-      } else if (widget.factoryId.toLowerCase().contains('permission') ||
-          widget.factoryId.toLowerCase().contains('per')) {
+      } else if (widget.visibilityDetectorKey.toLowerCase().contains('permission') ||
+          widget.visibilityDetectorKey.toLowerCase().contains('per')) {
         EventLogLib.logEvent("native_permission_false", parameters: {
           "reason":
               "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.checkInternet()}"
         });
-      } else if (widget.factoryId.toLowerCase().contains('interest')) {
+      } else if (widget.visibilityDetectorKey.toLowerCase().contains('interest')) {
         EventLogLib.logEvent("native_interest_false", parameters: {
           "reason":
               "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.checkInternet()}"
         });
-      } else if (widget.factoryId.toLowerCase().contains('wb')) {
+      } else if (widget.visibilityDetectorKey.toLowerCase().contains('wb')) {
         EventLogLib.logEvent("native_wb_false", parameters: {
           "reason":
               "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.checkInternet()}"
         });
-      } else if (widget.factoryId.toLowerCase().contains('welcome')) {
+      } else if (widget.visibilityDetectorKey.toLowerCase().contains('welcome')) {
         EventLogLib.logEvent("native_welcome_false", parameters: {
           "reason":
               "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.checkInternet()}"
@@ -215,19 +215,19 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
     ConsentManager.ins.handleRequestUmp(
       onPostExecute: () {
         if (ConsentManager.ins.canRequestAds) {
-          if (widget.factoryId.toLowerCase().contains('language') ||
-              widget.factoryId.toLowerCase().contains('lang')) {
-            EventLogLib.logEvent("native_language_true");
-          } else if (widget.factoryId.toLowerCase().contains('permission') ||
-              widget.factoryId.toLowerCase().contains('per')) {
-            EventLogLib.logEvent("native_permission_true");
-          } else if (widget.factoryId.toLowerCase().contains('interest')) {
-            EventLogLib.logEvent("native_interest_true");
-          } else if (widget.factoryId.toLowerCase().contains('wb')) {
-            EventLogLib.logEvent("native_wb_true");
-          } else if (widget.factoryId.toLowerCase().contains('welcome')) {
-            EventLogLib.logEvent("native_welcome_true");
-          }
+          // if (widget.visibilityDetectorKey.toLowerCase().contains('language') ||
+          //     widget.visibilityDetectorKey.toLowerCase().contains('lang')) {
+          //   EventLogLib.logEvent("native_language_true");
+          // } else if (widget.visibilityDetectorKey.toLowerCase().contains('permission') ||
+          //     widget.visibilityDetectorKey.toLowerCase().contains('per')) {
+          //   EventLogLib.logEvent("native_permission_true");
+          // } else if (widget.visibilityDetectorKey.toLowerCase().contains('interest')) {
+          //   EventLogLib.logEvent("native_interest_true");
+          // } else if (widget.visibilityDetectorKey.toLowerCase().contains('wb')) {
+          //   EventLogLib.logEvent("native_wb_true");
+          // } else if (widget.visibilityDetectorKey.toLowerCase().contains('welcome')) {
+          //   EventLogLib.logEvent("native_welcome_true");
+          // }
           _initAd();
         } else {
           _isLoading.value = false;
@@ -378,12 +378,13 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
     }
 
     _nativeAd ??= AdmobAds.instance.createNative(
+      visibilityDetectorKey: widget.visibilityDetectorKey,
       adNetwork: widget.adNetwork,
       factoryId: widget.factoryId,
       listId: widget.listId,
       onAdClicked: (adNetwork, adUnitType, data) {
-        if (widget.factoryId.toLowerCase().contains('language') ||
-            widget.factoryId.toLowerCase().contains('lang')) {
+        if (widget.visibilityDetectorKey.toLowerCase().contains('language') ||
+            widget.visibilityDetectorKey.toLowerCase().contains('lang')) {
           EventLogLib.logEvent(
               "native_language_click_${PreferencesUtilLib.getCountOpenApp() - 1}");
         }
@@ -466,8 +467,8 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
         }
       },
       onAdImpression: (adNetwork, adUnitType, data) {
-        if (widget.factoryId.toLowerCase().contains('language') ||
-            widget.factoryId.toLowerCase().contains('lang')) {
+        if (widget.visibilityDetectorKey.toLowerCase().contains('language') ||
+            widget.visibilityDetectorKey.toLowerCase().contains('lang')) {
           EventLogLib.logEvent(
               "native_language_impression_${PreferencesUtilLib.getCountOpenApp() - 1}");
         }

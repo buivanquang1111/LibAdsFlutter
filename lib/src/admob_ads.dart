@@ -123,13 +123,15 @@ class AdmobAds {
     String? packageName,
     bool isIap = false,
     GlobalKey<NavigatorState>? navigatorKey,
+    required bool turnOnOrganic,
   }) async {
-    if(await AdmobAds.instance.checkInternet()) {
+    if (await AdmobAds.instance.checkInternet()) {
       EventLogLib.logEvent('splash_have_internet');
     }
     //init remote key
     RemoteConfigKeyLib.initializeKeys(remoteConfigKeys);
 
+    CallOrganicAdjust.instance.setTurnOnOrganic(turnOn: turnOnOrganic);
     _timer = Timer.periodic(
       const Duration(seconds: 1),
       (timer) {
@@ -200,10 +202,20 @@ class AdmobAds {
       navigatorKey: navigatorKey,
     );
 
+    ///call id ads
+    Future<void> callIdAds = NetworkRequest.instance.fetchAdsModel(
+      linkServer: linkServer,
+      appId: appId,
+      packageName: packageName,
+      onResponse: () {},
+      onError: (p0) {},
+    );
+
     final tasksFuture = Future.wait([
       initRemoteConfig,
       initOrganicAdjust,
       initUMP,
+      callIdAds,
       organicCompleter.future,
       umpCompleter.future,
     ]).then((_) {
@@ -269,53 +281,53 @@ class AdmobAds {
         'show_value_inter --- init: setTimeIntervalBetweenInter: ${RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(PreferencesUtilLib.isOrganicAdjust() ? keyIntervalBetweenInterstitialOrganic ?? keyIntervalBetweenInterstitial : keyIntervalBetweenInterstitial).name]}, setTimeIntervalInterFromStart: ${RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyInterstitialFromStart).name]}');
 
     ///call id ads
-    await NetworkRequest.instance
-        .fetchAdsModel(
-      linkServer: linkServer,
-      appId: appId,
-      packageName: packageName,
-      onResponse: () {
-        print('check_next_splash --- onResponse onTimeout');
-        initAdsSplashAndAppOpen(
-          keyRateAOA: keyRateAOA,
-          keyOpenSplash: keyOpenSplash,
-          keyInterSplash: keyInterSplash,
-          onNextAction: onNextAction,
-          nameAdsOpenSplash: nameAdsOpenSplash,
-          nameAdsInterSplash: nameAdsInterSplash,
-          keyResumeConfig: keyResumeConfig,
-          listResumeId: NetworkRequest.instance.getListIDByName(nameAdsResume),
-          child: child,
-          isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds,
-          navigatorKey: navigatorKey,
-        );
-      },
-      onError: (p0) {
-        print('check_next_splash --- fetchAdsModel, onError $p0');
-        countOpenApp();
-        onNextAction();
-      },
-    )
-        .timeout(
-      const Duration(seconds: 4),
-      onTimeout: () {
-        print('check_next_splash --- fetchAdsModel onTimeout');
-        initAdsSplashAndAppOpen(
-          keyRateAOA: keyRateAOA,
-          keyOpenSplash: keyOpenSplash,
-          keyInterSplash: keyInterSplash,
-          onNextAction: onNextAction,
-          nameAdsOpenSplash: nameAdsOpenSplash,
-          nameAdsInterSplash: nameAdsInterSplash,
-          keyResumeConfig: keyResumeConfig,
-          listResumeId: NetworkRequest.instance.getListIDByName(nameAdsResume),
-          child: child,
-          isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds,
-          navigatorKey: navigatorKey,
-        );
-        return;
-      },
+    // await NetworkRequest.instance
+    //     .fetchAdsModel(
+    //   linkServer: linkServer,
+    //   appId: appId,
+    //   packageName: packageName,
+    //   onResponse: () {
+    //     print('check_next_splash --- onResponse onTimeout');
+    //     initAdsSplashAndAppOpen(
+    //       keyRateAOA: keyRateAOA,
+    //       keyOpenSplash: keyOpenSplash,
+    //       keyInterSplash: keyInterSplash,
+    //       onNextAction: onNextAction,
+    //       nameAdsOpenSplash: nameAdsOpenSplash,
+    //       nameAdsInterSplash: nameAdsInterSplash,
+    //       keyResumeConfig: keyResumeConfig,
+    //       listResumeId: NetworkRequest.instance.getListIDByName(nameAdsResume),
+    //       child: child,
+    //       isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds,
+    //       navigatorKey: navigatorKey,
+    //     );
+    //   },
+    //   onError: (p0) {
+    //     print('check_next_splash --- fetchAdsModel, onError $p0');
+    //     countOpenApp();
+    //     onNextAction();
+    //   },
+    // )
+    //     .timeout(
+    //   const Duration(seconds: 4),
+    //   onTimeout: () {
+    //     print('check_next_splash --- fetchAdsModel onTimeout');
+    initAdsSplashAndAppOpen(
+      keyRateAOA: keyRateAOA,
+      keyOpenSplash: keyOpenSplash,
+      keyInterSplash: keyInterSplash,
+      onNextAction: onNextAction,
+      nameAdsOpenSplash: nameAdsOpenSplash,
+      nameAdsInterSplash: nameAdsInterSplash,
+      keyResumeConfig: keyResumeConfig,
+      listResumeId: NetworkRequest.instance.getListIDByName(nameAdsResume),
+      child: child,
+      isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds,
+      navigatorKey: navigatorKey,
     );
+    //     return;
+    //   },
+    // );
   }
 
   //init ads resume and ads splash
@@ -340,6 +352,7 @@ class AdmobAds {
         navigatorKey: navigatorKey,
         adResumeConfig: RemoteConfigLib
             .configs[RemoteConfigKeyLib.getKeyByName(keyResumeConfig).name],
+        nameConfig: keyResumeConfig,
         child: child,
         isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds);
 
@@ -392,6 +405,7 @@ class AdmobAds {
     GlobalKey<NavigatorState>? navigatorKey,
     required List<String> listResumeId,
     required bool adResumeConfig,
+    required String nameConfig,
     Widget? child,
     bool isShowWelComeScreenAfterAds = true,
   }) {
@@ -401,6 +415,7 @@ class AdmobAds {
           navigatorKey: navigatorKey,
           listId: listResumeId,
           config: adResumeConfig,
+          nameConfig: nameConfig,
           adNetwork: AdNetwork.admob,
           child: child,
           isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds);
@@ -545,7 +560,7 @@ class AdmobAds {
     bool debugUmp = false,
     GlobalKey<NavigatorState>? navigatorKey,
     required List<String> listResumeId,
-    required bool adResumeConfig,
+    required String nameResumeConfig,
     AdNetwork adResumeNetwork = AdNetwork.admob,
     Widget? child,
     bool isShowWelComeScreenAfterAds = true,
@@ -589,9 +604,11 @@ class AdmobAds {
     if (navigatorKey != null) {
       this.navigatorKey = navigatorKey;
       appLifecycleReactor = AppLifecycleReactor(
+          nameConfig: nameResumeConfig,
           navigatorKey: navigatorKey,
           listId: listResumeId,
-          config: adResumeConfig,
+          config: RemoteConfigLib
+              .configs[RemoteConfigKeyLib.getKeyByName(nameResumeConfig).name],
           adNetwork: adResumeNetwork,
           child: child,
           isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds);
@@ -607,6 +624,7 @@ class AdmobAds {
     required AdNetwork adNetwork,
     required List<String> listId,
     required AdsBannerType type,
+    required String visibilityDetectorKey,
     AdSize? adSize,
     EasyAdCallback? onAdLoaded,
     EasyAdCallback? onAdShowed,
@@ -656,19 +674,19 @@ class AdmobAds {
       //     : adId;
 
       ad = AdmobBannerAd(
-        listId: listId,
-        adSize: adSize ?? getAdmobAdSize(type: type),
-        adRequest: adRequest,
-        onAdLoaded: onAdLoaded,
-        onAdShowed: onAdShowed,
-        onAdClicked: onAdClicked,
-        onAdFailedToLoad: onAdFailedToLoad,
-        onAdFailedToShow: onAdFailedToShow,
-        onAdDismissed: onAdDismissed,
-        onEarnedReward: onEarnedReward,
-        onPaidEvent: onPaidEvent,
-        onAdImpression: onAdImpression,
-      );
+          listId: listId,
+          adSize: adSize ?? getAdmobAdSize(type: type),
+          adRequest: adRequest,
+          onAdLoaded: onAdLoaded,
+          onAdShowed: onAdShowed,
+          onAdClicked: onAdClicked,
+          onAdFailedToLoad: onAdFailedToLoad,
+          onAdFailedToShow: onAdFailedToShow,
+          onAdDismissed: onAdDismissed,
+          onEarnedReward: onEarnedReward,
+          onPaidEvent: onPaidEvent,
+          onAdImpression: onAdImpression,
+          visibilityDetectorKey: visibilityDetectorKey);
     }
     return ad;
   }
@@ -679,6 +697,7 @@ class AdmobAds {
     required String factoryId,
     required List<String> listId,
     required bool config,
+    required String visibilityDetectorKey,
     EasyAdCallback? onAdLoaded,
     EasyAdCallback? onAdShowed,
     EasyAdCallback? onAdClicked,
@@ -713,6 +732,7 @@ class AdmobAds {
     }
 
     AdsBase? ad = AdmobAds.instance.createNative(
+      visibilityDetectorKey: visibilityDetectorKey,
       adNetwork: adNetwork,
       factoryId: factoryId,
       listId: listId,
@@ -735,6 +755,7 @@ class AdmobAds {
     required AdNetwork adNetwork,
     required String factoryId,
     required List<String> listId,
+    required String visibilityDetectorKey,
     EasyAdCallback? onAdLoaded,
     EasyAdCallback? onAdShowed,
     EasyAdCallback? onAdImpression,
@@ -751,6 +772,7 @@ class AdmobAds {
         // final String id =
         //     AdmobAds.instance.isDevMode ? TestAdsId.admobNativeId : adId;
         ad = AdmobNativeAd(
+          visibilityDetectorKey: visibilityDetectorKey,
           listId: listId,
           factoryId: factoryId,
           adRequest: _adRequest,
@@ -811,6 +833,7 @@ class AdmobAds {
   AdsBase? createInterstitial({
     required AdNetwork adNetwork,
     required List<String> listId,
+    required String? nameAds,
     bool isShowAdsSplash = false,
     EasyAdCallback? onAdLoaded,
     EasyAdCallback? onAdShowed,
@@ -828,6 +851,7 @@ class AdmobAds {
         // final String id =
         //     AdmobAds.instance.isDevMode ? TestAdsId.admobInterstitialId : adId;
         ad = AdmobInterstitialAd(
+          nameAds: nameAds,
           listId: listId,
           adRequest: _adRequest,
           isShowAdsSplash: isShowAdsSplash,
@@ -849,6 +873,7 @@ class AdmobAds {
   AdsBase? createReward({
     required AdNetwork adNetwork,
     required List<String> listId,
+    required String? nameAds,
     EasyAdCallback? onAdLoaded,
     EasyAdCallback? onAdShowed,
     EasyAdCallback? onAdClicked,
@@ -864,6 +889,7 @@ class AdmobAds {
         // final String id =
         //     AdmobAds.instance.isDevMode ? TestAdsId.admobRewardId : adId;
         ad = AdmobRewardedAd(
+          nameAds: nameAds,
           listId: listId,
           adRequest: _adRequest,
           onAdLoaded: onAdLoaded,
@@ -881,26 +907,27 @@ class AdmobAds {
     return ad;
   }
 
-  AdsBase? createAppOpenAd({
-    required AdNetwork adNetwork,
-    required List<String> listId,
-    bool isShowAdsSplash = false,
-    EasyAdCallback? onAdLoaded,
-    EasyAdCallback? onAdShowed,
-    EasyAdCallback? onAdImpression,
-    EasyAdCallback? onAdClicked,
-    EasyAdFailedCallback? onAdFailedToLoad,
-    EasyAdFailedCallback? onAdFailedToShow,
-    EasyAdCallback? onAdDismissed,
-    EasyAdEarnedReward? onEarnedReward,
-    EasyAdOnPaidEvent? onPaidEvent,
-  }) {
+  AdsBase? createAppOpenAd(
+      {required AdNetwork adNetwork,
+      required List<String> listId,
+      bool isShowAdsSplash = false,
+      EasyAdCallback? onAdLoaded,
+      EasyAdCallback? onAdShowed,
+      EasyAdCallback? onAdImpression,
+      EasyAdCallback? onAdClicked,
+      EasyAdFailedCallback? onAdFailedToLoad,
+      EasyAdFailedCallback? onAdFailedToShow,
+      EasyAdCallback? onAdDismissed,
+      EasyAdEarnedReward? onEarnedReward,
+      EasyAdOnPaidEvent? onPaidEvent,
+      required String? nameAds}) {
     AdsBase? ad;
     switch (adNetwork) {
       default:
         // String id =
         //     AdmobAds.instance.isDevMode ? TestAdsId.admobOpenResume : adId;
         ad = AdmobAppOpenAd(
+          nameAds: nameAds,
           listId: listId,
           adRequest: _adRequest,
           isShowAdsSplash: isShowAdsSplash,
@@ -934,8 +961,8 @@ class AdmobAds {
     EasyAdCallback? onAdDismissed,
     EasyAdOnPaidEvent? onPaidEvent,
     Function? onDismissCollapse,
-    Function? onCanRequestLogEvent,
     bool isShowAdsSplash = false,
+    required String? nameAds,
   }) async {
     if (!isShowAllAds ||
         !config ||
@@ -958,10 +985,8 @@ class AdmobAds {
     //   return;
     // }
 
-    //logEvent có thể Request ads
-    onCanRequestLogEvent?.call();
-
     final appOpen = createAppOpenAd(
+      nameAds: nameAds,
       adNetwork: adNetwork,
       listId: listId,
       isShowAdsSplash: isShowAdsSplash,
@@ -1034,6 +1059,7 @@ class AdmobAds {
     required List<String> listId,
     Function()? onDisabled,
     required bool config,
+    required String? nameAds,
     bool isShowAdsSplash = false,
     EasyAdCallback? onAdLoaded,
     EasyAdCallback? onAdShowed,
@@ -1044,7 +1070,6 @@ class AdmobAds {
     EasyAdCallback? onAdDismissed,
     EasyAdOnPaidEvent? onPaidEvent,
     bool? isTrickScreen = false,
-    bool? isShowAdsOnboard = false,
   }) async {
     if (!isShowAllAds ||
         !config ||
@@ -1105,11 +1130,8 @@ class AdmobAds {
       return;
     }
 
-    if (isShowAdsOnboard == true) {
-      EventLogLib.logEvent("inter_intro_true");
-    }
-
     final interstitialAd = createInterstitial(
+      nameAds: nameAds,
       adNetwork: adNetwork,
       listId: listId,
       isShowAdsSplash: isShowAdsSplash,
@@ -1188,6 +1210,7 @@ class AdmobAds {
     required List<String> listId,
     Function()? onDisabled,
     required bool config,
+    required String? nameAds,
     EasyAdCallback? onAdLoaded,
     EasyAdCallback? onAdShowed,
     EasyAdCallback? onAdClicked,
@@ -1214,6 +1237,7 @@ class AdmobAds {
       return;
     }
     final rewardAd = createReward(
+      nameAds: nameAds,
       adNetwork: adNetwork,
       listId: listId,
       onAdClicked: onAdClicked,
@@ -1267,83 +1291,83 @@ class AdmobAds {
     rewardAd.load();
   }
 
-  Future<void> showSplashAdWithInterstitialAndAppOpen({
-    AdNetwork adNetwork = AdNetwork.admob,
-    required List<String> listInterId,
-    required List<String> listOpenId,
-    required Function()? onDisabled,
-    void Function(AdUnitType type)? onShowed,
-    void Function(AdUnitType type)? onDismissed,
-    void Function()? onFailedToLoad,
-    void Function(AdUnitType type)? onFailedToShow,
-    Function(AdUnitType type)? onClicked,
-    EasyAdCallback? onAdInterstitialLoaded,
-    EasyAdCallback? onAdInterstitialShowed,
-    EasyAdCallback? onAdInterstitialClicked,
-    EasyAdFailedCallback? onAdInterstitialFailedToLoad,
-    EasyAdFailedCallback? onAdInterstitialFailedToShow,
-    EasyAdCallback? onAdInterstitialDismissed,
-    EasyAdOnPaidEvent? onInterstitialPaidEvent,
-    required bool configInterstitial,
-    EasyAdCallback? onAdAppOpenLoaded,
-    EasyAdCallback? onAdAppOpenShowed,
-    EasyAdCallback? onAdAppOpenClicked,
-    EasyAdFailedCallback? onAdAppOpenFailedToLoad,
-    EasyAdFailedCallback? onAdAppOpenFailedToShow,
-    EasyAdCallback? onAdAppOpenDismissed,
-    EasyAdOnPaidEvent? onAppOpenPaidEvent,
-    required bool configAppOpen,
-  }) async {
-    if (!isShowAllAds) {
-      onDisabled?.call();
-      return;
-    }
-    if (!configAppOpen && !configInterstitial) {
-      onDisabled?.call();
-      return;
-    }
-
-    if (_isFullscreenAdShowing) {
-      onDisabled?.call();
-      return;
-    }
-    if (!(await AdmobAds.instance.checkInternet())) {
-      onDisabled?.call();
-      return;
-    }
-    // ignore: use_build_context_synchronously
-    navigatorKey?.currentState?.push(
-      MaterialPageRoute(
-        builder: (context) => SplashAdWithInterstitialAndAppOpen(
-          adNetwork: adNetwork,
-          listInterId: listInterId,
-          listOpenId: listOpenId,
-          onShowed: onShowed,
-          onDismissed: onDismissed,
-          onFailedToLoad: onFailedToLoad,
-          onFailedToShow: onFailedToShow,
-          onClicked: onClicked,
-          onAdInterstitialLoaded: onAdInterstitialLoaded,
-          onAdInterstitialShowed: onAdInterstitialShowed,
-          onAdInterstitialClicked: onAdInterstitialClicked,
-          onAdInterstitialFailedToLoad: onAdInterstitialFailedToLoad,
-          onAdInterstitialFailedToShow: onAdInterstitialFailedToShow,
-          onAdInterstitialDismissed: onAdInterstitialDismissed,
-          onInterstitialPaidEvent: onInterstitialPaidEvent,
-          configInterstitial: configInterstitial,
-          onAdAppOpenLoaded: onAdAppOpenLoaded,
-          onAdAppOpenShowed: onAdAppOpenShowed,
-          onAdAppOpenClicked: onAdAppOpenClicked,
-          onAdAppOpenFailedToLoad: onAdAppOpenFailedToLoad,
-          onAdAppOpenFailedToShow: onAdAppOpenFailedToShow,
-          onAdAppOpenDismissed: onAdAppOpenDismissed,
-          onAppOpenPaidEvent: onAppOpenPaidEvent,
-          configAppOpen: configAppOpen,
-        ),
-        fullscreenDialog: true,
-      ),
-    );
-  }
+  // Future<void> showSplashAdWithInterstitialAndAppOpen({
+  //   AdNetwork adNetwork = AdNetwork.admob,
+  //   required List<String> listInterId,
+  //   required List<String> listOpenId,
+  //   required Function()? onDisabled,
+  //   void Function(AdUnitType type)? onShowed,
+  //   void Function(AdUnitType type)? onDismissed,
+  //   void Function()? onFailedToLoad,
+  //   void Function(AdUnitType type)? onFailedToShow,
+  //   Function(AdUnitType type)? onClicked,
+  //   EasyAdCallback? onAdInterstitialLoaded,
+  //   EasyAdCallback? onAdInterstitialShowed,
+  //   EasyAdCallback? onAdInterstitialClicked,
+  //   EasyAdFailedCallback? onAdInterstitialFailedToLoad,
+  //   EasyAdFailedCallback? onAdInterstitialFailedToShow,
+  //   EasyAdCallback? onAdInterstitialDismissed,
+  //   EasyAdOnPaidEvent? onInterstitialPaidEvent,
+  //   required bool configInterstitial,
+  //   EasyAdCallback? onAdAppOpenLoaded,
+  //   EasyAdCallback? onAdAppOpenShowed,
+  //   EasyAdCallback? onAdAppOpenClicked,
+  //   EasyAdFailedCallback? onAdAppOpenFailedToLoad,
+  //   EasyAdFailedCallback? onAdAppOpenFailedToShow,
+  //   EasyAdCallback? onAdAppOpenDismissed,
+  //   EasyAdOnPaidEvent? onAppOpenPaidEvent,
+  //   required bool configAppOpen,
+  // }) async {
+  //   if (!isShowAllAds) {
+  //     onDisabled?.call();
+  //     return;
+  //   }
+  //   if (!configAppOpen && !configInterstitial) {
+  //     onDisabled?.call();
+  //     return;
+  //   }
+  //
+  //   if (_isFullscreenAdShowing) {
+  //     onDisabled?.call();
+  //     return;
+  //   }
+  //   if (!(await AdmobAds.instance.checkInternet())) {
+  //     onDisabled?.call();
+  //     return;
+  //   }
+  //   // ignore: use_build_context_synchronously
+  //   navigatorKey?.currentState?.push(
+  //     MaterialPageRoute(
+  //       builder: (context) => SplashAdWithInterstitialAndAppOpen(
+  //         adNetwork: adNetwork,
+  //         listInterId: listInterId,
+  //         listOpenId: listOpenId,
+  //         onShowed: onShowed,
+  //         onDismissed: onDismissed,
+  //         onFailedToLoad: onFailedToLoad,
+  //         onFailedToShow: onFailedToShow,
+  //         onClicked: onClicked,
+  //         onAdInterstitialLoaded: onAdInterstitialLoaded,
+  //         onAdInterstitialShowed: onAdInterstitialShowed,
+  //         onAdInterstitialClicked: onAdInterstitialClicked,
+  //         onAdInterstitialFailedToLoad: onAdInterstitialFailedToLoad,
+  //         onAdInterstitialFailedToShow: onAdInterstitialFailedToShow,
+  //         onAdInterstitialDismissed: onAdInterstitialDismissed,
+  //         onInterstitialPaidEvent: onInterstitialPaidEvent,
+  //         configInterstitial: configInterstitial,
+  //         onAdAppOpenLoaded: onAdAppOpenLoaded,
+  //         onAdAppOpenShowed: onAdAppOpenShowed,
+  //         onAdAppOpenClicked: onAdAppOpenClicked,
+  //         onAdAppOpenFailedToLoad: onAdAppOpenFailedToLoad,
+  //         onAdAppOpenFailedToShow: onAdAppOpenFailedToShow,
+  //         onAdAppOpenDismissed: onAdAppOpenDismissed,
+  //         onAppOpenPaidEvent: onAppOpenPaidEvent,
+  //         configAppOpen: configAppOpen,
+  //       ),
+  //       fullscreenDialog: true,
+  //     ),
+  //   );
+  // }
 
   AdSize getAdmobAdSize({
     AdsBannerType type = AdsBannerType.standard,

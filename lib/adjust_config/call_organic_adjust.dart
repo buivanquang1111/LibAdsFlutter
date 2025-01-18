@@ -12,8 +12,14 @@ class CallOrganicAdjust {
 
   static final CallOrganicAdjust instance = CallOrganicAdjust._instance();
 
+  bool turnOnOrganic = true;
+
+  void setTurnOnOrganic({required bool turnOn}){
+    turnOnOrganic = turnOn;
+  }
+
   bool isOrganic() {
-    return PreferencesUtilLib.isOrganicAdjust();
+    return PreferencesUtilLib.isOrganicAdjust() && turnOnOrganic;
   }
 
   Future<void> initOrganicAdjust(
