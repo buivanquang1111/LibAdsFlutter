@@ -95,8 +95,8 @@ class _BannerSplashPlatformState extends State<BannerSplashPlatform> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: widget.adSize?.height.toDouble(),
-      width: widget.adSize?.width.toDouble(),
+      height: widget.adSize?.height.toDouble() ?? 60,
+      width: widget.adSize?.width.toDouble() ?? double.infinity,
       decoration: const BoxDecoration(
         color: Colors.white,
         border: Border(
@@ -106,34 +106,30 @@ class _BannerSplashPlatformState extends State<BannerSplashPlatform> {
       ),
       child: Stack(
         children: [
-          if(Platform.isAndroid)
-          AndroidView(
-            viewType: 'com.yourcompany.ads/banner',
-            creationParams: {
-              'adUnitId': widget.listIdAds[0],
-              'adSize': {
-                'width': widget.adSize?.width ??
-                    AdmobAds.instance.getAdmobAdSize(type: widget.type).width,
-                'height': widget.adSize?.height ??
-                    AdmobAds.instance.getAdmobAdSize(type: widget.type).height
-              }
-            },
-            creationParamsCodec: const StandardMessageCodec(),
-          )
-          else if(Platform.isIOS)
+          if (Platform.isAndroid)
+            AndroidView(
+              viewType: 'com.yourcompany.ads/banner',
+              creationParams: {
+                'adUnitId': widget.listIdAds[0],
+                'adSize': {
+                  'width': widget.adSize?.width ??
+                      AdmobAds.instance.getAdmobAdSize(type: widget.type).width,
+                  'height': widget.adSize?.height ??
+                      AdmobAds.instance.getAdmobAdSize(type: widget.type).height
+                }
+              },
+              creationParamsCodec: const StandardMessageCodec(),
+            )
+          else if (Platform.isIOS)
             UiKitView(
               viewType: 'com.yourcompany.ads/banner',
               creationParams: {
                 'adUnitId': widget.listIdAds[0],
                 'adSize': {
                   'width': widget.adSize?.width ??
-                      AdmobAds.instance
-                          .getAdmobAdSize(type: widget.type)
-                          .width,
+                      AdmobAds.instance.getAdmobAdSize(type: widget.type).width,
                   'height': widget.adSize?.height ??
-                      AdmobAds.instance
-                          .getAdmobAdSize(type: widget.type)
-                          .height
+                      AdmobAds.instance.getAdmobAdSize(type: widget.type).height
                 }
               },
               creationParamsCodec: const StandardMessageCodec(),
