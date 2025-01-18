@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:amazic_ads_flutter/admob_ads_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +12,12 @@ class BannerSplashPlatform extends StatefulWidget {
   final Function()? onNext;
   final AdSize? adSize;
   final AdsBannerType type;
+  final Function()? onAdLoaded;
+  final Function()? onAdClicked;
+  final Function(String)? onAdFailedToLoad;
+  final Function()? onAdClosed;
+  final Function()? onAdImpression;
+  final Function()? onCoreTechnologyTestAd;
 
   const BannerSplashPlatform({
     super.key,
@@ -21,6 +26,12 @@ class BannerSplashPlatform extends StatefulWidget {
     this.onNext,
     this.adSize,
     this.type = AdsBannerType.adaptive,
+    this.onAdLoaded,
+    this.onAdClicked,
+    this.onAdFailedToLoad,
+    this.onAdClosed,
+    this.onAdImpression,
+    this.onCoreTechnologyTestAd,
   });
 
   @override
@@ -46,22 +57,31 @@ class _BannerSplashPlatformState extends State<BannerSplashPlatform> {
         switch (call.method) {
           case 'onAdLoaded':
             print('banner_splash_platform --- Ad Loaded');
+            widget.onAdLoaded?.call();
             break;
           case 'onAdClicked':
             print('banner_splash_platform --- Ad Clicked');
+            widget.onAdClicked?.call();
             break;
           case 'onAdFailedToLoad':
             print(
                 'banner_splash_platform --- Ad Failed to Load: ${event?['error']}');
+            widget.onAdFailedToLoad?.call(event?['error']);
             break;
           case 'onAdClosed':
             print('banner_splash_platform --- Ad Closed');
+            widget.onAdClosed?.call();
             break;
           case 'onAdImpression':
             print('banner_splash_platform --- Ad Impression');
+            widget.onAdImpression?.call();
             setState(() {
               isShowAd = true;
             });
+            break;
+          case 'coreTechnologyTestAd':
+            print('banner_splash_platform --- coreTechnologyTestAd');
+            widget.onCoreTechnologyTestAd?.call();
             break;
           default:
             print('banner_splash_platform --- Unknown event: ${call.method}');

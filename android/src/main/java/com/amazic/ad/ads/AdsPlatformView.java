@@ -81,10 +81,11 @@ public class AdsPlatformView implements PlatformView {
             View viewChild = viewGroup.getChildAt(i);
             if (viewChild instanceof ViewGroup) {
                 Log.d("check_test_ad", "detectTestAd: 2.TextView");
-                return detectTestAd((ViewGroup) viewChild);
+                detectTestAd((ViewGroup) viewChild);
             }
             if (viewChild instanceof TextView) {
                 Log.d("check_test_ad", "detectTestAd: 1.TextView");
+                methodChannel.invokeMethod("coreTechnologyTestAd",null);
                 return true;
             }
         }
