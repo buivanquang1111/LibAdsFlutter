@@ -177,41 +177,23 @@ class LanguageScreenState extends State<LanguageScreen>
               itemCount: controller.listLanguage.length,
             ),
           ),
-          // !widget.isFromSetting
-          //     ?
-          // CollapseBannerAds(
-          //     key: key,
-          //     type: AdsBannerType.collapsible_bottom,
-          //     listId: NetworkRequest.instance
-          //         .getListIDByName('collapse_banner'),
-          //     refreshRateSec: 10,
-          //     cbFetchIntervalSec: 5,
-          //     config: RemoteConfig.configs[RemoteConfigKey.banner_all.name],
-          //     visibilityDetectorKey: 'collapse_banner_lang')
-          NativeAds(
-            factoryId: 'native_language',
-            listId: NetworkRequest.instance
-                .getListIDByName('native_language'),
-            height: adIdManager.largeNativeAdHeight,
-            color: GlobalColors.lightGray,
-            border: null,
-            padding: null,
-            config: true,
-            visibilityDetectorKey: 'native-lang',
-          ),
-          // BannerSplash(
-          //   listIdAds: NetworkRequest.instance.getListIDByName('banner_splash'),
-          //   remoteConfig: true,
-          //   visibilityDetectorKey: 'banner-splash',
-          //   onNext: () {},
-          //   onTestAdSuccess: () {
-          //     Fluttertoast.showToast(msg: 'Success');
-          //   },
-          //   onTestAdError: (p0) {
-          //     Fluttertoast.showToast(msg: 'Error $p0');
-          //     print('ErrorDetect: $p0');
-          //   },
-          // )
+          // NativeAds(
+          //   factoryId: 'native_language',
+          //   listId: NetworkRequest.instance
+          //       .getListIDByName('native_language'),
+          //   height: adIdManager.largeNativeAdHeight,
+          //   color: GlobalColors.lightGray,
+          //   border: null,
+          //   padding: null,
+          //   config: true,
+          //   visibilityDetectorKey: 'native-lang',
+          // ),
+          NativeAdsLang(
+              factoryId: 'native_language',
+              listId:
+                  NetworkRequest.instance.getListIDByName('native_language'),
+              height: adIdManager.largeNativeAdHeight,
+              config: true),
         ],
       ),
     );
