@@ -124,6 +124,7 @@ class AdmobAds {
     bool isIap = false,
     GlobalKey<NavigatorState>? navigatorKey,
     required bool turnOnOrganic,
+    bool isTrickScreen = true,
   }) async {
     if (await AdmobAds.instance.checkInternet()) {
       EventLogLib.logEvent('splash_have_internet');
@@ -313,18 +314,18 @@ class AdmobAds {
     //   onTimeout: () {
     //     print('check_next_splash --- fetchAdsModel onTimeout');
     initAdsSplashAndAppOpen(
-      keyRateAOA: keyRateAOA,
-      keyOpenSplash: keyOpenSplash,
-      keyInterSplash: keyInterSplash,
-      onNextAction: onNextAction,
-      nameAdsOpenSplash: nameAdsOpenSplash,
-      nameAdsInterSplash: nameAdsInterSplash,
-      keyResumeConfig: keyResumeConfig,
-      listResumeId: NetworkRequest.instance.getListIDByName(nameAdsResume),
-      child: child,
-      isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds,
-      navigatorKey: navigatorKey,
-    );
+        keyRateAOA: keyRateAOA,
+        keyOpenSplash: keyOpenSplash,
+        keyInterSplash: keyInterSplash,
+        onNextAction: onNextAction,
+        nameAdsOpenSplash: nameAdsOpenSplash,
+        nameAdsInterSplash: nameAdsInterSplash,
+        keyResumeConfig: keyResumeConfig,
+        listResumeId: NetworkRequest.instance.getListIDByName(nameAdsResume),
+        child: child,
+        isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds,
+        navigatorKey: navigatorKey,
+        isTrickScreen: isTrickScreen);
     //     return;
     //   },
     // );
@@ -340,6 +341,7 @@ class AdmobAds {
     required Function() onNextAction,
     required String keyResumeConfig,
     required List<String> listResumeId,
+    required bool isTrickScreen,
     Widget? child,
     bool isShowWelComeScreenAfterAds = true,
     GlobalKey<NavigatorState>? navigatorKey,
@@ -363,7 +365,8 @@ class AdmobAds {
         keyInterSplash: keyInterSplash,
         onNextAction: onNextAction,
         nameAdsOpenSplash: nameAdsOpenSplash,
-        nameAdsInterSplash: nameAdsInterSplash);
+        nameAdsInterSplash: nameAdsInterSplash,
+        isTrickScreen: isTrickScreen);
   }
 
   ///init UMP
@@ -430,7 +433,8 @@ class AdmobAds {
       required String keyInterSplash,
       required String nameAdsOpenSplash,
       required String nameAdsInterSplash,
-      required Function() onNextAction}) async {
+      required Function() onNextAction,
+      required bool isTrickScreen}) async {
     final String rateAoa = RemoteConfigLib
         .configs[RemoteConfigKeyLib.getKeyByName(keyRateAOA).name];
     final bool isShowOpen = RemoteConfigLib
@@ -461,6 +465,7 @@ class AdmobAds {
       listInterId: NetworkRequest.instance.getListIDByName(nameAdsInterSplash),
       configAdsOpen: isShowOpen,
       configAdsInter: isShowInter,
+      isTrickScreen: isTrickScreen,
       onAdShowed: (adNetwork, adUnitType, data) {
         print('check_start_ads --- onAdShowed');
       },
@@ -706,6 +711,7 @@ class AdmobAds {
     EasyAdCallback? onAdDismissed,
     EasyAdEarnedReward? onEarnedReward,
     EasyAdOnPaidEvent? onPaidEvent,
+    bool isClickAdsNotShowResume = true,
   }) async {
     if (!AdmobAds.instance.isShowAllAds ||
         !(await AdmobAds.instance.checkInternet()) ||
@@ -744,6 +750,7 @@ class AdmobAds {
       onAdDismissed: onAdDismissed,
       onEarnedReward: onEarnedReward,
       onPaidEvent: onPaidEvent,
+      isClickAdsNotShowResume: isClickAdsNotShowResume
     );
     await ad?.load();
     return ad;
@@ -756,6 +763,7 @@ class AdmobAds {
     required String factoryId,
     required List<String> listId,
     required String visibilityDetectorKey,
+    required bool isClickAdsNotShowResume,
     EasyAdCallback? onAdLoaded,
     EasyAdCallback? onAdShowed,
     EasyAdCallback? onAdImpression,
@@ -772,20 +780,20 @@ class AdmobAds {
         // final String id =
         //     AdmobAds.instance.isDevMode ? TestAdsId.admobNativeId : adId;
         ad = AdmobNativeAd(
-          visibilityDetectorKey: visibilityDetectorKey,
-          listId: listId,
-          factoryId: factoryId,
-          adRequest: _adRequest,
-          onAdLoaded: onAdLoaded,
-          onAdShowed: onAdShowed,
-          onAdClicked: onAdClicked,
-          onAdFailedToLoad: onAdFailedToLoad,
-          onAdFailedToShow: onAdFailedToShow,
-          onAdDismissed: onAdDismissed,
-          onEarnedReward: onEarnedReward,
-          onPaidEvent: onPaidEvent,
-          onAdImpression: onAdImpression,
-        );
+            visibilityDetectorKey: visibilityDetectorKey,
+            listId: listId,
+            factoryId: factoryId,
+            adRequest: _adRequest,
+            onAdLoaded: onAdLoaded,
+            onAdShowed: onAdShowed,
+            onAdClicked: onAdClicked,
+            onAdFailedToLoad: onAdFailedToLoad,
+            onAdFailedToShow: onAdFailedToShow,
+            onAdDismissed: onAdDismissed,
+            onEarnedReward: onEarnedReward,
+            onPaidEvent: onPaidEvent,
+            onAdImpression: onAdImpression,
+            isClickAdsNotShowResume: isClickAdsNotShowResume);
         break;
     }
 

@@ -39,6 +39,7 @@ class NativeAds extends StatefulWidget {
   final int refreshRateSec; //reload ads with time
   final bool isReloadWhenHideView; // reload when hide view
   final bool isReloadWhenResume;
+  final bool isClickAdsNotShowResume;
 
   NativeAds({
     this.adNetwork = AdNetwork.admob,
@@ -68,6 +69,7 @@ class NativeAds extends StatefulWidget {
     this.onAdImpression,
     this.isReloadWhenHideView = true,
     this.isReloadWhenResume = true,
+    this.isClickAdsNotShowResume = true,
   }) : super(key: key);
 
   @override
@@ -383,6 +385,7 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
       adNetwork: widget.adNetwork,
       factoryId: widget.factoryId,
       listId: widget.listId,
+      isClickAdsNotShowResume: widget.isClickAdsNotShowResume,
       onAdClicked: (adNetwork, adUnitType, data) {
         if (widget.visibilityDetectorKey.toLowerCase().contains('language') ||
             widget.visibilityDetectorKey.toLowerCase().contains('lang')) {

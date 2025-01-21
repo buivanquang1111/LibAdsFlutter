@@ -33,6 +33,7 @@ class NativeAdsReload extends StatefulWidget {
 
   final String visibilityDetectorKey;
   final ValueNotifier<bool>? visibilityController;
+  final bool isClickAdsNotShowResume;
 
   const NativeAdsReload({
     this.adNetwork = AdNetwork.admob,
@@ -58,6 +59,7 @@ class NativeAdsReload extends StatefulWidget {
     this.padding,
     this.margin,
     this.reloadOnClick = false,
+    this.isClickAdsNotShowResume = true,
   }) : super(key: key);
 
   @override
@@ -169,6 +171,7 @@ class _NativeAdsReloadState extends State<NativeAdsReload> with WidgetsBindingOb
       visibilityDetectorKey: widget.visibilityDetectorKey,
       adNetwork: widget.adNetwork,
       listId: widget.listId,
+      isClickAdsNotShowResume: widget.isClickAdsNotShowResume,
       onAdLoaded: (adNetwork, adUnitType, data) {
         if (!_isDestroy && !_isPaused) {
           _startTimer();

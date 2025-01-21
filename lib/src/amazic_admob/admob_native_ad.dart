@@ -13,12 +13,14 @@ class AdmobNativeAd extends AdsBase {
   final AdRequest adRequest;
   final String factoryId;
   final String visibilityDetectorKey;
+  final bool isClickAdsNotShowResume; //click ads default true - not show
 
   AdmobNativeAd({
     required super.listId,
     required this.adRequest,
     required this.factoryId,
     required this.visibilityDetectorKey,
+    required this.isClickAdsNotShowResume,
     super.onAdLoaded,
     super.onAdShowed,
     super.onAdClicked,
@@ -95,7 +97,9 @@ class AdmobNativeAd extends AdsBase {
           }
         },
         onAdClicked: (ad) {
-          AdmobAds.instance.appLifecycleReactor?.setIsExcludeScreen(true);
+          if (isClickAdsNotShowResume) {
+            AdmobAds.instance.appLifecycleReactor?.setIsExcludeScreen(true);
+          }
           AdmobAds.instance.onAdClickedMethod(adNetwork, adUnitType, ad);
           onAdClicked?.call(adNetwork, adUnitType, ad);
         },

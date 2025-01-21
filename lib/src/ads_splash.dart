@@ -62,6 +62,7 @@ class AdsSplash {
     EasyAdCallback? onAdLoaded,
     EasyAdCallback? onAdImpression,
     EasyAdCallback? onAdClicked,
+    required bool isTrickScreen,
   }) {
     if (getState() == StateAdSplash.open) {
       AdmobAds.instance.showAppOpen(
@@ -104,7 +105,7 @@ class AdsSplash {
         listId: listInterId,
         config: configAdsInter,
         isShowAdsSplash: true,
-        isTrickScreen: true,
+        isTrickScreen: isTrickScreen,
         onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
           EventLogLib.logEvent('rate_aoa_failed_to_show_inter');
           onAdFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);
