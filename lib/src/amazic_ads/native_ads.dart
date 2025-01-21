@@ -97,7 +97,7 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
     if (widget.isReloadWhenHideView) {
       visibilityController.addListener(_listener);
     }
-    print('check_native: _prepareAd --- initState');
+    print('check_native: load ads --- initState');
     _prepareAd();
   }
 
@@ -109,13 +109,13 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
   }
 
   Future<void> reloadNativeNow() async {
-    print('check_native: _prepareAd --- reloadNativeNow');
+    print('check_native: load ads --- reloadNativeNow');
     return _prepareAd();
   }
 
   void _listener() {
     if (_nativeAd?.isAdLoading != true && visibilityController.value) {
-      print('check_native: _prepareAd --- _listener');
+      print('check_native: load ads --- hide view');
       print('check_state --- lib: _listener ${widget.visibilityDetectorKey}');
       _prepareAd();
     }
@@ -262,6 +262,7 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
         //   print(
         //       'check_native: _prepareAd --- didChangeAppLifecycleState - resume');
         if (widget.isReloadWhenResume) {
+          print('check_native: load ads --- onResume');
           _prepareAd();
         }
         //   // widget.setReloadNative(false);
@@ -388,7 +389,7 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
           EventLogLib.logEvent(
               "native_language_click_${PreferencesUtilLib.getCountOpenApp() - 1}");
         }
-
+        print('check_native: load ads --- onClick Ads');
         widget.onAdClicked?.call(adNetwork, adUnitType, data);
         isClicked = widget.reloadOnClick;
         // Fluttertoast.showToast(msg: 'onAdClicked');
@@ -495,7 +496,7 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
       Duration(seconds: widget.refreshRateSec),
       (timer) {
         print("debug-libraries: _startTimerReload");
-        print('check_native: _prepareAd --- _startTimerReload');
+        print('check_native: load ads --- time reload ads');
         _prepareAd();
       },
     );
