@@ -41,6 +41,7 @@ class LanguageScreenState extends State<LanguageScreen>
     with WidgetsBindingObserver {
   final controller = Get.find<LanguageController>();
   final key = GlobalKey<CollapseBannerAdsState>();
+  final nativeKey = GlobalKey<NativeAdsLangState>();
 
   @override
   void initState() {
@@ -169,7 +170,13 @@ class LanguageScreenState extends State<LanguageScreen>
                 vertical: 24.h,
               ),
               itemBuilder: (context, index) {
-                return LanguageItem(controller.listLanguage[index]);
+                return LanguageItem(
+                  controller.listLanguage[index],
+                  onTap: () {
+                    print('clickitem --- abs');
+                    nativeKey.currentState?.reloadNativeNow();
+                  },
+                );
               },
               separatorBuilder: (context, index) {
                 return const SizedBox(height: 12);
@@ -186,14 +193,19 @@ class LanguageScreenState extends State<LanguageScreen>
           //   border: null,
           //   padding: null,
           //   config: true,
+          //   refreshRateSec: 10,
           //   visibilityDetectorKey: 'native-lang',
           // ),
           NativeAdsLang(
-              factoryId: 'native_language',
-              listId:
-                  NetworkRequest.instance.getListIDByName('native_language'),
-              height: adIdManager.largeNativeAdHeight,
-              config: true),
+            key: nativeKey,
+            factoryId: 'native_language',
+            listId: NetworkRequest.instance.getListIDByName('native_language'),
+            height: adIdManager.largeNativeAdHeight,
+            color: GlobalColors.lightGray,
+            config: true,
+            refreshRateSec: 10,
+            isReloadWhenResume: false,
+          ),
         ],
       ),
     );

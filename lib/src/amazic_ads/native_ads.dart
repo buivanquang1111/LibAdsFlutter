@@ -387,6 +387,7 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
       listId: widget.listId,
       isClickAdsNotShowResume: widget.isClickAdsNotShowResume,
       onAdClicked: (adNetwork, adUnitType, data) {
+        print('native_language --- onAdClicked');
         if (widget.visibilityDetectorKey.toLowerCase().contains('language') ||
             widget.visibilityDetectorKey.toLowerCase().contains('lang')) {
           EventLogLib.logEvent(
@@ -402,6 +403,7 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
         }
       },
       onAdDismissed: (adNetwork, adUnitType, data) {
+        print('native_language --- onAdDismissed');
         widget.onAdDismissed?.call(adNetwork, adUnitType, data);
         _logger.logInfo('native ad: onAdDismissed');
         if (mounted) {
@@ -409,6 +411,7 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
         }
       },
       onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
+        print('native_language --- onAdFailedToLoad');
         _isLoading.value = false;
         loadFailedCount++;
         widget.onAdFailedToLoad
@@ -421,6 +424,7 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
         _startTimerReload();
       },
       onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
+        print('native_language --- onAdFailedToShow');
         _isLoading.value = false;
         widget.onAdFailedToShow
             ?.call(adNetwork, adUnitType, data, errorMessage);
@@ -430,6 +434,7 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
         }
       },
       onAdLoaded: (adNetwork, adUnitType, data) {
+        print('native_language --- onAdLoaded');
         _isLoading.value = false;
         loadFailedCount = 0;
 
@@ -441,6 +446,7 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
         _startTimerReload();
       },
       onAdShowed: (adNetwork, adUnitType, data) {
+        print('native_language --- onAdShowed');
         widget.onAdShowed?.call(adNetwork, adUnitType, data);
         _logger.logInfo('native ad: onAdShowed');
         if (mounted) {
@@ -456,6 +462,7 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
         String? unit,
         String? placement,
       }) {
+        print('native_language --- onPaidEvent');
         widget.onPaidEvent?.call(
           adNetwork: adNetwork,
           adUnitType: adUnitType,
@@ -471,6 +478,7 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
         }
       },
       onAdImpression: (adNetwork, adUnitType, data) {
+        print('native_language --- onAdImpression');
         if (widget.visibilityDetectorKey.toLowerCase().contains('language') ||
             widget.visibilityDetectorKey.toLowerCase().contains('lang')) {
           EventLogLib.logEvent(

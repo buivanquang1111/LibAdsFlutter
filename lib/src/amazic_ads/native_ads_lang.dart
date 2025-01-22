@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
+import '../../adjust_config/call_organic_adjust.dart';
 import '../../admob_ads_flutter.dart';
 import 'loading_ads.dart';
 
@@ -54,12 +57,14 @@ class NativeAdsLang extends StatefulWidget {
   });
 
   @override
-  State<NativeAdsLang> createState() => _NativeAdsLangState();
+  State<NativeAdsLang> createState() => NativeAdsLangState();
 }
 
-class _NativeAdsLangState extends State<NativeAdsLang>
+class NativeAdsLangState extends State<NativeAdsLang>
     with WidgetsBindingObserver {
   AdsBase? _nativeAd;
+  final ValueNotifier<bool> _isLoading = ValueNotifier(false);
+  Timer? _timer;
 
   @override
   void initState() {
@@ -76,36 +81,78 @@ class _NativeAdsLangState extends State<NativeAdsLang>
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    switch (state) {
+      case AppLifecycleState.resumed:
+        print('native_language --- AppLifecycleState.resumed');
+        if (widget.isReloadWhenResume) {
+          _prepareAd();
+        } else {
+          _startTimeReload();
+        }
+        break;
+      case AppLifecycleState.paused:
+        print('native_language --- AppLifecycleState.paused');
+        _stopTimeReload();
+        break;
+      case AppLifecycleState.detached:
+        print('native_language --- AppLifecycleState.detached');
+        break;
+      case AppLifecycleState.hidden:
+        print('native_language --- AppLifecycleState.hidden');
+        break;
+      case AppLifecycleState.inactive:
+        print('native_language --- AppLifecycleState.inactive');
+        break;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Visibility(
       visible: widget.config && ConsentManager.ins.canRequestAds,
-      child: _nativeAd != null
-          ? _nativeAd?.show(
-              height: widget.height,
-              borderRadius: widget.borderRadius,
-              color: widget.color,
-              border: widget.border,
-              padding: widget.padding,
-              margin: widget.margin)
-          : Container(
-              decoration: BoxDecoration(
-                borderRadius: widget.borderRadius,
-                border: widget.border,
-                color: widget.color,
-              ),
-              padding: widget.padding,
-              margin: widget.margin,
-              child: ClipRRect(
-                borderRadius: widget.borderRadius,
-                child: SizedBox(
-                  height: widget.height,
-                  child: LoadingAds(
-                    height: widget.height,
+      child: ValueListenableBuilder(
+        valueListenable: _isLoading,
+        builder: (context, value, child) {
+          return value
+              ? Container(
+                  decoration: BoxDecoration(
+                    borderRadius: widget.borderRadius,
+                    border: widget.border,
+                    color: widget.color,
                   ),
-                ),
-              ),
-            ),
+                  padding: widget.padding,
+                  margin: widget.margin,
+                  child: ClipRRect(
+                    borderRadius: widget.borderRadius,
+                    child: SizedBox(
+                      height: widget.height,
+                      child: LoadingAds(
+                        height: widget.height,
+                      ),
+                    ),
+                  ),
+                )
+              : _nativeAd?.show(
+                    height: widget.height,
+                    borderRadius: widget.borderRadius,
+                    color: widget.color,
+                    border: widget.border,
+                    padding: widget.padding,
+                    margin: widget.margin,
+                  ) ??
+                  Container();
+        },
+      ),
     );
+  }
+
+  Future<void> reloadNativeNow() async {
+    _prepareAd();
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   Future<void> _prepareAd() async {
@@ -113,10 +160,20 @@ class _NativeAdsLangState extends State<NativeAdsLang>
         !(await AdmobAds.instance.checkInternet()) ||
         !widget.config ||
         !ConsentManager.ins.canRequestAds) {
+      if (_isLoading.value) {
+        _isLoading.value = false;
+      }
+      EventLogLib.logEvent("native_language_false", parameters: {
+        "reason":
+            "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.checkInternet()}"
+      });
+
       widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.native, null);
       return;
     }
-
+    if (!_isLoading.value) {
+      _isLoading.value = true;
+    }
     //load ads
     if (_nativeAd != null) {
       _nativeAd?.dispose();
@@ -130,23 +187,36 @@ class _NativeAdsLangState extends State<NativeAdsLang>
       visibilityDetectorKey: '',
       isClickAdsNotShowResume: widget.isClickAdsNotShowResume,
       onAdClicked: (adNetwork, adUnitType, data) {
+        print('native_language --- onAdClicked');
+        EventLogLib.logEvent(
+            "native_language_click_${PreferencesUtilLib.getCountOpenApp() - 1}");
         widget.onAdClicked?.call(adNetwork, adUnitType, data);
       },
       onAdDismissed: (adNetwork, adUnitType, data) {
+        print('native_language --- onAdDismissed');
         widget.onAdDismissed?.call(adNetwork, adUnitType, data);
       },
       onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
+        _isLoading.value = false;
+        print('native_language --- onAdFailedToLoad');
         widget.onAdFailedToLoad
             ?.call(adNetwork, adUnitType, data, errorMessage);
+        _startTimeReload();
       },
       onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
+        _isLoading.value = false;
+        print('native_language --- onAdFailedToShow');
         widget.onAdFailedToShow
             ?.call(adNetwork, adUnitType, data, errorMessage);
       },
       onAdLoaded: (adNetwork, adUnitType, data) {
+        print('native_language --- onAdLoaded');
+        _isLoading.value = false;
         widget.onAdLoaded?.call(adNetwork, adUnitType, data);
+        _startTimeReload();
       },
       onAdShowed: (adNetwork, adUnitType, data) {
+        print('native_language --- onAdShowed');
         widget.onAdShowed?.call(adNetwork, adUnitType, data);
       },
       onPaidEvent: (
@@ -157,6 +227,7 @@ class _NativeAdsLangState extends State<NativeAdsLang>
           placement,
           required revenue,
           unit}) {
+        print('native_language --- onPaidEvent');
         widget.onPaidEvent?.call(
             adNetwork: adNetwork,
             adUnitType: adUnitType,
@@ -167,12 +238,33 @@ class _NativeAdsLangState extends State<NativeAdsLang>
             placement: placement);
       },
       onAdImpression: (adNetwork, adUnitType, data) {
+        print('native_language --- onAdImpression');
+        EventLogLib.logEvent(
+            "native_language_impression_${PreferencesUtilLib.getCountOpenApp() - 1}");
         widget.onAdImpression?.call(adNetwork, adUnitType, data);
       },
     );
     _nativeAd?.load();
-    if (mounted) {
-      setState(() {});
+  }
+
+  void _stopTimeReload() {
+    _timer?.cancel();
+    _timer = null;
+  }
+
+  void _startTimeReload() {
+    if (widget.refreshRateSec == 0) {
+      return;
     }
+
+    _stopTimeReload();
+
+    _timer = Timer.periodic(
+      Duration(seconds: widget.refreshRateSec),
+      (timer) {
+        print('native_language --- timer reload');
+        _prepareAd();
+      },
+    );
   }
 }

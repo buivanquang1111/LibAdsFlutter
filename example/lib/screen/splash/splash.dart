@@ -36,7 +36,7 @@ class SplashState extends State<SplashScreen> {
     super.initState();
     adIdManager = DevAdIdManager();
     AdmobAds.instance.initAllDataSplash(
-      turnOnOrganic: true,
+        turnOnOrganic: true,
         remoteConfigKeys: [
           RemoteConfigKeyLib(
               name: 'show_ads', defaultValue: true, valueType: bool),
