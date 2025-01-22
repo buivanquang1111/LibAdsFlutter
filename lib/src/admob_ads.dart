@@ -313,6 +313,12 @@ class AdmobAds {
     //   const Duration(seconds: 4),
     //   onTimeout: () {
     //     print('check_next_splash --- fetchAdsModel onTimeout');
+    if (keyTrickScreen == null) {
+      print('check_remote_trick_screen --- null');
+    } else {
+      print(
+          'check_remote_trick_screen --- ${RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyTrickScreen).name]}');
+    }
     initAdsSplashAndAppOpen(
         keyRateAOA: keyRateAOA,
         keyOpenSplash: keyOpenSplash,
