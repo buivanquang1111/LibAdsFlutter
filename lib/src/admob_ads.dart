@@ -124,7 +124,7 @@ class AdmobAds {
     bool isIap = false,
     GlobalKey<NavigatorState>? navigatorKey,
     required bool turnOnOrganic,
-    bool isTrickScreen = true,
+    String? keyTrickScreen,
   }) async {
     if (await AdmobAds.instance.checkInternet()) {
       EventLogLib.logEvent('splash_have_internet');
@@ -325,7 +325,10 @@ class AdmobAds {
         child: child,
         isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds,
         navigatorKey: navigatorKey,
-        isTrickScreen: isTrickScreen);
+        isTrickScreen: keyTrickScreen == null
+            ? false
+            : RemoteConfigLib
+                .configs[RemoteConfigKeyLib.getKeyByName(keyTrickScreen).name]);
     //     return;
     //   },
     // );
@@ -738,20 +741,19 @@ class AdmobAds {
     }
 
     AdsBase? ad = AdmobAds.instance.createNative(
-      visibilityDetectorKey: visibilityDetectorKey,
-      adNetwork: adNetwork,
-      factoryId: factoryId,
-      listId: listId,
-      onAdLoaded: onAdLoaded,
-      onAdShowed: onAdShowed,
-      onAdClicked: onAdClicked,
-      onAdFailedToLoad: onAdFailedToLoad,
-      onAdFailedToShow: onAdFailedToShow,
-      onAdDismissed: onAdDismissed,
-      onEarnedReward: onEarnedReward,
-      onPaidEvent: onPaidEvent,
-      isClickAdsNotShowResume: isClickAdsNotShowResume
-    );
+        visibilityDetectorKey: visibilityDetectorKey,
+        adNetwork: adNetwork,
+        factoryId: factoryId,
+        listId: listId,
+        onAdLoaded: onAdLoaded,
+        onAdShowed: onAdShowed,
+        onAdClicked: onAdClicked,
+        onAdFailedToLoad: onAdFailedToLoad,
+        onAdFailedToShow: onAdFailedToShow,
+        onAdDismissed: onAdDismissed,
+        onEarnedReward: onEarnedReward,
+        onPaidEvent: onPaidEvent,
+        isClickAdsNotShowResume: isClickAdsNotShowResume);
     await ad?.load();
     return ad;
   }
