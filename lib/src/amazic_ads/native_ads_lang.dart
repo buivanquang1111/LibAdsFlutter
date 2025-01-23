@@ -88,11 +88,11 @@ class NativeAdsLangState extends State<NativeAdsLang>
       case AppLifecycleState.resumed:
         print('native_language --- AppLifecycleState.resumed :_${widget.isReloadWhenResume}');
         if (widget.isReloadWhenResume) {
-          // print('check_remote_trick_screen --- resume');
-          // _prepareAd();
+          print('check_remote_trick_screen --- resume');
+          _prepareAd();
         } else {
           // khởi tạo lại reload time
-          // _startTimeReload();
+          _startTimeReload();
           // print(
           //     'check_remote_trick_screen --- native_language: ${AdmobAds.instance.isTrickScreenOpen} ,firstLoadResumeTrick: $firstLoadResumeTrick');
           // //check resume của load trick lần 2 tại màn language
