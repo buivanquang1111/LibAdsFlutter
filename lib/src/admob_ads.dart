@@ -489,9 +489,9 @@ class AdmobAds {
       },
       onAdDismissed: (adNetwork, adUnitType, data) {
         print('check_start_ads --- onAdDismissed');
-        // AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
-        // countOpenApp();
-        // onNextAction();
+        AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
+        countOpenApp();
+        onNextAction();
       },
       onDisabled: () {
         print('check_start_ads --- onDisabled');
