@@ -92,9 +92,12 @@ class NativeAdsLangState extends State<NativeAdsLang>
         } else {
           // khởi tạo lại reload time
           _startTimeReload();
-
+          print(
+              'check_remote_trick_screen --- native_language: ${AdmobAds.instance.isTrickScreenOpen} ,firstLoadResumeTrick: $firstLoadResumeTrick');
           //check resume của load trick lần 2 tại màn language
           if (AdmobAds.instance.isTrickScreenOpen && !firstLoadResumeTrick) {
+            print(
+                'check_remote_trick_screen --- native_language: open');
             firstLoadResumeTrick = true;
             _prepareAd();
           }
