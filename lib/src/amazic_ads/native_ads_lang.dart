@@ -86,22 +86,22 @@ class NativeAdsLangState extends State<NativeAdsLang>
     super.didChangeAppLifecycleState(state);
     switch (state) {
       case AppLifecycleState.resumed:
-        print('native_language --- AppLifecycleState.resumed ${widget.isReloadWhenResume}');
+        print('native_language --- AppLifecycleState.resumed :_${widget.isReloadWhenResume}');
         if (widget.isReloadWhenResume) {
-          print('check_remote_trick_screen --- resume');
-          _prepareAd();
+          // print('check_remote_trick_screen --- resume');
+          // _prepareAd();
         } else {
           // khởi tạo lại reload time
-          _startTimeReload();
-          print(
-              'check_remote_trick_screen --- native_language: ${AdmobAds.instance.isTrickScreenOpen} ,firstLoadResumeTrick: $firstLoadResumeTrick');
-          //check resume của load trick lần 2 tại màn language
-          if (AdmobAds.instance.isTrickScreenOpen && !firstLoadResumeTrick) {
-            print(
-                'check_remote_trick_screen --- native_language: open');
-            firstLoadResumeTrick = true;
-            _prepareAd();
-          }
+          // _startTimeReload();
+          // print(
+          //     'check_remote_trick_screen --- native_language: ${AdmobAds.instance.isTrickScreenOpen} ,firstLoadResumeTrick: $firstLoadResumeTrick');
+          // //check resume của load trick lần 2 tại màn language
+          // if (AdmobAds.instance.isTrickScreenOpen && !firstLoadResumeTrick) {
+          //   print(
+          //       'check_remote_trick_screen --- native_language: open');
+          //   firstLoadResumeTrick = true;
+          //   _prepareAd();
+          // }
         }
         break;
       case AppLifecycleState.paused:
