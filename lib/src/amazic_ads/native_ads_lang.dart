@@ -71,6 +71,7 @@ class NativeAdsLangState extends State<NativeAdsLang>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    print('check_remote_trick_screen --- initState');
     _prepareAd();
   }
 
@@ -87,8 +88,9 @@ class NativeAdsLangState extends State<NativeAdsLang>
     switch (state) {
       case AppLifecycleState.resumed:
         print('native_language --- AppLifecycleState.resumed :_${widget.isReloadWhenResume}');
+        print('check_remote_trick_screen --- resume_${widget.isReloadWhenResume}');
         if (widget.isReloadWhenResume) {
-          print('check_remote_trick_screen --- resume');
+          print('check_remote_trick_screen --- 1.resume');
           _prepareAd();
         } else {
           // khởi tạo lại reload time
@@ -161,6 +163,7 @@ class NativeAdsLangState extends State<NativeAdsLang>
   }
 
   Future<void> reloadNativeNow() async {
+    print('check_remote_trick_screen --- reloadNativeNow');
     _prepareAd();
     if (mounted) {
       setState(() {});
@@ -275,6 +278,7 @@ class NativeAdsLangState extends State<NativeAdsLang>
       Duration(seconds: widget.refreshRateSec),
       (timer) {
         print('native_language --- timer reload');
+        print('check_remote_trick_screen --- _startTimeReload');
         _prepareAd();
       },
     );
