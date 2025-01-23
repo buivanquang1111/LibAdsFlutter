@@ -1018,9 +1018,9 @@ class AdmobAds {
       isShowAdsSplash: isShowAdsSplash,
       onAdClicked: onAdClicked,
       onAdDismissed: (adNetwork, adUnitType, data) async {
-        // if(isTrickScreen == false) {
+        if (isTrickScreen == false) {
           onAdDismissed?.call(adNetwork, adUnitType, data);
-        // }
+        }
         AdmobAds.instance.setFullscreenAdShowing(false);
         print(
             'check_full_screen_ads_show: ondismiss_App_Open - $isFullscreenAdShowing');
@@ -1064,9 +1064,9 @@ class AdmobAds {
             LoadingChannel.closeAd();
           });
         }
-        // if(isTrickScreen == true){
-        //   onDisabled?.call();
-        // }
+        if (isTrickScreen == true) {
+          onDisabled?.call();
+        }
         onAdShowed?.call(adNetwork, adUnitType, data);
       },
       onPaidEvent: onPaidEvent,
@@ -1170,10 +1170,10 @@ class AdmobAds {
       onAdDismissed: (adNetwork, adUnitType, data) {
         if (isShowAdsSplash == false)
           _lastTimeDismissInter = DateTime.now().millisecondsSinceEpoch;
-        // if (isTrickScreen == false) {
+        if (isTrickScreen == false) {
           ///TH k cho show trước màn sau
           onAdDismissed?.call(adNetwork, adUnitType, data);
-        // }
+        }
         AdmobAds.instance.setFullscreenAdShowing(false);
         print(
             'check_full_screen_ads_show: onAdDismiss_Inter - $isFullscreenAdShowing');
@@ -1206,10 +1206,10 @@ class AdmobAds {
           });
         }
 
-        // if (isTrickScreen == true) {
-        //   ///TH cho show màn sau trước khi ads được show
-        //   onDisabled?.call();
-        // }
+        if (isTrickScreen == true) {
+          ///TH cho show màn sau trước khi ads được show
+          onDisabled?.call();
+        }
 
         onAdShowed?.call(adNetwork, adUnitType, data);
       },
