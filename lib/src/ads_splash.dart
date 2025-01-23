@@ -70,6 +70,7 @@ class AdsSplash {
         listId: listOpenId,
         config: configAdsOpen,
         isShowAdsSplash: true,
+        isTrickScreen: isTrickScreen,
         onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
           EventLogLib.logEvent('rate_aoa_failed_to_show_open');
           onAdFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);

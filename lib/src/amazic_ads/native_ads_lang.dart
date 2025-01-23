@@ -65,6 +65,7 @@ class NativeAdsLangState extends State<NativeAdsLang>
   AdsBase? _nativeAd;
   final ValueNotifier<bool> _isLoading = ValueNotifier(false);
   Timer? _timer;
+  bool firstResumeTrick = false; // TH của trick sẽ load lần 2 ở resume
 
   @override
   void initState() {
@@ -89,7 +90,14 @@ class NativeAdsLangState extends State<NativeAdsLang>
         if (widget.isReloadWhenResume) {
           _prepareAd();
         } else {
+          ///khởi tạo lại time reload
           _startTimeReload();
+
+          ///check resume của trick lần đầu vào language
+          if (AdmobAds.instance.isTrickScreen && !firstResumeTrick) {
+            firstResumeTrick = true;
+            _prepareAd();
+          }
         }
         break;
       case AppLifecycleState.paused:
