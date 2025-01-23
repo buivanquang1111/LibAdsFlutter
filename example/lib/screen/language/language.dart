@@ -196,7 +196,7 @@ class LanguageScreenState extends State<LanguageScreen>
             color: GlobalColors.lightGray,
             config: true,
             refreshRateSec: 10,
-            isReloadWhenResume: false,
+            isReloadWhenResume: true,
           ),
         ],
       ),
