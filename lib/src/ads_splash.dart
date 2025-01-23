@@ -87,7 +87,7 @@ class AdsSplash {
           onAdDismissed?.call(adNetwork, adUnitType, data);
         },
         onAdShowed: (adNetwork, adUnitType, data) {
-          onDisabled?.call();
+          // onDisabled?.call();
           onAdShowed?.call(adNetwork, adUnitType, data);
         },
         onAdLoaded: (adNetwork, adUnitType, data) {
@@ -123,7 +123,7 @@ class AdsSplash {
           onAdDismissed?.call(adNetwork, adUnitType, data);
         },
         onAdShowed: (adNetwork, adUnitType, data) {
-          onDisabled?.call();
+          // onDisabled?.call();
           onAdShowed?.call(adNetwork, adUnitType, data);
         },
         onAdLoaded: (adNetwork, adUnitType, data) {
