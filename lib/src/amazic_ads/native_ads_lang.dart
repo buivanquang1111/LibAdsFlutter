@@ -75,11 +75,14 @@ class NativeAdsLangState extends State<NativeAdsLang>
     if (!widget.isReloadWhenResume) {
       print('check_remote_trick_screen --- start load ads initState off reload Resume');
       _prepareAd();
-    }else{
-      if(AdmobAds.instance.isTrickScreenOpen){
-        print('check_remote_trick_screen --- start load ads initState open Trick Screen');
-        _prepareAd();
-      }
+    }
+  }
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if(widget.isReloadWhenResume && AdmobAds.instance.isTrickScreenOpen){
+      print('check_remote_trick_screen --- start load ads didChangeDependencies open Trick Screen');
+      _prepareAd();
     }
   }
 
