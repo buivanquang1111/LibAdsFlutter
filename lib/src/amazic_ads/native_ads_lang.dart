@@ -71,6 +71,7 @@ class NativeAdsLangState extends State<NativeAdsLang>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    //TH tắt load ads resume mới cần mở load lần đầu ở initstate
     print('check_remote_trick_screen --- initState');
     if (!widget.isReloadWhenResume) {
       print('check_remote_trick_screen --- start load ads initState off reload Resume');
@@ -80,8 +81,9 @@ class NativeAdsLangState extends State<NativeAdsLang>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    //TH dùng cho bật trick screen  và bật cả load ads ở resume => load trick lần 1 ở đây
     if(widget.isReloadWhenResume && AdmobAds.instance.isTrickScreenOpen){
-      print('check_remote_trick_screen --- start load ads didChangeDependencies open Trick Screen');
+      print('check_remote_trick_screen --- start load ads didChangeDependencies open Trick Screen lan 1');
       _prepareAd();
     }
   }
@@ -101,20 +103,22 @@ class NativeAdsLangState extends State<NativeAdsLang>
         print('native_language --- AppLifecycleState.resumed :_${widget.isReloadWhenResume}');
         print('check_remote_trick_screen --- resume_${widget.isReloadWhenResume}');
         if (widget.isReloadWhenResume) {
+          //TH bật load ads resume lần đầu load ads sẽ ở đây
           print('check_remote_trick_screen --- 1.resume');
           _prepareAd();
         } else {
           // khởi tạo lại reload time
           _startTimeReload();
-          // print(
-          //     'check_remote_trick_screen --- native_language: ${AdmobAds.instance.isTrickScreenOpen} ,firstLoadResumeTrick: $firstLoadResumeTrick');
-          // //check resume của load trick lần 2 tại màn language
-          // if (AdmobAds.instance.isTrickScreenOpen && !firstLoadResumeTrick) {
-          //   print(
-          //       'check_remote_trick_screen --- native_language: open');
-          //   firstLoadResumeTrick = true;
-          //   _prepareAd();
-          // }
+          print(
+              'check_remote_trick_screen --- native_language: ${AdmobAds.instance.isTrickScreenOpen} ,firstLoadResumeTrick: $firstLoadResumeTrick');
+          //check resume của load trick lần 2 tại màn language
+          if (AdmobAds.instance.isTrickScreenOpen && !firstLoadResumeTrick) {
+            print(
+                'check_remote_trick_screen --- native_language: open');
+            print('check_remote_trick_screen --- resume load tric lan 2');
+            firstLoadResumeTrick = true;
+            _prepareAd();
+          }
         }
         break;
       case AppLifecycleState.paused:
