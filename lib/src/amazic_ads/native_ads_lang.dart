@@ -104,8 +104,6 @@ class NativeAdsLangState extends State<NativeAdsLang>
     super.didChangeAppLifecycleState(state);
     switch (state) {
       case AppLifecycleState.resumed:
-        print(
-            'check_remote_trick_screen --- resume_${widget.isReloadWhenResume}');
         if(widget.isReloadWhenResume == false && AdmobAds.instance.isTrickScreenOpen && !firstLoadResumeTrick){
           print('check_remote_trick_screen --- resume load tric lan 2');
           firstLoadResumeTrick = true;
