@@ -213,7 +213,7 @@ class NativeAdsLangState extends State<NativeAdsLang>
       adNetwork: widget.adNetwork,
       factoryId: widget.factoryId,
       listId: widget.listId,
-      visibilityDetectorKey: '',
+      visibilityDetectorKey: 'native_lang',
       isClickAdsNotShowResume: widget.isClickAdsNotShowResume,
       onAdClicked: (adNetwork, adUnitType, data) {
         print('native_language --- onAdClicked');

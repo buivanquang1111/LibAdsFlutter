@@ -62,6 +62,7 @@ class AdmobNativeAd extends AdsBase {
   @override
   Future<void> load() async {
     if (_isAdLoaded) return;
+    print('check_remote_trick_screen --- native_request');
     EventLogLib.logEvent('${visibilityDetectorKey}_true', parameters: {
       'reason':
           'ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.checkInternet()}'
