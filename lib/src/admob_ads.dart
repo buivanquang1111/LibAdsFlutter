@@ -1441,9 +1441,12 @@ class AdmobAds {
     cancelConnectivityOnBackground();
     connectivityStreamSub = connectivity.onConnectivityChanged.listen(
       (event) {
-        _isDeviceOffline = !(event == ConnectivityResult.wifi ||
-            event == ConnectivityResult.mobile ||
-            event == ConnectivityResult.vpn);
+        _isDeviceOffline = !event.any(
+          (element) =>
+              element == ConnectivityResult.wifi ||
+              element == ConnectivityResult.mobile ||
+              element == ConnectivityResult.vpn,
+        );
       },
     );
   }
