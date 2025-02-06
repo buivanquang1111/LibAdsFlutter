@@ -3,7 +3,6 @@ part of '../language.dart';
 class LanguageController extends GetxController implements GetxService {
   var currentLanguage = PreferencesUtil.getLanguage().obs;
   var previousLanguage = PreferencesUtil.getLanguage().obs;
-  final connectService = Get.find<ConnectivityService>();
   final List<String> lstLang = ['en', 'hi', 'es', 'fr', 'de', 'id', 'pt'];
 
   var listLanguage = [

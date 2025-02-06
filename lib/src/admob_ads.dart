@@ -96,13 +96,6 @@ class AdmobAds {
   Timer? _timer;
   int _second = 0;
 
-  ///show/hide trick screen
-  bool _isTrickScreen = false;
-
-  void setIsTrickScreen(bool value) => _isTrickScreen = value;
-
-  bool get isTrickScreenOpen => _isTrickScreen;
-
   Future<void> initAllDataSplash({
     RequestConfiguration? admobConfiguration,
     required List<RemoteConfigKeyLib> remoteConfigKeys,
@@ -133,7 +126,8 @@ class AdmobAds {
     required bool turnOnOrganic,
     String? keyTrickScreen,
   }) async {
-    if (await AdmobAds.instance.checkInternet()) {
+    await initConnectivity();
+    if (!isDeviceOffline) {
       EventLogLib.logEvent('splash_have_internet');
     }
     //init remote key
@@ -320,16 +314,6 @@ class AdmobAds {
     //   const Duration(seconds: 4),
     //   onTimeout: () {
     //     print('check_next_splash --- fetchAdsModel onTimeout');
-    if (keyTrickScreen == null) {
-      print('check_remote_trick_screen --- null');
-    } else {
-      print(
-          'check_remote_trick_screen --- ${RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyTrickScreen).name]}');
-    }
-    setIsTrickScreen(keyTrickScreen == null
-        ? false
-        : RemoteConfigLib
-            .configs[RemoteConfigKeyLib.getKeyByName(keyTrickScreen).name]);
 
     initAdsSplashAndAppOpen(
         keyRateAOA: keyRateAOA,
@@ -342,8 +326,7 @@ class AdmobAds {
         listResumeId: NetworkRequest.instance.getListIDByName(nameAdsResume),
         child: child,
         isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds,
-        navigatorKey: navigatorKey,
-        isTrickScreen: _isTrickScreen);
+        navigatorKey: navigatorKey);
     //     return;
     //   },
     // );
@@ -359,7 +342,6 @@ class AdmobAds {
     required Function() onNextAction,
     required String keyResumeConfig,
     required List<String> listResumeId,
-    required bool isTrickScreen,
     Widget? child,
     bool isShowWelComeScreenAfterAds = true,
     GlobalKey<NavigatorState>? navigatorKey,
@@ -383,8 +365,7 @@ class AdmobAds {
         keyInterSplash: keyInterSplash,
         onNextAction: onNextAction,
         nameAdsOpenSplash: nameAdsOpenSplash,
-        nameAdsInterSplash: nameAdsInterSplash,
-        isTrickScreen: isTrickScreen);
+        nameAdsInterSplash: nameAdsInterSplash);
   }
 
   ///init UMP
@@ -451,8 +432,7 @@ class AdmobAds {
       required String keyInterSplash,
       required String nameAdsOpenSplash,
       required String nameAdsInterSplash,
-      required Function() onNextAction,
-      required bool isTrickScreen}) async {
+      required Function() onNextAction}) async {
     final String rateAoa = RemoteConfigLib
         .configs[RemoteConfigKeyLib.getKeyByName(keyRateAOA).name];
     final bool isShowOpen = RemoteConfigLib
@@ -483,7 +463,6 @@ class AdmobAds {
       listInterId: NetworkRequest.instance.getListIDByName(nameAdsInterSplash),
       configAdsOpen: isShowOpen,
       configAdsInter: isShowInter,
-      isTrickScreen: isTrickScreen,
       onAdShowed: (adNetwork, adUnitType, data) {
         print('check_start_ads --- onAdShowed');
       },
@@ -988,7 +967,6 @@ class AdmobAds {
     Function? onDismissCollapse,
     bool isShowAdsSplash = false,
     required String? nameAds,
-    bool? isTrickScreen = false,
   }) async {
     if (!isShowAllAds ||
         !config ||
@@ -1018,9 +996,7 @@ class AdmobAds {
       isShowAdsSplash: isShowAdsSplash,
       onAdClicked: onAdClicked,
       onAdDismissed: (adNetwork, adUnitType, data) async {
-        if (isTrickScreen == false) {
-          onAdDismissed?.call(adNetwork, adUnitType, data);
-        }
+        onAdDismissed?.call(adNetwork, adUnitType, data);
         AdmobAds.instance.setFullscreenAdShowing(false);
         print(
             'check_full_screen_ads_show: ondismiss_App_Open - $isFullscreenAdShowing');
@@ -1064,9 +1040,6 @@ class AdmobAds {
             LoadingChannel.closeAd();
           });
         }
-        if (isTrickScreen == true) {
-          onDisabled?.call();
-        }
         onAdShowed?.call(adNetwork, adUnitType, data);
       },
       onPaidEvent: onPaidEvent,
@@ -1100,7 +1073,6 @@ class AdmobAds {
     EasyAdFailedCallback? onAdFailedToShow,
     EasyAdCallback? onAdDismissed,
     EasyAdOnPaidEvent? onPaidEvent,
-    bool? isTrickScreen = false,
   }) async {
     if (!isShowAllAds ||
         !config ||
@@ -1170,10 +1142,9 @@ class AdmobAds {
       onAdDismissed: (adNetwork, adUnitType, data) {
         if (isShowAdsSplash == false)
           _lastTimeDismissInter = DateTime.now().millisecondsSinceEpoch;
-        if (isTrickScreen == false) {
-          ///TH k cho show trước màn sau
-          onAdDismissed?.call(adNetwork, adUnitType, data);
-        }
+
+        onAdDismissed?.call(adNetwork, adUnitType, data);
+
         AdmobAds.instance.setFullscreenAdShowing(false);
         print(
             'check_full_screen_ads_show: onAdDismiss_Inter - $isFullscreenAdShowing');
@@ -1204,11 +1175,6 @@ class AdmobAds {
           Future.delayed(const Duration(seconds: 1), () {
             LoadingChannel.closeAd();
           });
-        }
-
-        if (isTrickScreen == true) {
-          ///TH cho show màn sau trước khi ads được show
-          onDisabled?.call();
         }
 
         onAdShowed?.call(adNetwork, adUnitType, data);
@@ -1427,7 +1393,7 @@ class AdmobAds {
     }
   }
 
-  Future<bool> isDeviceOffline() async {
+  Future<bool> isOfflineDevice() async {
     final connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult != ConnectivityResult.wifi &&
         connectivityResult != ConnectivityResult.mobile &&
@@ -1456,6 +1422,36 @@ class AdmobAds {
     }
     return false;
   }
+
+  //
+  bool _isDeviceOffline = false;
+
+  bool get isDeviceOffline => _isDeviceOffline;
+  final connectivity = Connectivity();
+  StreamSubscription<List<ConnectivityResult>>? connectivityStreamSub;
+
+  Future<void> initConnectivity() async {
+    final connectivityResult = await connectivity.checkConnectivity();
+    _isDeviceOffline = !connectivityResult.any((element) =>
+        element == ConnectivityResult.wifi ||
+        element == ConnectivityResult.mobile);
+
+    cancelConnectivityOnBackground();
+    connectivityStreamSub = connectivity.onConnectivityChanged.listen(
+      (event) {
+        _isDeviceOffline = !(event == ConnectivityResult.wifi ||
+            event == ConnectivityResult.mobile ||
+            event == ConnectivityResult.vpn);
+      },
+    );
+  }
+
+  void cancelConnectivityOnBackground() {
+    connectivityStreamSub?.cancel();
+    connectivityStreamSub = null;
+  }
+
+  //
 
   Future<bool?> getConsentResult() async {
     return await AdPlatform.instance.getConsentResult();

@@ -19,7 +19,7 @@ dependencies:
   logger: ^2.0.2
   visibility_detector: ^0.4.0+2
   shimmer: ^3.0.0
-  connectivity_plus: ^5.0.1
+  connectivity_plus: ^6.0.2
   http: ^1.2.1
   fluttertoast: ^8.2.6
   adjust_sdk: ^4.38.0

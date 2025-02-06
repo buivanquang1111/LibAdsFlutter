@@ -34,6 +34,7 @@ class NativeAdsReload extends StatefulWidget {
   final String visibilityDetectorKey;
   final ValueNotifier<bool>? visibilityController;
   final bool isClickAdsNotShowResume;
+  final bool isCanReloadHideView;
 
   const NativeAdsReload({
     this.adNetwork = AdNetwork.admob,
@@ -60,6 +61,7 @@ class NativeAdsReload extends StatefulWidget {
     this.margin,
     this.reloadOnClick = false,
     this.isClickAdsNotShowResume = true,
+    this.isCanReloadHideView = true,
   }) : super(key: key);
 
   @override
@@ -132,7 +134,7 @@ class _NativeAdsReloadState extends State<NativeAdsReload> with WidgetsBindingOb
       widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.banner, null);
       return;
     }
-    if (!(await AdmobAds.instance.checkInternet())) {
+    if (AdmobAds.instance.isDeviceOffline) {
       widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.banner, null);
       return;
     }
@@ -260,6 +262,10 @@ class _NativeAdsReloadState extends State<NativeAdsReload> with WidgetsBindingOb
   late final ValueNotifier<bool> visibilityController;
 
   void _listener() {
+    if(!widget.isCanReloadHideView){
+      return;
+    }
+
     if (_nativeAd?.isAdLoading != true && visibilityController.value) {
       _prepareAd();
       return;

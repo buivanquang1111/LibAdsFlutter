@@ -84,12 +84,12 @@ class NativeAdsLangState extends State<NativeAdsLang>
   void didChangeDependencies() {
     super.didChangeDependencies();
     //TH dùng cho bật trick screen  và bật cả load ads ở resume => load trick lần 1 ở đây
-    if (widget.isReloadWhenResume == true &&
-        AdmobAds.instance.isTrickScreenOpen == true) {
-      print(
-          'check_remote_trick_screen --- start load ads didChangeDependencies open Trick Screen lan 1');
-      _prepareAd();
-    }
+    // if (widget.isReloadWhenResume == true &&
+    //     AdmobAds.instance.isTrickScreenOpen == true) {
+    //   print(
+    //       'check_remote_trick_screen --- start load ads didChangeDependencies open Trick Screen lan 1');
+    //   _prepareAd();
+    // }
   }
 
   @override
@@ -104,7 +104,7 @@ class NativeAdsLangState extends State<NativeAdsLang>
     super.didChangeAppLifecycleState(state);
     switch (state) {
       case AppLifecycleState.resumed:
-        if(widget.isReloadWhenResume == false && AdmobAds.instance.isTrickScreenOpen && !firstLoadResumeTrick){
+        if(widget.isReloadWhenResume == false && !firstLoadResumeTrick){
           print('check_remote_trick_screen --- resume load tric lan 2');
           firstLoadResumeTrick = true;
           _prepareAd();

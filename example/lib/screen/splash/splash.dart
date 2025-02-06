@@ -16,7 +16,6 @@ import 'package:example/config/global_txt_style.dart';
 import 'package:example/language/l.dart';
 import 'package:example/main.dart';
 import 'package:example/screen/language/language.dart';
-import 'package:example/utils/connectivity.dart';
 
 // PreloadNativeController? introAdCtrl;
 AdsBase? preloadAds;
@@ -29,7 +28,6 @@ class SplashScreen extends StatefulWidget {
 }
 
 class SplashState extends State<SplashScreen> {
-  final connectService = Get.find<ConnectivityService>();
 
   @override
   void initState() {

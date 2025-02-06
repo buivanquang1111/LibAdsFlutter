@@ -7,7 +7,6 @@ import 'package:example/common/app_app_bar.dart';
 import 'package:example/common/app_scafold.dart';
 import 'package:example/const/resource.dart';
 import 'package:example/screen/onboard/onboard_1.dart';
-import 'package:example/utils/connectivity.dart';
 import 'package:example/utils/event_log.dart';
 import 'package:example/utils/language_ultis.dart';
 import 'package:example/utils/preferences_util.dart';
