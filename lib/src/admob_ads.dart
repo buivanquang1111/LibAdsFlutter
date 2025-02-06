@@ -1080,7 +1080,7 @@ class AdmobAds {
         isDeviceOffline ||
         !ConsentManager.ins.canRequestAds) {
       _logger.logInfo(
-          '1. isEnabled: $isShowAllAds, config: $config, isShowAllAds: $isShowAllAds, config: $config, _isFullscreenAdShowing: $_isFullscreenAdShowing,canRequestAds: ${ConsentManager.ins.canRequestAds}');
+          'config: $config, isShowAllAds: $isShowAllAds, isDeviceOffline: $isDeviceOffline, _isFullscreenAdShowing: $_isFullscreenAdShowing,canRequestAds: ${ConsentManager.ins.canRequestAds}');
 
       EventLogLib.logEvent("inter_intro_false", parameters: {
         "reason":
