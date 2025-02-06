@@ -127,7 +127,7 @@ class AdmobAds {
     String? keyTrickScreen,
   }) async {
     await initConnectivity();
-    if (!isDeviceOffline) {
+    if (isDeviceOffline) {
       EventLogLib.logEvent('splash_have_internet');
     }
     //init remote key
@@ -1079,7 +1079,8 @@ class AdmobAds {
         _isFullscreenAdShowing ||
         isDeviceOffline ||
         !ConsentManager.ins.canRequestAds) {
-      _logger.logInfo('1. isEnabled: $isShowAllAds, config: $config');
+      _logger.logInfo(
+          '1. isEnabled: $isShowAllAds, config: $config, isShowAllAds: $isShowAllAds, config: $config, _isFullscreenAdShowing: $_isFullscreenAdShowing,canRequestAds: ${ConsentManager.ins.canRequestAds}');
 
       EventLogLib.logEvent("inter_intro_false", parameters: {
         "reason":
@@ -1426,7 +1427,8 @@ class AdmobAds {
   //
   bool _isDeviceOffline = false;
 
-  bool get isDeviceOffline => _isDeviceOffline;//true - k co intenet, false - co internet
+  bool get isDeviceOffline =>
+      _isDeviceOffline; //true - k co intenet, false - co internet
   final connectivity = Connectivity();
   StreamSubscription<List<ConnectivityResult>>? connectivityStreamSub;
 
