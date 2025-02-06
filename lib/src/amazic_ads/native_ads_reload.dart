@@ -267,7 +267,7 @@ class _NativeAdsReloadState extends State<NativeAdsReload> with WidgetsBindingOb
     }
 
     if (_nativeAd?.isAdLoading != true && visibilityController.value) {
-      print('native_ads_reload --- start _listener');
+      print('native_ads_reload --- ${widget.visibilityDetectorKey} start _listener');
       _prepareAd();
       return;
     }
@@ -287,7 +287,7 @@ class _NativeAdsReloadState extends State<NativeAdsReload> with WidgetsBindingOb
 
   @override
   void didChangeDependencies() {
-    print('native_ads_reload --- start didChangeDependencies');
+    print('native_ads_reload --- ${widget.visibilityDetectorKey} start didChangeDependencies');
     _prepareAd();
     super.didChangeDependencies();
   }
@@ -306,7 +306,7 @@ class _NativeAdsReloadState extends State<NativeAdsReload> with WidgetsBindingOb
     if (state == AppLifecycleState.resumed) {
       if (isClicked) {
         isClicked = false;
-        print('native_ads_reload --- start didChangeAppLifecycleState click');
+        print('native_ads_reload --- ${widget.visibilityDetectorKey} start didChangeAppLifecycleState click');
         _prepareAd();
       } else {
         onResume();
@@ -354,7 +354,7 @@ class _NativeAdsReloadState extends State<NativeAdsReload> with WidgetsBindingOb
     _timer = Timer.periodic(
       Duration(seconds: widget.refreshRateSec),
       (timer) {
-        print('native_ads_reload --- start _startTimer');
+        print('native_ads_reload --- ${widget.visibilityDetectorKey} start _startTimer');
         _prepareAd();
       },
     );
