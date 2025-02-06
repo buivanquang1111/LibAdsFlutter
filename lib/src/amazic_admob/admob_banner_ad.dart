@@ -66,7 +66,7 @@ class AdmobBannerAd extends AdsBase {
 
     EventLogLib.logEvent('${visibilityDetectorKey}_true', parameters: {
       'reason':
-          'ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.checkInternet()}'
+          'ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${!AdmobAds.instance.isDeviceOffline}'
     });
 
     _bannerAd = BannerAd(

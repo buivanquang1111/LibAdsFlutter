@@ -37,7 +37,7 @@ class RemoteConfigLib {
   static Future<void> init(
       {required List<RemoteConfigKeyLib> remoteConfigKeys}) async {
     try {
-      if (await AdmobAds.instance.checkInternet() == false) {
+      if (AdmobAds.instance.isDeviceOffline) {
         print('check_remote_config: no internet');
         getRemoteConfigDefault();
       } else {

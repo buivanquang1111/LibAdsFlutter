@@ -62,8 +62,8 @@ class AdmobRewardedAd extends AdsBase {
       EventLogLib.logEvent('${nameAds}_true', parameters: {
         'reason':
         'ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust
-            .instance.isOrganic()}_internet_${AdmobAds.instance
-            .checkInternet()}'
+            .instance.isOrganic()}_internet_${!AdmobAds.instance
+            .isDeviceOffline}'
       });
     }
     await RewardedAd.load(

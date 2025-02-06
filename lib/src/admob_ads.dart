@@ -446,10 +446,10 @@ class AdmobAds {
 
     EventLogLib.logEvent("inter_splash_tracking", parameters: {
       'splash_detail':
-          '${ConsentManager.ins.canRequestAds}_${CallOrganicAdjust.instance.isOrganic()}_${await AdmobAds.instance.checkInternet()}_${AdmobAds.instance.isShowAllAds}_${idAdsCheck}_$rateAoa',
+          '${ConsentManager.ins.canRequestAds}_${CallOrganicAdjust.instance.isOrganic()}_${!isDeviceOffline}_${AdmobAds.instance.isShowAllAds}_${idAdsCheck}_$rateAoa',
       'ump': '${ConsentManager.ins.canRequestAds}',
       'organic': '${CallOrganicAdjust.instance.isOrganic()}',
-      'haveinternet': '${await AdmobAds.instance.checkInternet()}',
+      'haveinternet': '${!isDeviceOffline}',
       'showallad': '${AdmobAds.instance.isShowAllAds}',
       'idcheck': '$idAdsCheck',
       'interremote_openremote_aoavalue': '${isShowInter}_${isShowOpen}_$rateAoa'
@@ -711,18 +711,18 @@ class AdmobAds {
     bool isClickAdsNotShowResume = true,
   }) async {
     if (!AdmobAds.instance.isShowAllAds ||
-        !(await AdmobAds.instance.checkInternet()) ||
+        isDeviceOffline ||
         !config ||
         !ConsentManager.ins.canRequestAds) {
       if (factoryId.toLowerCase().contains("intro_full")) {
         EventLogLib.logEvent("native_intro_full_false", parameters: {
           "reason":
-              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.checkInternet()}"
+              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${!isDeviceOffline}"
         });
       } else {
         EventLogLib.logEvent("native_intro_false", parameters: {
           "reason":
-              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.checkInternet()}"
+              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${!isDeviceOffline}"
         });
       }
       return null;
@@ -971,7 +971,7 @@ class AdmobAds {
     if (!isShowAllAds ||
         !config ||
         _isFullscreenAdShowing ||
-        !(await AdmobAds.instance.checkInternet()) ||
+        isDeviceOffline ||
         !ConsentManager.ins.canRequestAds) {
       onDisabled?.call();
       return;
@@ -1077,13 +1077,13 @@ class AdmobAds {
     if (!isShowAllAds ||
         !config ||
         _isFullscreenAdShowing ||
-        !(await AdmobAds.instance.checkInternet()) ||
+        isDeviceOffline ||
         !ConsentManager.ins.canRequestAds) {
       _logger.logInfo('1. isEnabled: $isShowAllAds, config: $config');
 
       EventLogLib.logEvent("inter_intro_false", parameters: {
         "reason":
-            "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.checkInternet()}"
+            "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${!isDeviceOffline}"
       });
       onDisabled?.call();
       return;
@@ -1225,7 +1225,7 @@ class AdmobAds {
       onDisabled?.call();
       return;
     }
-    if (!(await AdmobAds.instance.checkInternet())) {
+    if (isDeviceOffline) {
       onDisabled?.call();
       return;
     }
@@ -1403,30 +1403,30 @@ class AdmobAds {
     return false;
   }
 
-  Future<bool> checkInternet() async {
-    // try {
-    //   final response = await http
-    //       .get(Uri.parse('https://www.google.com'))
-    //       .timeout(const Duration(seconds: 2));
-    //   return response.statusCode == 200;
-    // } catch (_) {
-    //   return false;
-    // }
-    var connectivityResult = await (Connectivity().checkConnectivity());
-    if (connectivityResult == ConnectivityResult.mobile) {
-      return true;
-    } else if (connectivityResult == ConnectivityResult.wifi) {
-      return true;
-    } else if (connectivityResult == ConnectivityResult.vpn) {
-      return true;
-    }
-    return false;
-  }
+  // Future<bool> checkInternet() async {
+  //   // try {
+  //   //   final response = await http
+  //   //       .get(Uri.parse('https://www.google.com'))
+  //   //       .timeout(const Duration(seconds: 2));
+  //   //   return response.statusCode == 200;
+  //   // } catch (_) {
+  //   //   return false;
+  //   // }
+  //   var connectivityResult = await (Connectivity().checkConnectivity());
+  //   if (connectivityResult == ConnectivityResult.mobile) {
+  //     return true;
+  //   } else if (connectivityResult == ConnectivityResult.wifi) {
+  //     return true;
+  //   } else if (connectivityResult == ConnectivityResult.vpn) {
+  //     return true;
+  //   }
+  //   return false;
+  // }
 
   //
   bool _isDeviceOffline = false;
 
-  bool get isDeviceOffline => _isDeviceOffline;
+  bool get isDeviceOffline => _isDeviceOffline;//true - k co intenet, false - co internet
   final connectivity = Connectivity();
   StreamSubscription<List<ConnectivityResult>>? connectivityStreamSub;
 
