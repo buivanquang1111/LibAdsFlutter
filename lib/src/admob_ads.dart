@@ -221,18 +221,15 @@ class AdmobAds {
     final List<Future<dynamic>> tasks = [];
     tasks.add(initRemoteConfig);
     if (isCallAdjust) {
-      if (initOrganicAdjust != null) {
-        tasks.add(initOrganicAdjust);
-      }
+        tasks.add(initOrganicAdjust!);
     }
     tasks.add(initUMP);
     if (isCallIdServer) {
-      if(callIdAds != null) {
-        tasks.add(callIdAds);
-      }
+        tasks.add(callIdAds!);
     }
     tasks.add(organicCompleter.future);
     tasks.add(umpCompleter.future);
+    print('check_length_tasks --- ${tasks.length}');
 
     final tasksFuture = Future.wait(tasks).then(
       (value) {
