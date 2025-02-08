@@ -1,6 +1,5 @@
 // ignore_for_file: public_member_api_docs
 import 'dart:io';
-
 import 'package:amazic_ads_flutter/adjust_config/call_organic_adjust.dart';
 import 'package:flutter/material.dart';
 
@@ -23,6 +22,7 @@ class AppLifecycleReactor {
   bool _isShowScreenWellCome = false;
   Function()? _onDismissCollapse;
   Function()? _onReloadCollapse;
+  Function()? onGoToWelComeBack;
 
   AppLifecycleReactor(
       {required this.navigatorKey,
@@ -31,7 +31,8 @@ class AppLifecycleReactor {
       required this.nameConfig,
       required this.adNetwork,
       this.child,
-      required this.isShowWelComeScreenAfterAds});
+      required this.isShowWelComeScreenAfterAds,
+      this.onGoToWelComeBack});
 
   void listenToAppStateChanges() {
     AppStateEventNotifier.startListening();
@@ -69,47 +70,50 @@ class AppLifecycleReactor {
 
   void showScreenWelCome() {
     setShowScreenWellCome(true);
-    if (Platform.isAndroid) {
-      showDialog(
-        barrierDismissible: false,
-        context: navigatorKey.currentContext!,
-        builder: (context) {
-          return PopScope(
-            canPop: false,
-            child: child!,
-          );
-        },
-      ).then(
-        (value) {
-          if (_onReloadCollapse != null) {
-            _onReloadCollapse!();
-          }
-        },
-      );
-    } else {
-      showGeneralDialog(
-          context: navigatorKey.currentContext!,
-          barrierDismissible: false,
-          transitionDuration: const Duration(milliseconds: 300),
-          pageBuilder: (context, animation, secondaryAnimation) {
-            return child!;
-          },
-          transitionBuilder: (context, animation, secondaryAnimation, child) {
-            return SlideTransition(
-              position: Tween<Offset>(
-                begin: const Offset(0, 1), // Bắt đầu từ dưới lên
-                end: Offset.zero,
-              ).animate(animation),
-              child: child,
-            );
-          }).then(
-        (value) {
-          if (_onReloadCollapse != null) {
-            _onReloadCollapse!();
-          }
-        },
-      );
+    if (onGoToWelComeBack != null) {
+      onGoToWelComeBack!();
     }
+    // if (Platform.isAndroid) {
+    //   showDialog(
+    //     barrierDismissible: false,
+    //     context: navigatorKey.currentContext!,
+    //     builder: (context) {
+    //       return PopScope(
+    //         canPop: false,
+    //         child: child!,
+    //       );
+    //     },
+    //   ).then(
+    //     (value) {
+    //       if (_onReloadCollapse != null) {
+    //         _onReloadCollapse!();
+    //       }
+    //     },
+    //   );
+    // } else {
+    //   showGeneralDialog(
+    //       context: navigatorKey.currentContext!,
+    //       barrierDismissible: false,
+    //       transitionDuration: const Duration(milliseconds: 300),
+    //       pageBuilder: (context, animation, secondaryAnimation) {
+    //         return child!;
+    //       },
+    //       transitionBuilder: (context, animation, secondaryAnimation, child) {
+    //         return SlideTransition(
+    //           position: Tween<Offset>(
+    //             begin: const Offset(0, 1), // Bắt đầu từ dưới lên
+    //             end: Offset.zero,
+    //           ).animate(animation),
+    //           child: child,
+    //         );
+    //       }).then(
+    //     (value) {
+    //       if (_onReloadCollapse != null) {
+    //         _onReloadCollapse!();
+    //       }
+    //     },
+    //   );
+    // }
   }
 
   void _onAppStateChanged(AppState appState) async {

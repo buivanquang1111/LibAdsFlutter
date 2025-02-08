@@ -125,6 +125,8 @@ class AdmobAds {
     GlobalKey<NavigatorState>? navigatorKey,
     required bool turnOnOrganic,
     String? keyTrickScreen,
+    bool isCallIdServer = true,
+    Function()? onGotoWelComeBack,
   }) async {
     await initConnectivity();
     if (isDeviceOffline) {
@@ -213,29 +215,45 @@ class AdmobAds {
       onError: (p0) {},
     );
 
-    final tasksFuture = Future.wait([
-      initRemoteConfig,
-      initOrganicAdjust,
-      initUMP,
-      callIdAds,
-      organicCompleter.future,
-      umpCompleter.future,
-    ]).then((_) {
-      if (!timeoutCompleter.isCompleted) {
-        timeoutCompleter.complete();
-      }
-    }).catchError((e) {
-      if (!timeoutCompleter.isCompleted) {
-        timeoutCompleter.completeError(e);
-      }
-    });
+    final tasksFuture = isCallIdServer
+        ? Future.wait([
+            initRemoteConfig,
+            initOrganicAdjust,
+            initUMP,
+            callIdAds,
+            organicCompleter.future,
+            umpCompleter.future,
+          ]).then((_) {
+            if (!timeoutCompleter.isCompleted) {
+              timeoutCompleter.complete();
+            }
+          }).catchError((e) {
+            if (!timeoutCompleter.isCompleted) {
+              timeoutCompleter.completeError(e);
+            }
+          })
+        : Future.wait([
+            initRemoteConfig,
+            initOrganicAdjust,
+            initUMP,
+            organicCompleter.future,
+            umpCompleter.future,
+          ]).then((_) {
+            if (!timeoutCompleter.isCompleted) {
+              timeoutCompleter.complete();
+            }
+          }).catchError((e) {
+            if (!timeoutCompleter.isCompleted) {
+              timeoutCompleter.completeError(e);
+            }
+          });
 
     try {
       await Future.any([tasksFuture, timeoutCompleter.future]);
       print('time_out_call: All tasks completed successfully.');
     } on TimeoutException catch (e) {
       print('time_out_call: Timeout ${e.message}');
-      EventLogLib.logEvent("Timeout_Splash_12s");
+      EventLogLib.logEvent("timeout_splash_12s");
       countOpenApp();
       onNextAction();
     } catch (e) {
@@ -326,7 +344,8 @@ class AdmobAds {
         listResumeId: NetworkRequest.instance.getListIDByName(nameAdsResume),
         child: child,
         isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds,
-        navigatorKey: navigatorKey);
+        navigatorKey: navigatorKey,
+        onGoToWelcomeBack: onGotoWelComeBack);
     //     return;
     //   },
     // );
@@ -345,6 +364,7 @@ class AdmobAds {
     Widget? child,
     bool isShowWelComeScreenAfterAds = true,
     GlobalKey<NavigatorState>? navigatorKey,
+    Function()? onGoToWelcomeBack,
   }) async {
     print('check_call_remote --- name: $keyResumeConfig');
     print(
@@ -356,7 +376,8 @@ class AdmobAds {
             .configs[RemoteConfigKeyLib.getKeyByName(keyResumeConfig).name],
         nameConfig: keyResumeConfig,
         child: child,
-        isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds);
+        isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds,
+        onGoToWelcomeBack: onGoToWelcomeBack);
 
     ///showAds inter/open Splash
     showAdsSplash(
@@ -410,6 +431,7 @@ class AdmobAds {
     required String nameConfig,
     Widget? child,
     bool isShowWelComeScreenAfterAds = true,
+    Function()? onGoToWelcomeBack,
   }) {
     ///khởi tạo ads resume
     if (navigatorKey != null) {
@@ -420,7 +442,8 @@ class AdmobAds {
           nameConfig: nameConfig,
           adNetwork: AdNetwork.admob,
           child: child,
-          isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds);
+          isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds,
+          onGoToWelComeBack: onGoToWelcomeBack);
       appLifecycleReactor!.listenToAppStateChanges();
     }
   }
@@ -566,6 +589,7 @@ class AdmobAds {
     AdNetwork adResumeNetwork = AdNetwork.admob,
     Widget? child,
     bool isShowWelComeScreenAfterAds = true,
+    Function()? onGoToWelcomeBack,
 
     ///init mediation callback
     Future<dynamic> Function(bool canRequestAds)? initMediationCallback,
@@ -613,7 +637,8 @@ class AdmobAds {
               .configs[RemoteConfigKeyLib.getKeyByName(nameResumeConfig).name],
           adNetwork: adResumeNetwork,
           child: child,
-          isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds);
+          isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds,
+          onGoToWelComeBack: onGoToWelcomeBack);
       appLifecycleReactor!.listenToAppStateChanges();
     }
   }
