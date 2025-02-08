@@ -170,8 +170,8 @@ class AdmobAds {
     );
 
     ///call Organic
-    Future<void> initOrganicAdjust =
-        CallOrganicAdjust.instance.initOrganicAdjust(
+    Future<void>? initOrganicAdjust = isCallAdjust
+        ? CallOrganicAdjust.instance.initOrganicAdjust(
             onOrganic: () {
               if (!organicCompleter.isCompleted) {
                 organicCompleter.complete(true);
@@ -183,7 +183,8 @@ class AdmobAds {
               }
             },
             onNextAction: () {},
-            appToken: adjustToken);
+            appToken: adjustToken)
+        : null;
 
     ///call UMP
     Future<void> initUMP = initUMPAndAdmob(
@@ -207,22 +208,28 @@ class AdmobAds {
     );
 
     ///call id ads
-    Future<void> callIdAds = NetworkRequest.instance.fetchAdsModel(
-      linkServer: linkServer,
-      appId: appId,
-      packageName: packageName,
-      onResponse: () {},
-      onError: (p0) {},
-    );
+    Future<void>? callIdAds = isCallIdServer
+        ? NetworkRequest.instance.fetchAdsModel(
+            linkServer: linkServer,
+            appId: appId,
+            packageName: packageName,
+            onResponse: () {},
+            onError: (p0) {},
+          )
+        : null;
 
     final List<Future<dynamic>> tasks = [];
     tasks.add(initRemoteConfig);
     if (isCallAdjust) {
-      tasks.add(initOrganicAdjust);
+      if (initOrganicAdjust != null) {
+        tasks.add(initOrganicAdjust);
+      }
     }
     tasks.add(initUMP);
     if (isCallIdServer) {
-      tasks.add(callIdAds);
+      if(callIdAds != null) {
+        tasks.add(callIdAds);
+      }
     }
     tasks.add(organicCompleter.future);
     tasks.add(umpCompleter.future);
