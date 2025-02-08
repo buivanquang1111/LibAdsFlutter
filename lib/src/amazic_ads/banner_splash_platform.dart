@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../adjust_config/call_organic_adjust.dart';
 import 'loading_ads.dart';
 
 class BannerSplashPlatform extends StatefulWidget {
@@ -43,6 +44,7 @@ class _BannerSplashPlatformState extends State<BannerSplashPlatform> {
       MethodChannel('com.yourcompany.ads/banner');
 
   bool isShowAd = false;
+  bool isVisibility = true;
 
   @override
   void initState() {
@@ -50,11 +52,34 @@ class _BannerSplashPlatformState extends State<BannerSplashPlatform> {
     _listenToAdEvents();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!AdmobAds.instance.isShowAllAds ||
+        AdmobAds.instance.isDeviceOffline ||
+        !widget.remoteConfig ||
+        !ConsentManager.ins.canRequestAds) {
+      EventLogLib.logEvent('banner_splash_false', parameters: {
+        "reason":
+            "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${!AdmobAds.instance.isDeviceOffline}"
+      });
+      setState(() {
+        isVisibility = false;
+      });
+    }
+  }
+
   void _listenToAdEvents() async {
     try {
       _methodChannel.setMethodCallHandler((call) async {
         final Map<String, dynamic>? event = call.arguments;
         switch (call.method) {
+          case 'onRequestAds':
+            EventLogLib.logEvent('banner_splash_true', parameters: {
+              'reason':
+                  'ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${!AdmobAds.instance.isDeviceOffline}'
+            });
+            break;
           case 'onAdLoaded':
             print('banner_splash_platform --- Ad Loaded');
             widget.onAdLoaded?.call();
@@ -94,60 +119,63 @@ class _BannerSplashPlatformState extends State<BannerSplashPlatform> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: widget.adSize?.height.toDouble() ?? 60,
-      width: widget.adSize?.width.toDouble() ?? double.infinity,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(
-          top: BorderSide(color: Colors.black, width: 2),
-          bottom: BorderSide(color: Colors.black, width: 2),
+    return Visibility(
+      visible: isVisibility,
+      child: Container(
+        height: widget.adSize?.height.toDouble() ?? 60,
+        width: widget.adSize?.width.toDouble() ?? double.infinity,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          border: Border(
+            top: BorderSide(color: Colors.black, width: 2),
+            bottom: BorderSide(color: Colors.black, width: 2),
+          ),
         ),
-      ),
-      child: Stack(
-        children: [
-          if (Platform.isAndroid)
-            if (widget.listIdAds.isNotEmpty)
-              AndroidView(
-                viewType: 'com.yourcompany.ads/banner',
-                creationParams: {
-                  'adUnitId': widget.listIdAds[0],
-                  'adSize': {
-                    'width': widget.adSize?.width ??
-                        AdmobAds.instance
-                            .getAdmobAdSize(type: widget.type)
-                            .width,
-                    'height': widget.adSize?.height ??
-                        AdmobAds.instance
-                            .getAdmobAdSize(type: widget.type)
-                            .height
-                  }
-                },
-                creationParamsCodec: const StandardMessageCodec(),
-              )
-            else if (Platform.isIOS)
-              UiKitView(
-                viewType: 'com.yourcompany.ads/banner',
-                creationParams: {
-                  'adUnitId': widget.listIdAds[0],
-                  'adSize': {
-                    'width': widget.adSize?.width ??
-                        AdmobAds.instance
-                            .getAdmobAdSize(type: widget.type)
-                            .width,
-                    'height': widget.adSize?.height ??
-                        AdmobAds.instance
-                            .getAdmobAdSize(type: widget.type)
-                            .height
-                  }
-                },
-                creationParamsCodec: const StandardMessageCodec(),
+        child: Stack(
+          children: [
+            if (Platform.isAndroid)
+              if (widget.listIdAds.isNotEmpty)
+                AndroidView(
+                  viewType: 'com.yourcompany.ads/banner',
+                  creationParams: {
+                    'adUnitId': widget.listIdAds[0],
+                    'adSize': {
+                      'width': widget.adSize?.width ??
+                          AdmobAds.instance
+                              .getAdmobAdSize(type: widget.type)
+                              .width,
+                      'height': widget.adSize?.height ??
+                          AdmobAds.instance
+                              .getAdmobAdSize(type: widget.type)
+                              .height
+                    }
+                  },
+                  creationParamsCodec: const StandardMessageCodec(),
+                )
+              else if (Platform.isIOS)
+                UiKitView(
+                  viewType: 'com.yourcompany.ads/banner',
+                  creationParams: {
+                    'adUnitId': widget.listIdAds[0],
+                    'adSize': {
+                      'width': widget.adSize?.width ??
+                          AdmobAds.instance
+                              .getAdmobAdSize(type: widget.type)
+                              .width,
+                      'height': widget.adSize?.height ??
+                          AdmobAds.instance
+                              .getAdmobAdSize(type: widget.type)
+                              .height
+                    }
+                  },
+                  creationParamsCodec: const StandardMessageCodec(),
+                ),
+            if (!isShowAd)
+              LoadingAds(
+                height: widget.adSize?.height.toDouble() ?? 60,
               ),
-          if (!isShowAd)
-            LoadingAds(
-              height: widget.adSize?.height.toDouble() ?? 60,
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }

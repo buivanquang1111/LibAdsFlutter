@@ -10,7 +10,6 @@ class AppLifecycleReactor {
   final GlobalKey<NavigatorState> navigatorKey;
   final List<String> listId;
   final AdNetwork adNetwork;
-  final Widget? child;
   final bool
       isShowWelComeScreenAfterAds; //hiển thị màn Welcome sau quảng cáo resume
 
@@ -30,7 +29,6 @@ class AppLifecycleReactor {
       this.config = true,
       required this.nameConfig,
       required this.adNetwork,
-      this.child,
       required this.isShowWelComeScreenAfterAds,
       this.onGoToWelComeBack});
 
@@ -119,7 +117,7 @@ class AppLifecycleReactor {
   void _onAppStateChanged(AppState appState) async {
     if (_onSplashScreen) return;
     if (!config) {
-      if (child != null) {
+      if (onGoToWelComeBack != null) {
         if (!_isShowScreenWellCome) {
           showScreenWelCome();
         }
@@ -157,21 +155,21 @@ class AppLifecycleReactor {
               listId: listId,
               config: config,
               onAdDismissed: (adNetwork, adUnitType, data) {
-                if (child != null) {
+                if (onGoToWelComeBack != null) {
                   if (!_isShowScreenWellCome) {
                     showScreenWelCome();
                   }
                 }
               },
               onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
-                if (child != null) {
+                if (onGoToWelComeBack != null) {
                   if (!_isShowScreenWellCome) {
                     showScreenWelCome();
                   }
                 }
               },
               onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
-                if (child != null) {
+                if (onGoToWelComeBack != null) {
                   if (!_isShowScreenWellCome) {
                     showScreenWelCome();
                   }
@@ -183,7 +181,7 @@ class AppLifecycleReactor {
                       "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${!AdmobAds.instance.isDeviceOffline}"
                 });
 
-                if (child != null) {
+                if (onGoToWelComeBack != null) {
                   if (!_isShowScreenWellCome) {
                     showScreenWelCome();
                   }
@@ -195,8 +193,8 @@ class AppLifecycleReactor {
                 }
               });
         } else {
-          print('check_app_resume --- child: $child');
-          if (child != null) {
+          print('check_app_resume --- child: $onGoToWelComeBack');
+          if (onGoToWelComeBack != null) {
             if (!_isShowScreenWellCome) {
               print(
                   'check_app_resume --- 2._isShowScreenWellCome: $_isShowScreenWellCome');

@@ -103,7 +103,6 @@ class AdmobAds {
     bool debugUmp = false,
     Future<dynamic> Function(bool canRequestAds)? initMediationCallback,
     required String adjustToken,
-    Widget? child,
     bool isShowWelComeScreenAfterAds = true,
     required String nameAdsResume,
     required String keyResumeConfig,
@@ -126,6 +125,7 @@ class AdmobAds {
     required bool turnOnOrganic,
     String? keyTrickScreen,
     bool isCallIdServer = true,
+    bool isCallAdjust = false,
     Function()? onGotoWelComeBack,
   }) async {
     await initConnectivity();
@@ -215,38 +215,62 @@ class AdmobAds {
       onError: (p0) {},
     );
 
-    final tasksFuture = isCallIdServer
-        ? Future.wait([
-            initRemoteConfig,
-            initOrganicAdjust,
-            initUMP,
-            callIdAds,
-            organicCompleter.future,
-            umpCompleter.future,
-          ]).then((_) {
-            if (!timeoutCompleter.isCompleted) {
-              timeoutCompleter.complete();
-            }
-          }).catchError((e) {
-            if (!timeoutCompleter.isCompleted) {
-              timeoutCompleter.completeError(e);
-            }
-          })
-        : Future.wait([
-            initRemoteConfig,
-            initOrganicAdjust,
-            initUMP,
-            organicCompleter.future,
-            umpCompleter.future,
-          ]).then((_) {
-            if (!timeoutCompleter.isCompleted) {
-              timeoutCompleter.complete();
-            }
-          }).catchError((e) {
-            if (!timeoutCompleter.isCompleted) {
-              timeoutCompleter.completeError(e);
-            }
-          });
+    final List<Future<dynamic>> tasks = [];
+    tasks.add(initRemoteConfig);
+    if (isCallAdjust) {
+      tasks.add(initOrganicAdjust);
+    }
+    tasks.add(initUMP);
+    if (isCallIdServer) {
+      tasks.add(callIdAds);
+    }
+    tasks.add(organicCompleter.future);
+    tasks.add(umpCompleter.future);
+
+    final tasksFuture = Future.wait(tasks).then(
+      (value) {
+        if (!timeoutCompleter.isCompleted) {
+          timeoutCompleter.complete();
+        }
+      },
+    ).catchError((e) {
+      if (!timeoutCompleter.isCompleted) {
+        timeoutCompleter.completeError(e);
+      }
+    });
+
+    // final tasksFuture = isCallIdServer
+    //     ? Future.wait([
+    //         initRemoteConfig,
+    //         initOrganicAdjust,
+    //         initUMP,
+    //         callIdAds,
+    //         organicCompleter.future,
+    //         umpCompleter.future,
+    //       ]).then((_) {
+    //         if (!timeoutCompleter.isCompleted) {
+    //           timeoutCompleter.complete();
+    //         }
+    //       }).catchError((e) {
+    //         if (!timeoutCompleter.isCompleted) {
+    //           timeoutCompleter.completeError(e);
+    //         }
+    //       })
+    //     : Future.wait([
+    //         initRemoteConfig,
+    //         initOrganicAdjust,
+    //         initUMP,
+    //         organicCompleter.future,
+    //         umpCompleter.future,
+    //       ]).then((_) {
+    //         if (!timeoutCompleter.isCompleted) {
+    //           timeoutCompleter.complete();
+    //         }
+    //       }).catchError((e) {
+    //         if (!timeoutCompleter.isCompleted) {
+    //           timeoutCompleter.completeError(e);
+    //         }
+    //       });
 
     try {
       await Future.any([tasksFuture, timeoutCompleter.future]);
@@ -342,7 +366,6 @@ class AdmobAds {
         nameAdsInterSplash: nameAdsInterSplash,
         keyResumeConfig: keyResumeConfig,
         listResumeId: NetworkRequest.instance.getListIDByName(nameAdsResume),
-        child: child,
         isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds,
         navigatorKey: navigatorKey,
         onGoToWelcomeBack: onGotoWelComeBack);
@@ -361,7 +384,6 @@ class AdmobAds {
     required Function() onNextAction,
     required String keyResumeConfig,
     required List<String> listResumeId,
-    Widget? child,
     bool isShowWelComeScreenAfterAds = true,
     GlobalKey<NavigatorState>? navigatorKey,
     Function()? onGoToWelcomeBack,
@@ -375,7 +397,6 @@ class AdmobAds {
         adResumeConfig: RemoteConfigLib
             .configs[RemoteConfigKeyLib.getKeyByName(keyResumeConfig).name],
         nameConfig: keyResumeConfig,
-        child: child,
         isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds,
         onGoToWelcomeBack: onGoToWelcomeBack);
 
@@ -429,7 +450,6 @@ class AdmobAds {
     required List<String> listResumeId,
     required bool adResumeConfig,
     required String nameConfig,
-    Widget? child,
     bool isShowWelComeScreenAfterAds = true,
     Function()? onGoToWelcomeBack,
   }) {
@@ -441,7 +461,6 @@ class AdmobAds {
           config: adResumeConfig,
           nameConfig: nameConfig,
           adNetwork: AdNetwork.admob,
-          child: child,
           isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds,
           onGoToWelComeBack: onGoToWelcomeBack);
       appLifecycleReactor!.listenToAppStateChanges();
@@ -587,7 +606,6 @@ class AdmobAds {
     required List<String> listResumeId,
     required String nameResumeConfig,
     AdNetwork adResumeNetwork = AdNetwork.admob,
-    Widget? child,
     bool isShowWelComeScreenAfterAds = true,
     Function()? onGoToWelcomeBack,
 
@@ -636,7 +654,6 @@ class AdmobAds {
           config: RemoteConfigLib
               .configs[RemoteConfigKeyLib.getKeyByName(nameResumeConfig).name],
           adNetwork: adResumeNetwork,
-          child: child,
           isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds,
           onGoToWelComeBack: onGoToWelcomeBack);
       appLifecycleReactor!.listenToAppStateChanges();

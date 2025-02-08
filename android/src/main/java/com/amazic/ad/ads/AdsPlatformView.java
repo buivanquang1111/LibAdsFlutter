@@ -38,7 +38,7 @@ public class AdsPlatformView implements PlatformView {
         adView = new AdView(context);
         adView.setAdSize(adSize);
         adView.setAdUnitId(adUnitId);
-
+        methodChannel.invokeMethod("onRequestAds", null);
         adView.setAdListener(new AdListener() {
             @Override
             public void onAdClicked() {
