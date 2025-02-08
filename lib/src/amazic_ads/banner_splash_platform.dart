@@ -106,8 +106,8 @@ class _BannerSplashPlatformState extends State<BannerSplashPlatform> {
             break;
           case 'coreTechnologyTestAd':
             print('banner_splash_platform --- coreTechnologyTestAd');
-            widget.onCoreTechnologyTestAd?.call();
             AdmobAds.instance.setIsTestAd(value: true);
+            widget.onCoreTechnologyTestAd?.call();
             break;
           default:
             print('banner_splash_platform --- Unknown event: ${call.method}');
