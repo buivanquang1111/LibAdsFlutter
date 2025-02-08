@@ -292,9 +292,11 @@ class AdmobAds {
     }
 
     ///set giá trị remote TH Organic
-    bool isOrganic = await organicCompleter.future;
-    if (isOrganic) {
-      onSetRemoteConfigOrganic();
+    if(isCallAdjust) {
+      bool isOrganic = await organicCompleter.future;
+      if (isOrganic) {
+        onSetRemoteConfigOrganic();
+      }
     }
 
     ///set k show all ads TH đã mua sub
