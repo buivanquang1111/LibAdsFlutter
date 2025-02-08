@@ -96,6 +96,11 @@ class AdmobAds {
   Timer? _timer;
   int _second = 0;
 
+  ///biến check có đang là testAd k
+  bool _isTestAd = false;
+  void setIsTestAd({required bool value}) => _isTestAd = value;
+  bool get isTestAd => _isTestAd;
+
   Future<void> initAllDataSplash({
     RequestConfiguration? admobConfiguration,
     required List<RemoteConfigKeyLib> remoteConfigKeys,
