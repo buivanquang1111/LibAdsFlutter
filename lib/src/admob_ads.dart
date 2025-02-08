@@ -170,21 +170,20 @@ class AdmobAds {
     );
 
     ///call Organic
-    Future<void>? initOrganicAdjust = isCallAdjust
-        ? CallOrganicAdjust.instance.initOrganicAdjust(
-            onOrganic: () {
-              if (!organicCompleter.isCompleted) {
-                organicCompleter.complete(true);
-              }
-            },
-            onError: (p0) {
-              if (!organicCompleter.isCompleted) {
-                organicCompleter.complete(false);
-              }
-            },
-            onNextAction: () {},
-            appToken: adjustToken)
-        : null;
+    // Future<void> initOrganicAdjust =
+    //     CallOrganicAdjust.instance.initOrganicAdjust(
+    //         onOrganic: () {
+    //           if (!organicCompleter.isCompleted) {
+    //             organicCompleter.complete(true);
+    //           }
+    //         },
+    //         onError: (p0) {
+    //           if (!organicCompleter.isCompleted) {
+    //             organicCompleter.complete(false);
+    //           }
+    //         },
+    //         onNextAction: () {},
+    //         appToken: adjustToken);
 
     ///call UMP
     Future<void> initUMP = initUMPAndAdmob(
@@ -208,24 +207,40 @@ class AdmobAds {
     );
 
     ///call id ads
-    Future<void>? callIdAds = isCallIdServer
-        ? NetworkRequest.instance.fetchAdsModel(
-            linkServer: linkServer,
-            appId: appId,
-            packageName: packageName,
-            onResponse: () {},
-            onError: (p0) {},
-          )
-        : null;
+    // Future<void> callIdAds = NetworkRequest.instance.fetchAdsModel(
+    //         linkServer: linkServer,
+    //         appId: appId,
+    //         packageName: packageName,
+    //         onResponse: () {},
+    //         onError: (p0) {},
+    //       );
 
     final List<Future<dynamic>> tasks = [];
     tasks.add(initRemoteConfig);
     if (isCallAdjust) {
-        tasks.add(initOrganicAdjust!);
+      tasks.add(CallOrganicAdjust.instance.initOrganicAdjust(
+          onOrganic: () {
+            if (!organicCompleter.isCompleted) {
+              organicCompleter.complete(true);
+            }
+          },
+          onError: (p0) {
+            if (!organicCompleter.isCompleted) {
+              organicCompleter.complete(false);
+            }
+          },
+          onNextAction: () {},
+          appToken: adjustToken));
     }
     tasks.add(initUMP);
     if (isCallIdServer) {
-        tasks.add(callIdAds!);
+      tasks.add(NetworkRequest.instance.fetchAdsModel(
+        linkServer: linkServer,
+        appId: appId,
+        packageName: packageName,
+        onResponse: () {},
+        onError: (p0) {},
+      ));
     }
     tasks.add(organicCompleter.future);
     tasks.add(umpCompleter.future);
