@@ -12,6 +12,7 @@ import 'package:amazic_ads_flutter/src/utils/amazic_logger.dart';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -98,7 +99,9 @@ class AdmobAds {
 
   ///biến check có đang là testAd k
   bool _isTestAd = false;
+
   void setIsTestAd({required bool value}) => _isTestAd = value;
+
   bool get isTestAd => _isTestAd;
 
   Future<void> initAllDataSplash({
@@ -133,8 +136,7 @@ class AdmobAds {
     bool isCallAdjust = false,
     Function()? onGotoWelComeBack,
   }) async {
-    await initConnectivity();
-    if (isDeviceOffline) {
+    if (await haveInternet()) {
       EventLogLib.logEvent('splash_have_internet');
     }
     //init remote key
@@ -226,12 +228,12 @@ class AdmobAds {
     final List<Future<dynamic>> tasks = [];
     tasks.add(initRemoteConfig);
     if (isCallAdjust) {
-        tasks.add(initOrganicAdjust!);
-        tasks.add(organicCompleter.future);
+      tasks.add(initOrganicAdjust!);
+      tasks.add(organicCompleter.future);
     }
     tasks.add(initUMP);
     if (isCallIdServer) {
-        tasks.add(callIdAds!);
+      tasks.add(callIdAds!);
     }
     tasks.add(umpCompleter.future);
     print('check_length_tasks --- ${tasks.length}');
@@ -297,7 +299,7 @@ class AdmobAds {
     }
 
     ///set giá trị remote TH Organic
-    if(isCallAdjust) {
+    if (isCallAdjust) {
       bool isOrganic = await organicCompleter.future;
       if (isOrganic) {
         onSetRemoteConfigOrganic();
@@ -335,39 +337,6 @@ class AdmobAds {
     _logger.logInfo(
         'show_value_inter --- init: setTimeIntervalBetweenInter: ${RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(PreferencesUtilLib.isOrganicAdjust() ? keyIntervalBetweenInterstitialOrganic ?? keyIntervalBetweenInterstitial : keyIntervalBetweenInterstitial).name]}, setTimeIntervalInterFromStart: ${RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyInterstitialFromStart).name]}');
 
-    ///call id ads
-    // await NetworkRequest.instance
-    //     .fetchAdsModel(
-    //   linkServer: linkServer,
-    //   appId: appId,
-    //   packageName: packageName,
-    //   onResponse: () {
-    //     print('check_next_splash --- onResponse onTimeout');
-    //     initAdsSplashAndAppOpen(
-    //       keyRateAOA: keyRateAOA,
-    //       keyOpenSplash: keyOpenSplash,
-    //       keyInterSplash: keyInterSplash,
-    //       onNextAction: onNextAction,
-    //       nameAdsOpenSplash: nameAdsOpenSplash,
-    //       nameAdsInterSplash: nameAdsInterSplash,
-    //       keyResumeConfig: keyResumeConfig,
-    //       listResumeId: NetworkRequest.instance.getListIDByName(nameAdsResume),
-    //       child: child,
-    //       isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds,
-    //       navigatorKey: navigatorKey,
-    //     );
-    //   },
-    //   onError: (p0) {
-    //     print('check_next_splash --- fetchAdsModel, onError $p0');
-    //     countOpenApp();
-    //     onNextAction();
-    //   },
-    // )
-    //     .timeout(
-    //   const Duration(seconds: 4),
-    //   onTimeout: () {
-    //     print('check_next_splash --- fetchAdsModel onTimeout');
-
     initAdsSplashAndAppOpen(
         keyRateAOA: keyRateAOA,
         keyOpenSplash: keyOpenSplash,
@@ -380,9 +349,6 @@ class AdmobAds {
         isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds,
         navigatorKey: navigatorKey,
         onGoToWelcomeBack: onGotoWelComeBack);
-    //     return;
-    //   },
-    // );
   }
 
   //init ads resume and ads splash
@@ -402,14 +368,6 @@ class AdmobAds {
     print('check_call_remote --- name: $keyResumeConfig');
     print(
         'check_call_remote --- name: ${RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyResumeConfig).name]}');
-    initAdsOpenResume(
-        listResumeId: listResumeId,
-        navigatorKey: navigatorKey,
-        adResumeConfig: RemoteConfigLib
-            .configs[RemoteConfigKeyLib.getKeyByName(keyResumeConfig).name],
-        nameConfig: keyResumeConfig,
-        isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds,
-        onGoToWelcomeBack: onGoToWelcomeBack);
 
     ///showAds inter/open Splash
     showAdsSplash(
@@ -419,6 +377,15 @@ class AdmobAds {
         onNextAction: onNextAction,
         nameAdsOpenSplash: nameAdsOpenSplash,
         nameAdsInterSplash: nameAdsInterSplash);
+
+    initAdsOpenResume(
+        listResumeId: listResumeId,
+        navigatorKey: navigatorKey,
+        adResumeConfig: RemoteConfigLib
+            .configs[RemoteConfigKeyLib.getKeyByName(keyResumeConfig).name],
+        nameConfig: keyResumeConfig,
+        isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds,
+        onGoToWelcomeBack: onGoToWelcomeBack);
   }
 
   ///init UMP
@@ -499,10 +466,10 @@ class AdmobAds {
 
     EventLogLib.logEvent("inter_splash_tracking", parameters: {
       'splash_detail':
-          '${ConsentManager.ins.canRequestAds}_${CallOrganicAdjust.instance.isOrganic()}_${!isDeviceOffline}_${AdmobAds.instance.isShowAllAds}_${idAdsCheck}_$rateAoa',
+          '${ConsentManager.ins.canRequestAds}_${CallOrganicAdjust.instance.isOrganic()}_${await haveInternet()}_${AdmobAds.instance.isShowAllAds}_${idAdsCheck}_$rateAoa',
       'ump': '${ConsentManager.ins.canRequestAds}',
       'organic': '${CallOrganicAdjust.instance.isOrganic()}',
-      'haveinternet': '${!isDeviceOffline}',
+      'haveinternet': '${await haveInternet()}',
       'showallad': '${AdmobAds.instance.isShowAllAds}',
       'idcheck': '$idAdsCheck',
       'interremote_openremote_aoavalue': '${isShowInter}_${isShowOpen}_$rateAoa'
@@ -764,18 +731,18 @@ class AdmobAds {
     bool isClickAdsNotShowResume = true,
   }) async {
     if (!AdmobAds.instance.isShowAllAds ||
-        isDeviceOffline ||
+        !(await haveInternet()) ||
         !config ||
         !ConsentManager.ins.canRequestAds) {
       if (factoryId.toLowerCase().contains("intro_full")) {
         EventLogLib.logEvent("native_intro_full_false", parameters: {
           "reason":
-              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${!isDeviceOffline}"
+              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await haveInternet()}"
         });
       } else {
         EventLogLib.logEvent("native_intro_false", parameters: {
           "reason":
-              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${!isDeviceOffline}"
+              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await haveInternet()}"
         });
       }
       return null;
@@ -1024,7 +991,7 @@ class AdmobAds {
     if (!isShowAllAds ||
         !config ||
         _isFullscreenAdShowing ||
-        isDeviceOffline ||
+        !(await haveInternet()) ||
         !ConsentManager.ins.canRequestAds) {
       onDisabled?.call();
       return;
@@ -1130,14 +1097,14 @@ class AdmobAds {
     if (!isShowAllAds ||
         !config ||
         _isFullscreenAdShowing ||
-        isDeviceOffline ||
+        !(await haveInternet()) ||
         !ConsentManager.ins.canRequestAds) {
       _logger.logInfo(
-          'config: $config, isShowAllAds: $isShowAllAds, isDeviceOffline: $isDeviceOffline, _isFullscreenAdShowing: $_isFullscreenAdShowing,canRequestAds: ${ConsentManager.ins.canRequestAds}');
+          'config: $config, isShowAllAds: $isShowAllAds, isDeviceOffline: ${await haveInternet()}, _isFullscreenAdShowing: $_isFullscreenAdShowing,canRequestAds: ${ConsentManager.ins.canRequestAds}');
 
       EventLogLib.logEvent("inter_intro_false", parameters: {
         "reason":
-            "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${!isDeviceOffline}"
+            "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await haveInternet()}"
       });
       onDisabled?.call();
       return;
@@ -1279,7 +1246,7 @@ class AdmobAds {
       onDisabled?.call();
       return;
     }
-    if (isDeviceOffline) {
+    if (!(await haveInternet())) {
       onDisabled?.call();
       return;
     }
@@ -1457,57 +1424,54 @@ class AdmobAds {
     return false;
   }
 
-  // Future<bool> checkInternet() async {
-  //   // try {
-  //   //   final response = await http
-  //   //       .get(Uri.parse('https://www.google.com'))
-  //   //       .timeout(const Duration(seconds: 2));
-  //   //   return response.statusCode == 200;
-  //   // } catch (_) {
-  //   //   return false;
-  //   // }
-  //   var connectivityResult = await (Connectivity().checkConnectivity());
-  //   if (connectivityResult == ConnectivityResult.mobile) {
-  //     return true;
-  //   } else if (connectivityResult == ConnectivityResult.wifi) {
-  //     return true;
-  //   } else if (connectivityResult == ConnectivityResult.vpn) {
-  //     return true;
-  //   }
-  //   return false;
-  // }
+  Future<bool> haveInternet() async {
+    var connectivityResult = await Connectivity().checkConnectivity();
+
+    for (var model in connectivityResult) {
+      print('check_have_internet -- ${model.name}');
+    }
+    if (connectivityResult.contains(ConnectivityResult.none)) {
+      print('check_have_internet --- 1.haveInternet false');
+      return false;
+    }
+
+    bool isHaveConnected =
+        await InternetConnectionChecker.instance.hasConnection;
+    print('check_have_internet --- 2.haveInternet $isHaveConnected');
+    return isHaveConnected;
+  }
 
   //
-  bool _isDeviceOffline = false;
-
-  bool get isDeviceOffline =>
-      _isDeviceOffline; //true - k co intenet, false - co internet
-  final connectivity = Connectivity();
-  StreamSubscription<List<ConnectivityResult>>? connectivityStreamSub;
-
-  Future<void> initConnectivity() async {
-    final connectivityResult = await connectivity.checkConnectivity();
-    _isDeviceOffline = !connectivityResult.any((element) =>
-        element == ConnectivityResult.wifi ||
-        element == ConnectivityResult.mobile);
-
-    cancelConnectivityOnBackground();
-    connectivityStreamSub = connectivity.onConnectivityChanged.listen(
-      (event) {
-        _isDeviceOffline = !event.any(
-          (element) =>
-              element == ConnectivityResult.wifi ||
-              element == ConnectivityResult.mobile ||
-              element == ConnectivityResult.vpn,
-        );
-      },
-    );
-  }
-
-  void cancelConnectivityOnBackground() {
-    connectivityStreamSub?.cancel();
-    connectivityStreamSub = null;
-  }
+  // bool _isDeviceOffline = false;
+  //
+  // bool get isDeviceOffline =>
+  //     _isDeviceOffline; //true - k co intenet, false - co internet
+  // final connectivity = Connectivity();
+  // StreamSubscription<List<ConnectivityResult>>? connectivityStreamSub;
+  //
+  // Future<void> initConnectivity() async {
+  //   final connectivityResult = await connectivity.checkConnectivity();
+  //   _isDeviceOffline = !connectivityResult.any((element) =>
+  //       element == ConnectivityResult.wifi ||
+  //       element == ConnectivityResult.mobile);
+  //
+  //   cancelConnectivityOnBackground();
+  //   connectivityStreamSub = connectivity.onConnectivityChanged.listen(
+  //     (event) {
+  //       _isDeviceOffline = !event.any(
+  //         (element) =>
+  //             element == ConnectivityResult.wifi ||
+  //             element == ConnectivityResult.mobile ||
+  //             element == ConnectivityResult.vpn,
+  //       );
+  //     },
+  //   );
+  // }
+  //
+  // void cancelConnectivityOnBackground() {
+  //   connectivityStreamSub?.cancel();
+  //   connectivityStreamSub = null;
+  // }
 
   //
 

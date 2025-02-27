@@ -138,7 +138,7 @@ class AppLifecycleReactor {
         if (!AdmobAds.instance.isShowAllAds) {
           return;
         }
-        if (AdmobAds.instance.isDeviceOffline) {
+        if (!(await AdmobAds.instance.haveInternet())) {
           return;
         }
         if (!ConsentManager.ins.canRequestAds) {
@@ -178,7 +178,7 @@ class AppLifecycleReactor {
               onDisabled: () async {
                 EventLogLib.logEvent("open_resume_false", parameters: {
                   "reason":
-                      "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${!AdmobAds.instance.isDeviceOffline}"
+                      "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.haveInternet()}"
                 });
 
                 if (onGoToWelComeBack != null) {
@@ -236,7 +236,7 @@ class AppLifecycleReactor {
         setShowScreenWellCome(false);
         EventLogLib.logEvent("open_resume_false", parameters: {
           "reason":
-              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${!AdmobAds.instance.isDeviceOffline}"
+              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.haveInternet()}"
         });
         onDisabled?.call();
       },

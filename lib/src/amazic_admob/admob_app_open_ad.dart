@@ -62,7 +62,7 @@ class AdmobAppOpenAd extends AdsBase {
   }
 
   @override
-  Future<void> load() {
+  Future<void> load() async{
     if (isAdLoaded) return Future.value();
     if (listId.isEmpty) return Future.value();
     _isAdLoading = true;
@@ -80,8 +80,8 @@ class AdmobAppOpenAd extends AdsBase {
         EventLogLib.logEvent('${nameAds}_true', parameters: {
           'reason':
           'ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust
-              .instance.isOrganic()}_internet_${!AdmobAds.instance
-              .isDeviceOffline}'
+              .instance.isOrganic()}_internet_${await AdmobAds.instance
+              .haveInternet()}'
         });
       }
     }

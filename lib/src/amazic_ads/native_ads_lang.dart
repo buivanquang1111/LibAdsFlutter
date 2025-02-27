@@ -186,7 +186,7 @@ class NativeAdsLangState extends State<NativeAdsLang>
 
   Future<void> _prepareAd() async {
     if (!AdmobAds.instance.isShowAllAds ||
-        AdmobAds.instance.isDeviceOffline ||
+        !(await AdmobAds.instance.haveInternet()) ||
         !widget.config ||
         !ConsentManager.ins.canRequestAds) {
       if (_isLoading.value) {
@@ -194,7 +194,7 @@ class NativeAdsLangState extends State<NativeAdsLang>
       }
       EventLogLib.logEvent("native_language_false", parameters: {
         "reason":
-            "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${!AdmobAds.instance.isDeviceOffline}"
+            "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.haveInternet()}"
       });
 
       widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.native, null);
