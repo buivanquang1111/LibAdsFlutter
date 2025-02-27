@@ -140,7 +140,7 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
     //   return;
     // }
     if (!AdmobAds.instance.isShowAllAds ||
-        !(await AdmobAds.instance.haveInternet()) ||
+        !AdmobAds.instance.isHaveInternet ||
         !widget.config ||
         !ConsentManager.ins.canRequestAds) {
       if (_isLoading.value) {
@@ -152,33 +152,33 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
           widget.visibilityDetectorKey.toLowerCase().contains('lang')) {
         EventLogLib.logEvent("native_language_false", parameters: {
           "reason":
-              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.haveInternet()}"
+              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.isHaveInternet}"
         });
       } else if (widget.visibilityDetectorKey.toLowerCase().contains('intro')) {
         EventLogLib.logEvent("native_intro_false", parameters: {
           "reason":
-              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.haveInternet()}"
+              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.isHaveInternet}"
         });
       } else if (widget.visibilityDetectorKey.toLowerCase().contains('permission') ||
           widget.visibilityDetectorKey.toLowerCase().contains('per')) {
         EventLogLib.logEvent("native_permission_false", parameters: {
           "reason":
-              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.haveInternet()}"
+              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.isHaveInternet}"
         });
       } else if (widget.visibilityDetectorKey.toLowerCase().contains('interest')) {
         EventLogLib.logEvent("native_interest_false", parameters: {
           "reason":
-              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.haveInternet()}"
+              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.isHaveInternet}"
         });
       } else if (widget.visibilityDetectorKey.toLowerCase().contains('wb')) {
         EventLogLib.logEvent("native_wb_false", parameters: {
           "reason":
-              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.haveInternet()}"
+              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.isHaveInternet}"
         });
       } else if (widget.visibilityDetectorKey.toLowerCase().contains('welcome')) {
         EventLogLib.logEvent("native_welcome_false", parameters: {
           "reason":
-              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.haveInternet()}"
+              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.isHaveInternet}"
         });
       }
       //end

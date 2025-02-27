@@ -80,8 +80,8 @@ class AdmobAppOpenAd extends AdsBase {
         EventLogLib.logEvent('${nameAds}_true', parameters: {
           'reason':
           'ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust
-              .instance.isOrganic()}_internet_${await AdmobAds.instance
-              .haveInternet()}'
+              .instance.isOrganic()}_internet_${AdmobAds.instance
+              .isHaveInternet}'
         });
       }
     }

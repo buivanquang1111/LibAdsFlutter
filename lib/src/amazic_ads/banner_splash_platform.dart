@@ -53,15 +53,15 @@ class _BannerSplashPlatformState extends State<BannerSplashPlatform> {
   }
 
   @override
-  void didChangeDependencies() async {
+  void didChangeDependencies() {
     super.didChangeDependencies();
     if (!AdmobAds.instance.isShowAllAds ||
-        (await AdmobAds.instance.haveInternet()) ||
+        !AdmobAds.instance.isHaveInternet ||
         !widget.remoteConfig ||
         !ConsentManager.ins.canRequestAds) {
       EventLogLib.logEvent('banner_splash_false', parameters: {
         "reason":
-            "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.haveInternet()}"
+            "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.isHaveInternet}"
       });
       setState(() {
         isVisibility = false;
@@ -77,7 +77,7 @@ class _BannerSplashPlatformState extends State<BannerSplashPlatform> {
           case 'onRequestAds':
             EventLogLib.logEvent('banner_splash_true', parameters: {
               'reason':
-                  'ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.haveInternet()}'
+                  'ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.isHaveInternet}'
             });
             break;
           case 'onAdLoaded':

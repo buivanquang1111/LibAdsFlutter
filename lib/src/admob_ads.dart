@@ -136,7 +136,9 @@ class AdmobAds {
     bool isCallAdjust = false,
     Function()? onGotoWelComeBack,
   }) async {
-    if (await haveInternet()) {
+    await haveInternet();
+    if (await InternetConnectionChecker.instance.hasConnection) {
+      print('check_have_internet --- logEvent have internet');
       EventLogLib.logEvent('splash_have_internet');
     }
     //init remote key
@@ -466,10 +468,10 @@ class AdmobAds {
 
     EventLogLib.logEvent("inter_splash_tracking", parameters: {
       'splash_detail':
-          '${ConsentManager.ins.canRequestAds}_${CallOrganicAdjust.instance.isOrganic()}_${await haveInternet()}_${AdmobAds.instance.isShowAllAds}_${idAdsCheck}_$rateAoa',
+          '${ConsentManager.ins.canRequestAds}_${CallOrganicAdjust.instance.isOrganic()}_${isHaveInternet}_${AdmobAds.instance.isShowAllAds}_${idAdsCheck}_$rateAoa',
       'ump': '${ConsentManager.ins.canRequestAds}',
       'organic': '${CallOrganicAdjust.instance.isOrganic()}',
-      'haveinternet': '${await haveInternet()}',
+      'haveinternet': '${isHaveInternet}',
       'showallad': '${AdmobAds.instance.isShowAllAds}',
       'idcheck': '$idAdsCheck',
       'interremote_openremote_aoavalue': '${isShowInter}_${isShowOpen}_$rateAoa'
@@ -731,18 +733,18 @@ class AdmobAds {
     bool isClickAdsNotShowResume = true,
   }) async {
     if (!AdmobAds.instance.isShowAllAds ||
-        !(await haveInternet()) ||
+        !isHaveInternet ||
         !config ||
         !ConsentManager.ins.canRequestAds) {
       if (factoryId.toLowerCase().contains("intro_full")) {
         EventLogLib.logEvent("native_intro_full_false", parameters: {
           "reason":
-              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await haveInternet()}"
+              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${isHaveInternet}"
         });
       } else {
         EventLogLib.logEvent("native_intro_false", parameters: {
           "reason":
-              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await haveInternet()}"
+              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${isHaveInternet}"
         });
       }
       return null;
@@ -991,7 +993,7 @@ class AdmobAds {
     if (!isShowAllAds ||
         !config ||
         _isFullscreenAdShowing ||
-        !(await haveInternet()) ||
+        !isHaveInternet ||
         !ConsentManager.ins.canRequestAds) {
       onDisabled?.call();
       return;
@@ -1097,14 +1099,14 @@ class AdmobAds {
     if (!isShowAllAds ||
         !config ||
         _isFullscreenAdShowing ||
-        !(await haveInternet()) ||
+        !isHaveInternet ||
         !ConsentManager.ins.canRequestAds) {
       _logger.logInfo(
-          'config: $config, isShowAllAds: $isShowAllAds, isDeviceOffline: ${await haveInternet()}, _isFullscreenAdShowing: $_isFullscreenAdShowing,canRequestAds: ${ConsentManager.ins.canRequestAds}');
+          'config: $config, isShowAllAds: $isShowAllAds, isHaveInternet: ${isHaveInternet}, _isFullscreenAdShowing: $_isFullscreenAdShowing,canRequestAds: ${ConsentManager.ins.canRequestAds}');
 
       EventLogLib.logEvent("inter_intro_false", parameters: {
         "reason":
-            "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await haveInternet()}"
+            "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${isHaveInternet}"
       });
       onDisabled?.call();
       return;
@@ -1246,7 +1248,7 @@ class AdmobAds {
       onDisabled?.call();
       return;
     }
-    if (!(await haveInternet())) {
+    if (!isHaveInternet) {
       onDisabled?.call();
       return;
     }
@@ -1424,21 +1426,27 @@ class AdmobAds {
     return false;
   }
 
-  Future<bool> haveInternet() async {
-    var connectivityResult = await Connectivity().checkConnectivity();
+  bool _isHaveInternet = true;
+  bool get isHaveInternet => _isHaveInternet;
+  Future<void> haveInternet() async {
+    // var connectivityResult = await Connectivity().checkConnectivity();
+    //
+    // for (var model in connectivityResult) {
+    //   print('check_have_internet -- ${model.name}');
+    // }
+    // if (connectivityResult.contains(ConnectivityResult.none)) {
+    //   print('check_have_internet --- 1.haveInternet false');
+    //   return false;
+    // }
+    //
+    // bool isHaveConnected =
+    //     await InternetConnectionChecker.instance.hasConnection;
+    // print('check_have_internet --- 2.haveInternet $isHaveConnected');
 
-    for (var model in connectivityResult) {
-      print('check_have_internet -- ${model.name}');
-    }
-    if (connectivityResult.contains(ConnectivityResult.none)) {
-      print('check_have_internet --- 1.haveInternet false');
-      return false;
-    }
-
-    bool isHaveConnected =
-        await InternetConnectionChecker.instance.hasConnection;
-    print('check_have_internet --- 2.haveInternet $isHaveConnected');
-    return isHaveConnected;
+    Connectivity().onConnectivityChanged.listen((event) async{
+      _isHaveInternet = await InternetConnectionChecker.instance.hasConnection;
+      print('check_have_internet --- onConnectivityChanged $_isHaveInternet');
+    },);
   }
 
   //

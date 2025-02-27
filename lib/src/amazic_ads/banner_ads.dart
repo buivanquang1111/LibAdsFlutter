@@ -119,7 +119,7 @@ class _BannerAdsState extends State<BannerAds> with WidgetsBindingObserver {
     // }
 
     if (!AdmobAds.instance.isShowAllAds ||
-        !(await AdmobAds.instance.haveInternet()) ||
+        !AdmobAds.instance.isHaveInternet ||
         !widget.config ||
         !ConsentManager.ins.canRequestAds) {
       widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.banner, null);
@@ -127,11 +127,11 @@ class _BannerAdsState extends State<BannerAds> with WidgetsBindingObserver {
       if (widget.onSplashScreen) {
         EventLogLib.logEvent("banner_splash_false", parameters: {
           "reason":
-              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.haveInternet()}"
+              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.isHaveInternet}"
         });
       }else{
         EventLogLib.logEvent('${widget.visibilityDetectorKey}_false',parameters: {
-          'reason':'ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.haveInternet()}'
+          'reason':'ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.isHaveInternet}'
         });
       }
       return;
