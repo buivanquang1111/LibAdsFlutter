@@ -155,11 +155,11 @@ class _NativeAdsReloadState extends State<NativeAdsReload>
         if (ConsentManager.ins.canRequestAds) {
           if (widget.countRequest == 0) {
             print('native_ads_reload --- TH1 count = 0');
-            _initAd();
+            _initAd(text: 'TH1 count = 0');
           } else {
             for (int i = 0; i < widget.countRequest; i++) {
               print('native_ads_reload --- TH2 index = $i');
-              _initAd();
+              _initAd(text: 'TH2 index = $i');
             }
           }
         } else {
@@ -169,7 +169,7 @@ class _NativeAdsReloadState extends State<NativeAdsReload>
     );
   }
 
-  Future<void> _initAd() async {
+  Future<void> _initAd({required String text}) async {
     _stopTimer();
 
     // if (_nativeAd != null) {
@@ -187,7 +187,7 @@ class _NativeAdsReloadState extends State<NativeAdsReload>
       isClickAdsNotShowResume: widget.isClickAdsNotShowResume,
       onAdLoaded: (adNetwork, adUnitType, data) {
         print(
-            'native_ads_reload --- ${widget.visibilityDetectorKey} onAdLoaded');
+            'native_ads_reload ---$text ${widget.visibilityDetectorKey} onAdLoaded');
         if (!_isDestroy && !_isPaused) {
           _startTimer();
         }
@@ -198,7 +198,7 @@ class _NativeAdsReloadState extends State<NativeAdsReload>
       },
       onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
         print(
-            'native_ads_reload --- ${widget.visibilityDetectorKey} onAdFailedToLoad');
+            'native_ads_reload ---$text ${widget.visibilityDetectorKey} onAdFailedToLoad');
         if (!_isDestroy && !_isPaused) {
           _startTimer();
         }
@@ -210,7 +210,7 @@ class _NativeAdsReloadState extends State<NativeAdsReload>
       },
       onAdClicked: (adNetwork, adUnitType, data) {
         print(
-            'native_ads_reload --- ${widget.visibilityDetectorKey} onAdClicked');
+            'native_ads_reload ---$text ${widget.visibilityDetectorKey} onAdClicked');
         widget.onAdClicked?.call(adNetwork, adUnitType, data);
         isClicked = true;
         if (mounted) {
@@ -219,7 +219,7 @@ class _NativeAdsReloadState extends State<NativeAdsReload>
       },
       onAdDismissed: (adNetwork, adUnitType, data) {
         print(
-            'native_ads_reload --- ${widget.visibilityDetectorKey} onAdDismissed');
+            'native_ads_reload ---$text ${widget.visibilityDetectorKey} onAdDismissed');
         widget.onAdDismissed?.call(adNetwork, adUnitType, data);
         if (mounted) {
           setState(() {});
@@ -227,7 +227,7 @@ class _NativeAdsReloadState extends State<NativeAdsReload>
       },
       onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
         print(
-            'native_ads_reload --- ${widget.visibilityDetectorKey} onAdFailedToShow');
+            'native_ads_reload ---$text ${widget.visibilityDetectorKey} onAdFailedToShow');
         widget.onAdFailedToShow
             ?.call(adNetwork, adUnitType, data, errorMessage);
         if (mounted) {
@@ -236,7 +236,7 @@ class _NativeAdsReloadState extends State<NativeAdsReload>
       },
       onAdShowed: (adNetwork, adUnitType, data) {
         print(
-            'native_ads_reload --- ${widget.visibilityDetectorKey} onAdShowed');
+            'native_ads_reload ---$text ${widget.visibilityDetectorKey} onAdShowed');
         widget.onAdShowed?.call(adNetwork, adUnitType, data);
         if (mounted) {
           setState(() {});
@@ -244,7 +244,7 @@ class _NativeAdsReloadState extends State<NativeAdsReload>
       },
       onAdImpression: (adNetwork, adUnitType, data) {
         print(
-            'native_ads_reload --- ${widget.visibilityDetectorKey} onAdImpression');
+            'native_ads_reload ---$text ${widget.visibilityDetectorKey} onAdImpression');
       },
       onPaidEvent: ({
         required AdNetwork adNetwork,
@@ -256,7 +256,7 @@ class _NativeAdsReloadState extends State<NativeAdsReload>
         String? placement,
       }) {
         print(
-            'native_ads_reload --- ${widget.visibilityDetectorKey} onPaidEvent');
+            'native_ads_reload ---$text ${widget.visibilityDetectorKey} onPaidEvent');
         widget.onPaidEvent?.call(
           adNetwork: adNetwork,
           adUnitType: adUnitType,
