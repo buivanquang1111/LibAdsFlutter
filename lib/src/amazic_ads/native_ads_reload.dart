@@ -165,13 +165,13 @@ class _NativeAdsReloadState extends State<NativeAdsReload>
   Future<void> _initAd({required bool isLoadAdsWithCount}) async {
     _stopTimer();
 
-    // if (_nativeAd != null) {
-    //   _nativeAd!.dispose();
-    //   _nativeAd = null;
-    //   if (mounted) {
-    //     setState(() {});
-    //   }
-    // }
+    if (_nativeAd != null) {
+      _nativeAd!.dispose();
+      _nativeAd = null;
+      if (mounted) {
+        setState(() {});
+      }
+    }
 
     _nativeAd = AdmobAds.instance.createNative(
       visibilityDetectorKey: widget.visibilityDetectorKey,
