@@ -132,7 +132,7 @@ class _NativeAdsReloadState extends State<NativeAdsReload>
     );
   }
 
-  Future<void> _prepareAd() async {
+  Future<void> _prepareAd({required bool isFirstLoad}) async {
     if (!AdmobAds.instance.isShowAllAds) {
       widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.banner, null);
       return;
@@ -153,14 +153,19 @@ class _NativeAdsReloadState extends State<NativeAdsReload>
     ConsentManager.ins.handleRequestUmp(
       onPostExecute: () {
         if (ConsentManager.ins.canRequestAds) {
-          if (widget.countRequest == 0) {
-            print('native_ads_reload --- TH1 count = 0');
-            _initAd(text: 'TH1 count = 0');
-          } else {
-            for (int i = 0; i < widget.countRequest; i++) {
-              print('native_ads_reload --- TH2 index = $i');
-              _initAd(text: 'TH2 index = $i');
+          if (isFirstLoad) {
+            if (widget.countRequest == 0) {
+              print('native_ads_reload --- TH1 count = 0');
+              _initAd(text: 'TH1 count = 0');
+            } else {
+              for (int i = 0; i < widget.countRequest; i++) {
+                print('native_ads_reload --- TH2 index = $i');
+                _initAd(text: 'TH2 index = $i');
+                Future.delayed(Duration(seconds: 2));
+              }
             }
+          } else {
+            _initAd(text: 'TH load khac');
           }
         } else {
           widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.banner, null);
@@ -300,7 +305,7 @@ class _NativeAdsReloadState extends State<NativeAdsReload>
     if (_nativeAd?.isAdLoading != true && visibilityController.value) {
       print(
           'native_ads_reload --- ${widget.visibilityDetectorKey} start _listener');
-      _prepareAd();
+      _prepareAd(isFirstLoad: false);
       return;
     }
 
@@ -321,7 +326,7 @@ class _NativeAdsReloadState extends State<NativeAdsReload>
   void didChangeDependencies() {
     print(
         'native_ads_reload --- ${widget.visibilityDetectorKey} start didChangeDependencies');
-    _prepareAd();
+    _prepareAd(isFirstLoad: true);
     super.didChangeDependencies();
   }
 
@@ -341,7 +346,7 @@ class _NativeAdsReloadState extends State<NativeAdsReload>
         isClicked = false;
         print(
             'native_ads_reload --- ${widget.visibilityDetectorKey} start didChangeAppLifecycleState click');
-        _prepareAd();
+        _prepareAd(isFirstLoad: false);
       } else {
         onResume();
       }
@@ -391,7 +396,7 @@ class _NativeAdsReloadState extends State<NativeAdsReload>
       (timer) {
         print(
             'native_ads_reload --- ${widget.visibilityDetectorKey} start _startTimer');
-        _prepareAd();
+        _prepareAd(isFirstLoad: false);
       },
     );
   }
