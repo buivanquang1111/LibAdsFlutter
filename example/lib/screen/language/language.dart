@@ -188,15 +188,14 @@ class LanguageScreenState extends State<LanguageScreen>
           //   refreshRateSec: 10,
           //   visibilityDetectorKey: 'native-lang',
           // ),
-          NativeAdsLang(
-            factoryId: 'native_language',
-            listId: NetworkRequest.instance.getListIDByName('native_language'),
-            height: adIdManager.largeNativeAdHeight,
-            color: GlobalColors.lightGray,
-            config: true,
-            refreshRateSec: 10,
-            isReloadWhenResume: true,
-          ),
+          NativeAdsReload(
+              listId: NetworkRequest.instance.getListIDByName('native_language'),
+              refreshRateSec: 0,
+              visibilityDetectorKey: 'native_language',
+              factoryId: 'native_language',
+              config: true,
+              height: adIdManager.largeNativeAdHeight,
+              borderRadius: BorderRadius.zero),
         ],
       ),
     );

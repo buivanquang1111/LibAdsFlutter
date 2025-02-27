@@ -161,7 +161,6 @@ class _NativeAdsReloadState extends State<NativeAdsReload>
               for (int i = 0; i < widget.countRequest; i++) {
                 print('native_ads_reload --- TH2 index = $i');
                 _initAd(text: 'TH2 index = $i');
-                Future.delayed(Duration(seconds: 2));
               }
             }
           } else {
