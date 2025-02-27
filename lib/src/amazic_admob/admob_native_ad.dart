@@ -33,7 +33,7 @@ class AdmobNativeAd extends AdsBase {
   });
 
   NativeAd? _nativeAd;
-  // bool _isAdLoaded = false;
+  bool _isAdLoaded = false;
   bool _isAdLoading = false;
   bool _isAdLoadedFailed = false;
 
@@ -47,21 +47,21 @@ class AdmobNativeAd extends AdsBase {
 
   @override
   Future<void> dispose() async {
-    // _isAdLoaded = false;
+    _isAdLoaded = false;
     _isAdLoadedFailed = false;
     _nativeAd?.dispose();
     _nativeAd = null;
   }
 
   @override
-  bool get isAdLoaded => false;
+  bool get isAdLoaded => _isAdLoaded;
 
   @override
   bool get isAdLoadedFailed => _isAdLoadedFailed;
 
   @override
   Future<void> load() async {
-    // if (_isAdLoaded) return;
+    if (_isAdLoaded) return;
     print('check_remote_trick_screen --- native_request');
     EventLogLib.logEvent('${visibilityDetectorKey}_true', parameters: {
       'reason':
@@ -74,7 +74,7 @@ class AdmobNativeAd extends AdsBase {
       listener: NativeAdListener(
         onAdLoaded: (Ad ad) {
           _nativeAd = ad as NativeAd?;
-          // _isAdLoaded = true;
+          _isAdLoaded = true;
           _isAdLoading = false;
           _isAdLoadedFailed = false;
           AdmobAds.instance.onAdLoadedMethod(adNetwork, adUnitType, ad);
@@ -87,7 +87,7 @@ class AdmobNativeAd extends AdsBase {
             load();
           } else {
             _nativeAd = null;
-            // _isAdLoaded = false;
+            _isAdLoaded = false;
             _isAdLoading = false;
             _isAdLoadedFailed = true;
             AdmobAds.instance.onAdFailedToLoadMethod(
@@ -152,8 +152,7 @@ class AdmobNativeAd extends AdsBase {
       );
     }
     NativeAd? ads = _nativeAd;
-    // if (ads == null && !_isAdLoaded) {
-    if (ads == null) {
+    if (ads == null && !_isAdLoaded) {
       return const SizedBox(
         height: 1,
         width: 1,
