@@ -330,9 +330,9 @@ class _NativeAdsReloadState extends State<NativeAdsReload>
     if(widget.adsBase != null){
       print('native_ads_reload ---1. adsBase have data');
       _startTimer();
-      setState(() {
-
-      });
+      if (mounted) {
+        setState(() {});
+      }
     }else {
       print('native_ads_reload ---2. not data');
       _prepareAd(isLoadAdsWithCount: true);
