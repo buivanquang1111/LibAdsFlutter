@@ -36,6 +36,7 @@ class NativeAdsReload extends StatefulWidget {
   final bool isClickAdsNotShowResume;
   final bool isCanReloadHideView;
   final int countRequest;
+  final AdsBase? adsBase;
 
   const NativeAdsReload({
     this.adNetwork = AdNetwork.admob,
@@ -64,6 +65,7 @@ class NativeAdsReload extends StatefulWidget {
     this.isClickAdsNotShowResume = true,
     this.isCanReloadHideView = true,
     this.countRequest = 0,
+    this.adsBase,
   }) : super(key: key);
 
   @override
@@ -286,6 +288,8 @@ class _NativeAdsReloadState extends State<NativeAdsReload>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
 
+    _nativeAd = widget.adsBase;
+
     count = widget.countRequest;
 
     visibilityController = widget.visibilityController ?? ValueNotifier(true);
@@ -323,7 +327,16 @@ class _NativeAdsReloadState extends State<NativeAdsReload>
   void didChangeDependencies() {
     print(
         'native_ads_reload --- ${widget.visibilityDetectorKey} start didChangeDependencies');
-    _prepareAd(isLoadAdsWithCount: true);
+    if(widget.adsBase != null){
+      print('native_ads_reload ---1. adsBase have data');
+      _startTimer();
+      setState(() {
+
+      });
+    }else {
+      print('native_ads_reload ---2. not data');
+      _prepareAd(isLoadAdsWithCount: true);
+    }
     super.didChangeDependencies();
   }
 
