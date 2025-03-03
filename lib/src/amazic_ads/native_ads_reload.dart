@@ -295,21 +295,14 @@ class NativeAdsReloadState extends State<NativeAdsReload>
   }
 
   reloadAdsNative({required AdsBase? adsBase}) {
-    _nativeAd = null;
-    print('native_ads_reload --- start reload ads native');
-    if (mounted) {
-      setState(() {});
-    }
-    Future.delayed(const Duration(seconds: 2), () {
-      _nativeAd = adsBase;
-      if (adsBase != null) {
-        print('native_ads_reload --- reload ads native with value adsBase');
-        _startTimer();
-        if (mounted) {
-          setState(() {});
-        }
+    _nativeAd = adsBase;
+    if (adsBase != null) {
+      print('native_ads_reload --- reload ads native with value adsBase');
+      _startTimer();
+      if (mounted) {
+        setState(() {});
       }
-    });
+    }
   }
 
   late final ValueNotifier<bool> visibilityController;
