@@ -35,7 +35,6 @@ class NativeAdsReload extends StatefulWidget {
   final ValueNotifier<bool>? visibilityController;
   final bool isClickAdsNotShowResume;
   final bool isCanReloadHideView;
-  final int countRequest;
   final AdsBase? adsBase;
 
   const NativeAdsReload({
@@ -64,7 +63,6 @@ class NativeAdsReload extends StatefulWidget {
     this.reloadOnClick = false,
     this.isClickAdsNotShowResume = true,
     this.isCanReloadHideView = true,
-    this.countRequest = 0,
     this.adsBase,
   }) : super(key: key);
 
@@ -79,7 +77,6 @@ class _NativeAdsReloadState extends State<NativeAdsReload>
   Timer? _timer;
   bool _isPaused = false;
   bool _isDestroy = false;
-  int count = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -135,7 +132,7 @@ class _NativeAdsReloadState extends State<NativeAdsReload>
     );
   }
 
-  Future<void> _prepareAd({required bool isLoadAdsWithCount}) async {
+  Future<void> _prepareAd() async {
     if (!AdmobAds.instance.isShowAllAds) {
       widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.banner, null);
       return;
@@ -156,7 +153,7 @@ class _NativeAdsReloadState extends State<NativeAdsReload>
     ConsentManager.ins.handleRequestUmp(
       onPostExecute: () {
         if (ConsentManager.ins.canRequestAds) {
-          _initAd(isLoadAdsWithCount: isLoadAdsWithCount);
+          _initAd();
         } else {
           widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.banner, null);
         }
@@ -164,7 +161,7 @@ class _NativeAdsReloadState extends State<NativeAdsReload>
     );
   }
 
-  Future<void> _initAd({required bool isLoadAdsWithCount}) async {
+  Future<void> _initAd() async {
     _stopTimer();
 
     if (_nativeAd != null) {
@@ -238,15 +235,7 @@ class _NativeAdsReloadState extends State<NativeAdsReload>
         }
       },
       onAdImpression: (adNetwork, adUnitType, data) {
-        print(
-            'native_ads_reload --- ${widget.visibilityDetectorKey} onAdImpression');
-        if(isLoadAdsWithCount) {
-          count--;
-          print('native_ads_reload --- TH2 count: $count');
-          if (count > 0) {
-            _initAd(isLoadAdsWithCount: isLoadAdsWithCount);
-          }
-        }
+
       },
       onPaidEvent: ({
         required AdNetwork adNetwork,
@@ -290,11 +279,36 @@ class _NativeAdsReloadState extends State<NativeAdsReload>
 
     _nativeAd = widget.adsBase;
 
-    count = widget.countRequest;
-
     visibilityController = widget.visibilityController ?? ValueNotifier(true);
     visibilityController.addListener(_listener);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if(widget.adsBase != null){
+        print('native_ads_reload ---1. adsBase have data');
+        _startTimer();
+        if (mounted) {
+          setState(() {});
+        }
+      }else {
+        print('native_ads_reload ---2. not data');
+        _prepareAd();
+      }
+    });
   }
+
+  reloadAdsNative({required AdsBase? adsBase}){
+    _nativeAd = adsBase;
+    if(adsBase != null){
+      print('native_ads_reload --- reload ads native with value adsBase');
+      _startTimer();
+      if(mounted){
+        setState(() {
+
+        });
+      }
+    }
+  }
+
 
   late final ValueNotifier<bool> visibilityController;
 
@@ -306,7 +320,7 @@ class _NativeAdsReloadState extends State<NativeAdsReload>
     if (_nativeAd?.isAdLoading != true && visibilityController.value) {
       print(
           'native_ads_reload --- ${widget.visibilityDetectorKey} start _listener');
-      _prepareAd(isLoadAdsWithCount: true);
+      _prepareAd();
       return;
     }
 
@@ -325,18 +339,18 @@ class _NativeAdsReloadState extends State<NativeAdsReload>
 
   @override
   void didChangeDependencies() {
-    print(
-        'native_ads_reload --- ${widget.visibilityDetectorKey} start didChangeDependencies');
-    if(widget.adsBase != null){
-      print('native_ads_reload ---1. adsBase have data');
-      _startTimer();
-      if (mounted) {
-        setState(() {});
-      }
-    }else {
-      print('native_ads_reload ---2. not data');
-      _prepareAd(isLoadAdsWithCount: true);
-    }
+    // print(
+    //     'native_ads_reload --- ${widget.visibilityDetectorKey} start didChangeDependencies');
+    // if(widget.adsBase != null){
+    //   print('native_ads_reload ---1. adsBase have data');
+    //   _startTimer();
+    //   if (mounted) {
+    //     setState(() {});
+    //   }
+    // }else {
+    //   print('native_ads_reload ---2. not data');
+    //   _prepareAd(isLoadAdsWithCount: true);
+    // }
     super.didChangeDependencies();
   }
 
@@ -356,7 +370,7 @@ class _NativeAdsReloadState extends State<NativeAdsReload>
         isClicked = false;
         print(
             'native_ads_reload --- ${widget.visibilityDetectorKey} start didChangeAppLifecycleState click');
-        _prepareAd(isLoadAdsWithCount: true);
+        _prepareAd();
       } else {
         onResume();
       }
@@ -406,7 +420,7 @@ class _NativeAdsReloadState extends State<NativeAdsReload>
       (timer) {
         print(
             'native_ads_reload --- ${widget.visibilityDetectorKey} start _startTimer');
-        _prepareAd(isLoadAdsWithCount: false);
+        _prepareAd();
       },
     );
   }

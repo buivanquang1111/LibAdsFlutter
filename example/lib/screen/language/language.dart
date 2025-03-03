@@ -196,7 +196,6 @@ class LanguageScreenState extends State<LanguageScreen>
             config: true,
             height: adIdManager.largeNativeAdHeight,
             borderRadius: BorderRadius.zero,
-            countRequest: 2,
             isCanReloadHideView: true,
           ),
         ],
