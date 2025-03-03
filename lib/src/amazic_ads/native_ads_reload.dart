@@ -295,6 +295,13 @@ class NativeAdsReloadState extends State<NativeAdsReload>
   }
 
   reloadAdsNative({required AdsBase? adsBase}) {
+    if (_nativeAd != null) {
+      _nativeAd!.dispose();
+      _nativeAd = null;
+      if (mounted) {
+        setState(() {});
+      }
+    }
     _nativeAd = adsBase;
     if (adsBase != null) {
       print('native_ads_reload --- reload ads native with value adsBase');
