@@ -234,9 +234,7 @@ class NativeAdsReloadState extends State<NativeAdsReload>
           setState(() {});
         }
       },
-      onAdImpression: (adNetwork, adUnitType, data) {
-
-      },
+      onAdImpression: (adNetwork, adUnitType, data) {},
       onPaidEvent: ({
         required AdNetwork adNetwork,
         required AdUnitType adUnitType,
@@ -283,32 +281,36 @@ class NativeAdsReloadState extends State<NativeAdsReload>
     visibilityController.addListener(_listener);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if(widget.adsBase != null){
+      if (widget.adsBase != null) {
         print('native_ads_reload ---1. adsBase have data');
         _startTimer();
         if (mounted) {
           setState(() {});
         }
-      }else {
+      } else {
         print('native_ads_reload ---2. not data');
         _prepareAd();
       }
     });
   }
 
-  reloadAdsNative({required AdsBase? adsBase}){
-    _nativeAd = adsBase;
-    if(adsBase != null){
-      print('native_ads_reload --- reload ads native with value adsBase');
-      _startTimer();
-      if(mounted){
-        setState(() {
-
-        });
-      }
+  reloadAdsNative({required AdsBase? adsBase}) {
+    _nativeAd = null;
+    print('native_ads_reload --- start reload ads native');
+    if (mounted) {
+      setState(() {});
     }
+    Future.delayed(const Duration(seconds: 2), () {
+      _nativeAd = adsBase;
+      if (adsBase != null) {
+        print('native_ads_reload --- reload ads native with value adsBase');
+        _startTimer();
+        if (mounted) {
+          setState(() {});
+        }
+      }
+    });
   }
-
 
   late final ValueNotifier<bool> visibilityController;
 
