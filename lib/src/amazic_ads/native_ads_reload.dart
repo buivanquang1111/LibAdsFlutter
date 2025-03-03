@@ -298,9 +298,6 @@ class NativeAdsReloadState extends State<NativeAdsReload>
     if (_nativeAd != null) {
       _nativeAd!.dispose();
       _nativeAd = null;
-      if (mounted) {
-        setState(() {});
-      }
     }
     _nativeAd = adsBase;
     if (adsBase != null) {
