@@ -296,12 +296,11 @@ class NativeAdsReloadState extends State<NativeAdsReload>
 
   reloadAdsNative({required AdsBase? adsBase}) {
     if (_nativeAd != null) {
-      _nativeAd!.dispose();
       _nativeAd = null;
     }
-    _nativeAd = adsBase;
     if (adsBase != null) {
-      print('native_ads_reload --- reload ads native with value adsBase');
+      _nativeAd = adsBase;
+      print('native_ads_reload --- reload ads native with value adsBase $_nativeAd, $adsBase');
       _startTimer();
       if (mounted) {
         setState(() {});
