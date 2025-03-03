@@ -67,10 +67,10 @@ class NativeAdsReload extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<NativeAdsReload> createState() => _NativeAdsReloadState();
+  State<NativeAdsReload> createState() => NativeAdsReloadState();
 }
 
-class _NativeAdsReloadState extends State<NativeAdsReload>
+class NativeAdsReloadState extends State<NativeAdsReload>
     with WidgetsBindingObserver {
   AdsBase? _nativeAd;
 
