@@ -294,18 +294,8 @@ class NativeAdsReloadState extends State<NativeAdsReload>
     });
   }
 
-  reloadAdsNative({required AdsBase? adsBase}) {
-    if (_nativeAd != null) {
-      _nativeAd = null;
-    }
-    if (adsBase != null) {
-      _nativeAd = adsBase;
-      print('native_ads_reload --- reload ads native with value adsBase $_nativeAd, $adsBase');
-      _startTimer();
-      if (mounted) {
-        setState(() {});
-      }
-    }
+  reloadAdsNative() {
+    _prepareAd();
   }
 
   late final ValueNotifier<bool> visibilityController;
