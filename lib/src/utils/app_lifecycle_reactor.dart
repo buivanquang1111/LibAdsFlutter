@@ -216,40 +216,44 @@ class AppLifecycleReactor {
     EasyAdCallback? onAdDismissed,
     Function? onDismissCollapse,
   }) {
-    AdmobAds.instance.showAppOpen(
-      nameAds: nameConfig,
-      listId: listId,
-      config: config,
-      onAdDismissed: (adNetwork, adUnitType, data) {
-        setShowScreenWellCome(false);
-        onAdDismissed?.call(adNetwork, adUnitType, data);
-      },
-      onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
-        setShowScreenWellCome(false);
-        onAdFailedToLoad?.call(adNetwork, adUnitType, data, errorMessage);
-      },
-      onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
-        setShowScreenWellCome(false);
-        onAdFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);
-      },
-      onDisabled: () async {
-        setShowScreenWellCome(false);
-        EventLogLib.logEvent("open_resume_false", parameters: {
-          "reason":
-              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.isHaveInternet}"
-        });
-        onDisabled?.call();
-      },
-      onDismissCollapse: () {
-        setShowScreenWellCome(false);
-        if (onDismissCollapse != null) {
-          onDismissCollapse();
-        }
-        if (_onDismissCollapse != null) {
-          _onDismissCollapse!();
-        }
-      },
-    );
+    if (!_isExcludeScreen) {
+      AdmobAds.instance.showAppOpen(
+        nameAds: nameConfig,
+        listId: listId,
+        config: config,
+        onAdDismissed: (adNetwork, adUnitType, data) {
+          setShowScreenWellCome(false);
+          onAdDismissed?.call(adNetwork, adUnitType, data);
+        },
+        onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
+          setShowScreenWellCome(false);
+          onAdFailedToLoad?.call(adNetwork, adUnitType, data, errorMessage);
+        },
+        onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
+          setShowScreenWellCome(false);
+          onAdFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);
+        },
+        onDisabled: () async {
+          setShowScreenWellCome(false);
+          EventLogLib.logEvent("open_resume_false", parameters: {
+            "reason":
+                "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.isHaveInternet}"
+          });
+          onDisabled?.call();
+        },
+        onDismissCollapse: () {
+          setShowScreenWellCome(false);
+          if (onDismissCollapse != null) {
+            onDismissCollapse();
+          }
+          if (_onDismissCollapse != null) {
+            _onDismissCollapse!();
+          }
+        },
+      );
+    } else {
+      _isExcludeScreen = false;
+    }
   }
 
   void showAppOpenResumeAdsAfter() {}
