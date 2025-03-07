@@ -19,6 +19,9 @@ import 'package:example/screen/language/language.dart';
 
 // PreloadNativeController? introAdCtrl;
 AdsBase? preloadAds;
+AdsBase? adsBase1;
+AdsBase? adsBase2;
+List<AdsBase?> listAds = [];
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -28,7 +31,6 @@ class SplashScreen extends StatefulWidget {
 }
 
 class SplashState extends State<SplashScreen> {
-
   @override
   void initState() {
     super.initState();
@@ -62,6 +64,32 @@ class SplashState extends State<SplashScreen> {
         adjustToken: '',
         onSetRemoteConfigOrganic: () {},
         onStartLoadBannerSplash: () {
+          AdmobAds.instance
+              .loadNativeAds(
+                  adNetwork: AdNetwork.admob,
+                  factoryId: 'native_language',
+                  listId: NetworkRequest.instance
+                      .getListIDByName('native_language'),
+                  config: true,
+                  visibilityDetectorKey: 'native_language')
+              .then(
+            (value) {
+              listAds.add(value);
+            },
+          );
+          AdmobAds.instance
+              .loadNativeAds(
+                  adNetwork: AdNetwork.admob,
+                  factoryId: 'native_language',
+                  listId: NetworkRequest.instance
+                      .getListIDByName('native_language'),
+                  config: true,
+                  visibilityDetectorKey: 'native_language')
+              .then(
+            (value) {
+              listAds.add(value);
+            },
+          );
           setState(() {
             NetworkRequest.instance.listAdsId.putIfAbsent(
               'banner_splash',

@@ -78,6 +78,8 @@ class NativeAdsReloadState extends State<NativeAdsReload>
   bool _isPaused = false;
   bool _isDestroy = false;
 
+  Key _adKey = UniqueKey();
+
   @override
   Widget build(BuildContext context) {
     return VisibilityDetector(
@@ -114,18 +116,21 @@ class NativeAdsReloadState extends State<NativeAdsReload>
               height: ConsentManager.ins.canRequestAds ? widget.height : 1,
               width: MediaQuery.sizeOf(context).width,
             ),
-            child: _nativeAd?.show(
-                  height: widget.height,
-                  borderRadius: widget.borderRadius,
-                  color: widget.color,
-                  border: widget.border,
-                  padding: widget.padding,
-                  margin: widget.margin,
-                ) ??
-                SizedBox(
-                  height: 1,
-                  width: MediaQuery.sizeOf(context).width,
-                ),
+            child: Container(
+              key: _adKey,
+              child: _nativeAd?.show(
+                    height: widget.height,
+                    borderRadius: widget.borderRadius,
+                    color: widget.color,
+                    border: widget.border,
+                    padding: widget.padding,
+                    margin: widget.margin,
+                  ) ??
+                  SizedBox(
+                    height: 1,
+                    width: MediaQuery.sizeOf(context).width,
+                  ),
+            ),
           );
         },
       ),
@@ -134,19 +139,19 @@ class NativeAdsReloadState extends State<NativeAdsReload>
 
   Future<void> _prepareAd() async {
     if (!AdmobAds.instance.isShowAllAds) {
-      widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.banner, null);
+      widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.native, null);
       return;
     }
     if (!AdmobAds.instance.isHaveInternet) {
-      widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.banner, null);
+      widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.native, null);
       return;
     }
     if (!widget.config) {
-      widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.banner, null);
+      widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.native, null);
       return;
     }
     if (!ConsentManager.ins.canRequestAds) {
-      widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.banner, null);
+      widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.native, null);
       return;
     }
 
@@ -155,7 +160,7 @@ class NativeAdsReloadState extends State<NativeAdsReload>
         if (ConsentManager.ins.canRequestAds) {
           _initAd();
         } else {
-          widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.banner, null);
+          widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.native, null);
         }
       },
     );
@@ -294,8 +299,17 @@ class NativeAdsReloadState extends State<NativeAdsReload>
     });
   }
 
-  reloadAdsNative() {
-    _prepareAd();
+  reloadAdsNative({required AdsBase? adBase}) {
+    if(adBase != null){
+      _nativeAd = adBase;
+      _startTimer();
+      _adKey = UniqueKey();
+      if (mounted) {
+        setState(() {});
+      }
+    }
+
+    // _prepareAd();
   }
 
   late final ValueNotifier<bool> visibilityController;

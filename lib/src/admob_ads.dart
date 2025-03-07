@@ -41,6 +41,8 @@ class AdmobAds {
   /// Google admob's ad request
   AdRequest _adRequest = const AdRequest();
 
+  AdRequest get adRequest => _adRequest;
+
   // late final IAdIdManager adIdManager;
 
   /// True value when there is exist an Ad and false otherwise.
@@ -1427,7 +1429,9 @@ class AdmobAds {
   }
 
   bool _isHaveInternet = true;
+
   bool get isHaveInternet => _isHaveInternet;
+
   Future<void> haveInternet() async {
     // var connectivityResult = await Connectivity().checkConnectivity();
     //
@@ -1443,10 +1447,13 @@ class AdmobAds {
     //     await InternetConnectionChecker.instance.hasConnection;
     // print('check_have_internet --- 2.haveInternet $isHaveConnected');
 
-    Connectivity().onConnectivityChanged.listen((event) async{
-      _isHaveInternet = await InternetConnectionChecker.instance.hasConnection;
-      print('check_have_internet --- onConnectivityChanged $_isHaveInternet');
-    },);
+    Connectivity().onConnectivityChanged.listen(
+      (event) async {
+        _isHaveInternet =
+            await InternetConnectionChecker.instance.hasConnection;
+        print('check_have_internet --- onConnectivityChanged $_isHaveInternet');
+      },
+    );
   }
 
   //

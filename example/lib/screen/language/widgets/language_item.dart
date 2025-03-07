@@ -2,7 +2,9 @@ part of '../language.dart';
 
 class LanguageItem extends GetWidget<LanguageController> {
   final LanguageModel data;
-  const LanguageItem(this.data, {super.key});
+  final Function() onTap;
+
+  const LanguageItem(this.data, {super.key, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -26,15 +28,15 @@ class LanguageItem extends GetWidget<LanguageController> {
             ),
             child: Theme(
               data: ThemeData().copyWith(
-                 radioTheme: RadioThemeData(
-                  fillColor: MaterialStatePropertyAll(GlobalColors.darkGray),
-                )
-              ),
+                  radioTheme: RadioThemeData(
+                fillColor: MaterialStatePropertyAll(GlobalColors.darkGray),
+              )),
               child: RadioListTile(
                 value: data.code,
                 groupValue: controller.currentLanguage.value,
                 onChanged: (v) {
                   controller.confirmChangeLanguage(v);
+                  onTap();
                 },
                 controlAffinity: ListTileControlAffinity.trailing,
                 title: Row(

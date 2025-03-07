@@ -7,6 +7,7 @@ import 'package:example/common/app_app_bar.dart';
 import 'package:example/common/app_scafold.dart';
 import 'package:example/const/resource.dart';
 import 'package:example/screen/onboard/onboard_1.dart';
+import 'package:example/screen/splash/splash.dart';
 import 'package:example/utils/event_log.dart';
 import 'package:example/utils/language_ultis.dart';
 import 'package:example/utils/preferences_util.dart';
@@ -40,16 +41,77 @@ class LanguageScreenState extends State<LanguageScreen>
     with WidgetsBindingObserver {
   final controller = Get.find<LanguageController>();
   final key = GlobalKey<CollapseBannerAdsState>();
+  final nativeKey = GlobalKey<NativeAdsReloadState>();
+
+  //
+  NativeAd? _currentNativeAd;
+  NativeAd? _nextNativeAd;
+  bool _isCurrentAdLoaded = false;
+  bool _isNextAdLoaded = false;
+  Key _adKey = UniqueKey(); // Key để ép Flutter rebuild UI
 
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     print('appLifeState: initState');
     super.initState();
+    _loadCurrentAd();
+    _preloadNextAd();
+  }
+
+  void _loadCurrentAd() {
+    _currentNativeAd = NativeAd(
+      adUnitId: 'ca-app-pub-3940256099942544/2247696110',
+      factoryId: 'native_language',
+      request: AdRequest(),
+      listener: NativeAdListener(
+        onAdLoaded: (ad) {
+          setState(() {
+            _isCurrentAdLoaded = true;
+          });
+        },
+        onAdFailedToLoad: (ad, error) {
+          ad.dispose();
+        },
+      ),
+    )..load();
+  }
+
+  void _preloadNextAd() {
+    _nextNativeAd = NativeAd(
+      adUnitId: 'ca-app-pub-3940256099942544/2247696110',
+      factoryId: 'native_language',
+      request: AdRequest(),
+      listener: NativeAdListener(
+        onAdLoaded: (ad) {
+          setState(() {
+            _isNextAdLoaded = true;
+          });
+        },
+        onAdFailedToLoad: (ad, error) {
+          ad.dispose();
+        },
+      ),
+    )..load();
+  }
+
+  void _showNextAd() {
+    if (_isNextAdLoaded) {
+      setState(() {
+        _currentNativeAd = _nextNativeAd; // Gán NativeAd mới vào
+        _adKey = UniqueKey(); // Tạo key mới để ép Flutter rebuild UI
+        _isCurrentAdLoaded = true;
+        _isNextAdLoaded = false;
+      });
+
+      _preloadNextAd(); // Load trước NativeAd tiếp theo
+    }
   }
 
   @override
   void dispose() {
+    _currentNativeAd?.dispose();
+    _nextNativeAd?.dispose();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -168,7 +230,17 @@ class LanguageScreenState extends State<LanguageScreen>
                 vertical: 24.h,
               ),
               itemBuilder: (context, index) {
-                return LanguageItem(controller.listLanguage[index]);
+                return LanguageItem(
+                  controller.listLanguage[index],
+                  onTap: () {
+                    Fluttertoast.showToast(msg: 'click');
+                    if (listAds.length > 1) {
+                      listAds.removeAt(0);
+                      nativeKey.currentState
+                          ?.reloadAdsNative(adBase: listAds[0]);
+                    }
+                  },
+                );
               },
               separatorBuilder: (context, index) {
                 return const SizedBox(height: 12);
@@ -189,8 +261,10 @@ class LanguageScreenState extends State<LanguageScreen>
           //   visibilityDetectorKey: 'native-lang',
           // ),
           NativeAdsReload(
+            key: nativeKey,
+            adsBase: listAds.isNotEmpty ? listAds[0] : null,
             listId: NetworkRequest.instance.getListIDByName('native_language'),
-            refreshRateSec: 0,
+            refreshRateSec: 10,
             visibilityDetectorKey: 'native_language',
             factoryId: 'native_language',
             config: true,
@@ -198,6 +272,16 @@ class LanguageScreenState extends State<LanguageScreen>
             borderRadius: BorderRadius.zero,
             isCanReloadHideView: true,
           ),
+          // NativeAdsAdmob(
+          //     key: nativeKey,
+          //     nativeAd: nativeAd,
+          //     idAds: 'ca-app-pub-3940256099942544/2247696110',
+          //     refreshRateSec: 0,
+          //     visibilityDetectorKey: 'native_language',
+          //     factoryId: 'native_language',
+          //     config: true,
+          //     height: adIdManager.largeNativeAdHeight,
+          //     borderRadius: BorderRadius.zero),
         ],
       ),
     );
