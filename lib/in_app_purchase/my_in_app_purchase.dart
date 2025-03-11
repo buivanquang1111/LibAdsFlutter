@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 import 'package:amazic_ads_flutter/in_app_purchase/premium_type.dart';
 import 'package:collection/collection.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 
@@ -100,8 +99,8 @@ class MyInAppPurchase {
         .buyNonConsumable(purchaseParam: purchaseParam)
         .catchError((error) {
       print('my_in_app_purchase---error: $error');
-      Fluttertoast.showToast(
-          msg: "Please try again later.", toastLength: Toast.LENGTH_SHORT);
+      // Fluttertoast.showToast(
+      //     msg: "Please try again later.", toastLength: Toast.LENGTH_SHORT);
     });
   }
 

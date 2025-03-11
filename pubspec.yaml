@@ -22,7 +22,7 @@ dependencies:
   connectivity_plus: ^6.0.2
   internet_connection_checker: ^3.0.1
   http: ^1.2.1
-  fluttertoast: ^8.2.8
+#  fluttertoast: ^8.2.8
   adjust_sdk: ^4.38.0
   shared_preferences: ^2.3.1
   screenshot: ^3.0.0
