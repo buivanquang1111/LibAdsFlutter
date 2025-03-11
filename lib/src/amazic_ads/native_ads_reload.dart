@@ -308,8 +308,10 @@ class NativeAdsReloadState extends State<NativeAdsReload>
         setState(() {});
       }
     }
+  }
 
-    // _prepareAd();
+  reloadAdsNow(){
+    _prepareAd();
   }
 
   late final ValueNotifier<bool> visibilityController;
