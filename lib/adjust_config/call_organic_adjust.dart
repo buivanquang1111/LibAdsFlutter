@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:advertising_id/advertising_id.dart';
+// import 'package:advertising_id/advertising_id.dart';
 import 'package:http/http.dart';
 
 import '../src/utils/preferences_util.dart';
 
+///tạm thời bỏ k ấy đưucoj id của device nên k call đưcoj adjust (do bỏ k dùng adjust)
 class CallOrganicAdjust {
   var trackerName = "Organic";
 
@@ -104,7 +105,7 @@ class CallOrganicAdjust {
   Future<String?> getAdvertisingId() async {
     String? advertisingId;
     try {
-      advertisingId = await AdvertisingId.id(true);
+      // advertisingId = await AdvertisingId.id(true);
     } catch (e) {
       advertisingId = null;
     }
