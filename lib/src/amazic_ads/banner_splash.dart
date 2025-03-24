@@ -10,7 +10,7 @@ import 'package:screenshot/screenshot.dart';
 import '../utils/detect_test_ad.dart';
 
 class BannerSplash extends StatefulWidget {
-  final List<String> listIdAds;
+  final String idAds;
   final bool remoteConfig;
   final String visibilityDetectorKey;
   final Function()? onNext;
@@ -22,7 +22,7 @@ class BannerSplash extends StatefulWidget {
 
   const BannerSplash(
       {super.key,
-      required this.listIdAds,
+      required this.idAds,
       required this.remoteConfig,
       required this.visibilityDetectorKey,
       this.onNext,
@@ -171,7 +171,7 @@ class _BannerSplashState extends State<BannerSplash> {
         key: adWidgetKey,
         onSplashScreen: true,
         type: AdsBannerType.adaptive,
-        listId: widget.listIdAds,
+        idAds: widget.idAds,
         config: widget.remoteConfig,
         visibilityDetectorKey: widget.visibilityDetectorKey,
         onAdLoaded: (adNetwork, adUnitType, data) {

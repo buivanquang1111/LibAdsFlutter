@@ -35,6 +35,21 @@ class MainActivity : FlutterActivity() {
             }
         }
 
+        MethodChannel(
+            flutterEngine.getDartExecutor().getBinaryMessenger(),
+            "main_channel"
+        ).setMethodCallHandler { call, result ->
+            when (call.method) {
+                "init_mediation" -> {
+                    val canRequestAds = call.arguments as Boolean
+                    initMediation(canRequestAds)
+                    result.success(true)
+                }
+
+                // "flavor" -> result.success(BuildConfig.FLAVOR)
+            }
+        }
+
         initAdFactory(flutterEngine)
     }
 

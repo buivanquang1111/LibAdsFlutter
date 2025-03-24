@@ -11,7 +11,7 @@ import 'loading_ads.dart';
 class NativeAds extends StatefulWidget {
   final AdNetwork adNetwork;
   final String factoryId;
-  final List<String> listId;
+  final String idAds;
   final double height;
   final Color? color;
   final BorderRadiusGeometry borderRadius;
@@ -44,7 +44,7 @@ class NativeAds extends StatefulWidget {
   NativeAds({
     this.adNetwork = AdNetwork.admob,
     required this.factoryId,
-    required this.listId,
+    required this.idAds,
     required this.height,
     this.color,
     this.border,
@@ -384,7 +384,7 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
       visibilityDetectorKey: widget.visibilityDetectorKey,
       adNetwork: widget.adNetwork,
       factoryId: widget.factoryId,
-      listId: widget.listId,
+      idAds: widget.idAds,
       isClickAdsNotShowResume: widget.isClickAdsNotShowResume,
       onAdClicked: (adNetwork, adUnitType, data) {
         print('native_language --- onAdClicked');
@@ -417,7 +417,7 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
         widget.onAdFailedToLoad
             ?.call(adNetwork, adUnitType, data, errorMessage);
         _logger.logInfo(
-            'native ad: onAdFailedToLoad , listId: ${widget.listId[0]}, AdmobAds.instance.isShowAllAds: ${AdmobAds.instance.isShowAllAds}, widget.config: ${widget.config}, ConsentManager.ins.canRequestAds: ${ConsentManager.ins.canRequestAds}');
+            'native ad: onAdFailedToLoad , AdmobAds.instance.isShowAllAds: ${AdmobAds.instance.isShowAllAds}, widget.config: ${widget.config}, ConsentManager.ins.canRequestAds: ${ConsentManager.ins.canRequestAds}');
         if (mounted) {
           setState(() {});
         }

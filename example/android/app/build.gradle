@@ -66,6 +66,13 @@ flutter {
 }
 
 dependencies {
+    implementation platform('com.google.firebase:firebase-bom:32.6.0')
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-crashlytics'
+    implementation 'androidx.multidex:multidex:2.0.1'
+    implementation 'com.google.android.gms:play-services-ads:22.6.0'
+    implementation 'com.google.android.gms:play-services-ads-identifier:18.0.1'
+
     implementation  'com.google.ads.mediation:applovin:12.1.0.0'
     implementation  'com.google.ads.mediation:vungle:7.1.0.0'
     implementation  'com.google.ads.mediation:facebook:6.16.0.0'
@@ -73,11 +80,4 @@ dependencies {
     implementation  'com.google.ads.mediation:pangle:5.7.0.1.0'
     implementation  'com.unity3d.ads:unity-ads:4.9.2'
     implementation  'com.google.ads.mediation:unity:4.9.2.0'
-
-    implementation platform('com.google.firebase:firebase-bom:32.6.0')
-    implementation 'com.google.firebase:firebase-analytics'
-    implementation 'com.google.firebase:firebase-crashlytics'
-    implementation 'androidx.multidex:multidex:2.0.1'
-    implementation 'com.google.android.gms:play-services-ads:22.6.0'
-    implementation 'com.google.android.gms:play-services-ads-identifier:18.0.1'
 }

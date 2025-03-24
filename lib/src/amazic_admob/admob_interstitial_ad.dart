@@ -15,7 +15,7 @@ class AdmobInterstitialAd extends AdsBase {
   final String? nameAds;
 
   AdmobInterstitialAd({
-    required super.listId,
+    required super.idAds,
     required this.adRequest,
     required this.isShowAdsSplash,
     required this.nameAds,
@@ -77,22 +77,19 @@ class AdmobInterstitialAd extends AdsBase {
         () {
           EventLogLib.logEvent('inter_splash_id_timeout');
           _logger.logInfo('Ad Timeout: Timeout 20s ads Inter');
-          onAdFailedToShow?.call(
-              adNetwork, adUnitType, _interstitialAd, 'Ad timeout 20s');
+          onAdFailedToShow?.call(adNetwork, adUnitType, _interstitialAd, 'Ad timeout 20s');
         },
       );
-    }else{
-      if(nameAds != null) {
+    } else {
+      if (nameAds != null) {
         EventLogLib.logEvent('${nameAds}_true', parameters: {
           'reason':
-          'ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust
-              .instance.isOrganic()}_internet_${AdmobAds.instance
-              .isHaveInternet}'
+              'ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.isHaveInternet}'
         });
       }
     }
     await InterstitialAd.load(
-      adUnitId: listId.isNotEmpty ? listId[0] : '',
+      adUnitId: idAds,
       request: adRequest,
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (InterstitialAd ad) {
@@ -122,22 +119,13 @@ class AdmobInterstitialAd extends AdsBase {
         },
         onAdFailedToLoad: (LoadAdError error) {
           _logger.logInfo('3.load inter onAdFailedToLoad');
-          if (listId.length > 1) {
-            _logger.logInfo('4.load inter onAdFailedToLoad removeAt 0');
-            listId.removeAt(0);
-            load();
-          } else {
-            _logger.logInfo('5.load inter onAdFailedToLoadMethod');
-            _adShowTimeoutTimer?.cancel();
-            _interstitialAd = null;
-            _isAdLoaded = false;
-            _isAdLoading = false;
-            _isAdLoadedFailed = true;
-            AdmobAds.instance.onAdFailedToLoadMethod(
-                adNetwork, adUnitType, error, error.toString());
-            onAdFailedToLoad?.call(
-                adNetwork, adUnitType, error, error.toString());
-          }
+          _adShowTimeoutTimer?.cancel();
+          _interstitialAd = null;
+          _isAdLoaded = false;
+          _isAdLoading = false;
+          _isAdLoadedFailed = true;
+          AdmobAds.instance.onAdFailedToLoadMethod(adNetwork, adUnitType, error, error.toString());
+          onAdFailedToLoad?.call(adNetwork, adUnitType, error, error.toString());
         },
       ),
     );
@@ -169,8 +157,7 @@ class AdmobInterstitialAd extends AdsBase {
       },
       onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
         _adShowTimeoutTimer?.cancel();
-        AdmobAds.instance.onAdFailedToShowMethod(
-            adNetwork, adUnitType, ad, error.toString());
+        AdmobAds.instance.onAdFailedToShowMethod(adNetwork, adUnitType, ad, error.toString());
         onAdFailedToShow?.call(adNetwork, adUnitType, ad, error.toString());
 
         ad.dispose();

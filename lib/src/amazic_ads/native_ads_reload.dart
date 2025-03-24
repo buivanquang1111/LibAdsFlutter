@@ -11,7 +11,7 @@ class NativeAdsReload extends StatefulWidget {
 
   final AdNetwork adNetwork;
   final String factoryId;
-  final List<String> listId;
+  final String idAds;
   final double height;
   final Color? color;
   final BorderRadiusGeometry borderRadius;
@@ -39,7 +39,7 @@ class NativeAdsReload extends StatefulWidget {
 
   const NativeAdsReload({
     this.adNetwork = AdNetwork.admob,
-    required this.listId,
+    required this.idAds,
     required this.refreshRateSec,
     required this.visibilityDetectorKey,
     this.visibilityController,
@@ -180,7 +180,7 @@ class NativeAdsReloadState extends State<NativeAdsReload>
     _nativeAd = AdmobAds.instance.createNative(
       visibilityDetectorKey: widget.visibilityDetectorKey,
       adNetwork: widget.adNetwork,
-      listId: widget.listId,
+      idAds: widget.idAds,
       isClickAdsNotShowResume: widget.isClickAdsNotShowResume,
       onAdLoaded: (adNetwork, adUnitType, data) {
         print(

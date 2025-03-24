@@ -55,8 +55,8 @@ class OnBoardState1 extends State<OnboardScreen1> {
       visibilityDetectorKey: 'native_intro',
       config: true,
       adNetwork: AdNetwork.admob,
-      factoryId: adIdManager.nativeIntroFactory,
-      listId: NetworkRequest.instance.getListIDByName('native_intro'),
+      factoryId: 'native_intro',
+      idAds: adIdManager.native_intro,
       onAdLoaded: (adNetwork, adUnitType, data) {
         setState(() {});
         print('check_load_native_intro: xong');

@@ -8,7 +8,7 @@ import '../../admob_ads_flutter.dart';
 /// Listens for app foreground events and shows app open ads.
 class AppLifecycleReactor {
   final GlobalKey<NavigatorState> navigatorKey;
-  final List<String> listId;
+  final String idAds;
   final AdNetwork adNetwork;
   final bool
       isShowWelComeScreenAfterAds; //hiển thị màn Welcome sau quảng cáo resume
@@ -25,7 +25,7 @@ class AppLifecycleReactor {
 
   AppLifecycleReactor(
       {required this.navigatorKey,
-      required this.listId,
+      required this.idAds,
       this.config = true,
       required this.nameConfig,
       required this.adNetwork,
@@ -145,14 +145,12 @@ class AppLifecycleReactor {
           return;
         }
 
-        if (listId.isNotEmpty != true) return;
-
         print(
             'check_app_resume --- 1.isShowWelComeScreenAfterAds: $isShowWelComeScreenAfterAds');
         if (isShowWelComeScreenAfterAds) {
           AdmobAds.instance.showAppOpen(
               nameAds: nameConfig,
-              listId: listId,
+              idAds: idAds,
               config: config,
               onAdDismissed: (adNetwork, adUnitType, data) {
                 if (onGoToWelComeBack != null) {
@@ -219,7 +217,7 @@ class AppLifecycleReactor {
     if (!_isExcludeScreen) {
       AdmobAds.instance.showAppOpen(
         nameAds: nameConfig,
-        listId: listId,
+        idAds: idAds,
         config: config,
         onAdDismissed: (adNetwork, adUnitType, data) {
           setShowScreenWellCome(false);

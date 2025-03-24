@@ -7,7 +7,7 @@ import '../utils/amazic_logger.dart';
 
 class InterstitialAds extends StatefulWidget {
   final AdNetwork adNetwork;
-  final List<String> listId;
+  final String idAds;
   final EasyAdCallback? onAdLoaded;
   final EasyAdCallback? onAdShowed;
   final EasyAdCallback? onAdClicked;
@@ -20,7 +20,7 @@ class InterstitialAds extends StatefulWidget {
   const InterstitialAds({
     Key? key,
     required this.adNetwork,
-    required this.listId,
+    required this.idAds,
     required this.nameAds,
     this.onAdLoaded,
     this.onAdShowed,
@@ -36,7 +36,7 @@ class InterstitialAds extends StatefulWidget {
 
   static DialogRoute getRoute({
     required BuildContext context,
-    required List<String> listId,
+    required String idAds,
     AdNetwork adNetwork = AdNetwork.admob,
     EasyAdCallback? onAdLoaded,
     EasyAdCallback? onAdShowed,
@@ -52,7 +52,7 @@ class InterstitialAds extends StatefulWidget {
       context: context,
       builder: (context) => InterstitialAds(
         nameAds: nameAds,
-        listId: listId,
+        idAds: idAds,
         adNetwork: adNetwork,
         onAdLoaded: onAdLoaded,
         onAdShowed: onAdShowed,
@@ -176,7 +176,7 @@ class _InterstitialAdsState extends State<InterstitialAds>
     _interstitialAd = AdmobAds.instance.createInterstitial(
       nameAds: widget.nameAds,
       adNetwork: widget.adNetwork,
-      listId: widget.listId,
+      idAds: widget.idAds,
       onAdClicked: (adNetwork, adUnitType, data) {
         widget.onAdClicked?.call(adNetwork, adUnitType, data);
       },

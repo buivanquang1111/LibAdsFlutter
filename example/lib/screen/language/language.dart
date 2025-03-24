@@ -159,8 +159,7 @@ class LanguageScreenState extends State<LanguageScreen>
                     //       () {
                     AdmobAds.instance.showInterstitialAd(
                       nameAds: 'inter_intro',
-                      listId: NetworkRequest.instance
-                          .getListIDByName('inter_intro'),
+                      idAds: adIdManager.inter_intro,
                       config: true,
                       onDisabled: () {
                         controller.foSave();
@@ -263,7 +262,7 @@ class LanguageScreenState extends State<LanguageScreen>
           NativeAdsReload(
             key: nativeKey,
             adsBase: listAds.isNotEmpty ? listAds[0] : null,
-            listId: NetworkRequest.instance.getListIDByName('native_language'),
+            idAds: adIdManager.native_language,
             refreshRateSec: 10,
             visibilityDetectorKey: 'native_language',
             factoryId: 'native_language',

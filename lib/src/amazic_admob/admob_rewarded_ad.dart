@@ -12,7 +12,7 @@ class AdmobRewardedAd extends AdsBase {
   final String? nameAds;
 
   AdmobRewardedAd({
-    required super.listId,
+    required super.idAds,
     required this.adRequest,
     required this.nameAds,
     super.onAdLoaded,
@@ -58,16 +58,14 @@ class AdmobRewardedAd extends AdsBase {
   Future<void> load() async {
     if (_isAdLoaded) return;
     _isAdLoading = true;
-    if(nameAds != null) {
+    if (nameAds != null) {
       EventLogLib.logEvent('${nameAds}_true', parameters: {
         'reason':
-        'ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust
-            .instance.isOrganic()}_internet_${AdmobAds.instance
-            .isHaveInternet}'
+            'ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.isHaveInternet}'
       });
     }
     await RewardedAd.load(
-      adUnitId: listId.isNotEmpty ? listId[0] : '',
+      adUnitId: idAds,
       request: adRequest,
       rewardedAdLoadCallback: RewardedAdLoadCallback(
         onAdLoaded: (RewardedAd ad) {
@@ -95,19 +93,12 @@ class AdmobRewardedAd extends AdsBase {
           onAdLoaded?.call(adNetwork, adUnitType, ad);
         },
         onAdFailedToLoad: (LoadAdError error) {
-          if (listId.length > 1) {
-            listId.removeAt(0);
-            load();
-          } else {
-            _rewardedAd = null;
-            _isAdLoaded = false;
-            _isAdLoadedFailed = true;
-            _isAdLoading = false;
-            AdmobAds.instance.onAdFailedToLoadMethod(
-                adNetwork, adUnitType, error, error.toString());
-            onAdFailedToLoad?.call(
-                adNetwork, adUnitType, error, error.toString());
-          }
+          _rewardedAd = null;
+          _isAdLoaded = false;
+          _isAdLoadedFailed = true;
+          _isAdLoading = false;
+          AdmobAds.instance.onAdFailedToLoadMethod(adNetwork, adUnitType, error, error.toString());
+          onAdFailedToLoad?.call(adNetwork, adUnitType, error, error.toString());
         },
       ),
     );
@@ -137,8 +128,7 @@ class AdmobRewardedAd extends AdsBase {
         ad.dispose();
       },
       onAdFailedToShowFullScreenContent: (RewardedAd ad, AdError error) {
-        AdmobAds.instance.onAdFailedToShowMethod(
-            adNetwork, adUnitType, ad, error.toString());
+        AdmobAds.instance.onAdFailedToShowMethod(adNetwork, adUnitType, ad, error.toString());
         onAdFailedToShow?.call(adNetwork, adUnitType, ad, error.toString());
 
         ad.dispose();
@@ -152,8 +142,7 @@ class AdmobRewardedAd extends AdsBase {
     ad.setImmersiveMode(true);
     ad.show(
       onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
-        AdmobAds.instance.onEarnedRewardMethod(
-            adNetwork, adUnitType, reward.type, reward.amount);
+        AdmobAds.instance.onEarnedRewardMethod(adNetwork, adUnitType, reward.type, reward.amount);
         onEarnedReward?.call(adNetwork, adUnitType, reward.type, reward.amount);
       },
     );

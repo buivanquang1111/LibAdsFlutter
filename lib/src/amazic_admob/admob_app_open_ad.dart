@@ -12,7 +12,7 @@ class AdmobAppOpenAd extends AdsBase {
   final String? nameAds;
 
   AdmobAppOpenAd({
-    required super.listId,
+    required super.idAds,
     required this.adRequest,
     required this.isShowAdsSplash,
     required this.nameAds,
@@ -62,31 +62,31 @@ class AdmobAppOpenAd extends AdsBase {
   }
 
   @override
-  Future<void> load() async{
+  Future<void> load() async {
     if (isAdLoaded) return Future.value();
-    if (listId.isEmpty) return Future.value();
+
     _isAdLoading = true;
-    if(isShowAdsSplash){
+    if (isShowAdsSplash) {
       EventLogLib.logEvent("open_splash_true");
       _adShowTimeoutTimer?.cancel();
-      _adShowTimeoutTimer = Timer(const Duration(seconds: 20), () {
-        EventLogLib.logEvent('open_splash_id_timeout');
-        _logger.logInfo('Ad Timeout: Timeout 20s ads Open');
-        onAdFailedToShow?.call(
-            adNetwork, adUnitType, _appOpenAd, 'Ad timeout 20s');
-      },);
-    }else{
-      if(nameAds != null) {
+      _adShowTimeoutTimer = Timer(
+        const Duration(seconds: 20),
+        () {
+          EventLogLib.logEvent('open_splash_id_timeout');
+          _logger.logInfo('Ad Timeout: Timeout 20s ads Open');
+          onAdFailedToShow?.call(adNetwork, adUnitType, _appOpenAd, 'Ad timeout 20s');
+        },
+      );
+    } else {
+      if (nameAds != null) {
         EventLogLib.logEvent('${nameAds}_true', parameters: {
           'reason':
-          'ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust
-              .instance.isOrganic()}_internet_${AdmobAds.instance
-              .isHaveInternet}'
+              'ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.isHaveInternet}'
         });
       }
     }
     return AppOpenAd.load(
-      adUnitId: listId.isNotEmpty ? listId[0] : '',
+      adUnitId: idAds,
       request: adRequest,
       adLoadCallback: AppOpenAdLoadCallback(
         onAdLoaded: (AppOpenAd ad) {
@@ -115,20 +115,13 @@ class AdmobAppOpenAd extends AdsBase {
           onAdLoaded?.call(adNetwork, adUnitType, ad);
         },
         onAdFailedToLoad: (LoadAdError error) {
-          if (listId.length > 1) {
-            listId.removeAt(0);
-            load();
-          } else {
-            _adShowTimeoutTimer?.cancel();
-            _appOpenAd = null;
-            _isAdLoading = false;
-            _isAdLoadedFailed = true;
-            _isAdLoaded = false;
-            AdmobAds.instance.onAdFailedToLoadMethod(
-                adNetwork, adUnitType, error, error.toString());
-            onAdFailedToLoad?.call(
-                adNetwork, adUnitType, error, error.toString());
-          }
+          _adShowTimeoutTimer?.cancel();
+          _appOpenAd = null;
+          _isAdLoading = false;
+          _isAdLoadedFailed = true;
+          _isAdLoaded = false;
+          AdmobAds.instance.onAdFailedToLoadMethod(adNetwork, adUnitType, error, error.toString());
+          onAdFailedToLoad?.call(adNetwork, adUnitType, error, error.toString());
         },
       ),
     );
@@ -149,10 +142,10 @@ class AdmobAppOpenAd extends AdsBase {
     }
 
     if (_isShowingAd) {
-      AdmobAds.instance.onAdFailedToShowMethod(adNetwork, adUnitType, null,
-          'Tried to show ad while already showing an ad.');
-      onAdFailedToShow?.call(adNetwork, adUnitType, null,
-          'Tried to show ad while already showing an ad.');
+      AdmobAds.instance.onAdFailedToShowMethod(
+          adNetwork, adUnitType, null, 'Tried to show ad while already showing an ad.');
+      onAdFailedToShow?.call(
+          adNetwork, adUnitType, null, 'Tried to show ad while already showing an ad.');
       return;
     }
 
@@ -176,8 +169,7 @@ class AdmobAppOpenAd extends AdsBase {
         _adShowTimeoutTimer?.cancel();
         _isShowingAd = false;
 
-        AdmobAds.instance.onAdFailedToShowMethod(
-            adNetwork, adUnitType, ad, error.toString());
+        AdmobAds.instance.onAdFailedToShowMethod(adNetwork, adUnitType, ad, error.toString());
         onAdFailedToShow?.call(adNetwork, adUnitType, ad, error.toString());
 
         ad.dispose();

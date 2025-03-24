@@ -111,11 +111,9 @@ class AdmobAds {
     bool enableLogger = true,
     bool debugUmp = false,
     Future<dynamic> Function(bool canRequestAds)? initMediationCallback,
-    required String adjustToken,
     bool isShowWelComeScreenAfterAds = true,
-    required String nameAdsResume,
+    required String idAdsResume,
     required String keyResumeConfig,
-    required Function() onSetRemoteConfigOrganic,
     required Function() onStartLoadBannerSplash,
     required Function() onNextAction,
     required String keyRateAOA,
@@ -124,14 +122,13 @@ class AdmobAds {
     required String keyIntervalBetweenInterstitial,
     String? keyIntervalBetweenInterstitialOrganic,
     required String keyInterstitialFromStart,
-    required String nameAdsOpenSplash,
-    required String nameAdsInterSplash,
+    required String idAdsOpen,
+    required String idAdsInter,
     String? linkServer,
     String? appId,
     String? packageName,
     bool isIap = false,
     GlobalKey<NavigatorState>? navigatorKey,
-    required bool turnOnOrganic,
     String? keyTrickScreen,
     bool isCallIdServer = true,
     bool isCallAdjust = false,
@@ -145,7 +142,6 @@ class AdmobAds {
     //init remote key
     RemoteConfigKeyLib.initializeKeys(remoteConfigKeys);
 
-    CallOrganicAdjust.instance.setTurnOnOrganic(turnOn: turnOnOrganic);
     _timer = Timer.periodic(
       const Duration(seconds: 1),
       (timer) {
@@ -153,7 +149,6 @@ class AdmobAds {
       },
     );
 
-    final Completer<bool> organicCompleter = Completer<bool>();
     final Completer<bool> umpCompleter = Completer<bool>();
 
     const timeoutDuration = Duration(seconds: 12);
@@ -169,32 +164,13 @@ class AdmobAds {
     });
 
     ///call remote config
-    Future<void> initRemoteConfig =
-        RemoteConfigLib.init(remoteConfigKeys: remoteConfigKeys).then(
+    Future<void> initRemoteConfig = RemoteConfigLib.init(remoteConfigKeys: remoteConfigKeys).then(
       (value) {
         for (var key in RemoteConfigKeyLib.listRemoteConfigKey) {
           print('CHECK_REMOTE --- ${key.name}: ${key.defaultValue}');
         }
-        // RemoteConfigLib.getRemoteConfig();
       },
     );
-
-    ///call Organic
-    Future<void>? initOrganicAdjust = isCallAdjust
-        ? CallOrganicAdjust.instance.initOrganicAdjust(
-            onOrganic: () {
-              if (!organicCompleter.isCompleted) {
-                organicCompleter.complete(true);
-              }
-            },
-            onError: (p0) {
-              if (!organicCompleter.isCompleted) {
-                organicCompleter.complete(false);
-              }
-            },
-            onNextAction: () {},
-            appToken: adjustToken)
-        : null;
 
     ///call UMP
     Future<void> initUMP = initUMPAndAdmob(
@@ -217,27 +193,9 @@ class AdmobAds {
       navigatorKey: navigatorKey,
     );
 
-    ///call id ads
-    Future<void>? callIdAds = isCallIdServer
-        ? NetworkRequest.instance.fetchAdsModel(
-            linkServer: linkServer,
-            appId: appId,
-            packageName: packageName,
-            onResponse: () {},
-            onError: (p0) {},
-          )
-        : null;
-
     final List<Future<dynamic>> tasks = [];
     tasks.add(initRemoteConfig);
-    if (isCallAdjust) {
-      tasks.add(initOrganicAdjust!);
-      tasks.add(organicCompleter.future);
-    }
     tasks.add(initUMP);
-    if (isCallIdServer) {
-      tasks.add(callIdAds!);
-    }
     tasks.add(umpCompleter.future);
     print('check_length_tasks --- ${tasks.length}');
 
@@ -253,39 +211,6 @@ class AdmobAds {
       }
     });
 
-    // final tasksFuture = isCallIdServer
-    //     ? Future.wait([
-    //         initRemoteConfig,
-    //         initOrganicAdjust,
-    //         initUMP,
-    //         callIdAds,
-    //         organicCompleter.future,
-    //         umpCompleter.future,
-    //       ]).then((_) {
-    //         if (!timeoutCompleter.isCompleted) {
-    //           timeoutCompleter.complete();
-    //         }
-    //       }).catchError((e) {
-    //         if (!timeoutCompleter.isCompleted) {
-    //           timeoutCompleter.completeError(e);
-    //         }
-    //       })
-    //     : Future.wait([
-    //         initRemoteConfig,
-    //         initOrganicAdjust,
-    //         initUMP,
-    //         organicCompleter.future,
-    //         umpCompleter.future,
-    //       ]).then((_) {
-    //         if (!timeoutCompleter.isCompleted) {
-    //           timeoutCompleter.complete();
-    //         }
-    //       }).catchError((e) {
-    //         if (!timeoutCompleter.isCompleted) {
-    //           timeoutCompleter.completeError(e);
-    //         }
-    //       });
-
     try {
       await Future.any([tasksFuture, timeoutCompleter.future]);
       print('time_out_call: All tasks completed successfully.');
@@ -299,14 +224,6 @@ class AdmobAds {
       EventLogLib.logEvent("inter_splash_error");
       countOpenApp();
       onNextAction();
-    }
-
-    ///set giá trị remote TH Organic
-    if (isCallAdjust) {
-      bool isOrganic = await organicCompleter.future;
-      if (isOrganic) {
-        onSetRemoteConfigOrganic();
-      }
     }
 
     ///set k show all ads TH đã mua sub
@@ -326,16 +243,15 @@ class AdmobAds {
 
     ///set time
     setOpenAppTime(DateTime.now().millisecondsSinceEpoch);
-    setTimeIntervalBetweenInter(RemoteConfigLib.configs[
-            RemoteConfigKeyLib.getKeyByName(PreferencesUtilLib.isOrganicAdjust()
-                    ? keyIntervalBetweenInterstitialOrganic ??
-                        keyIntervalBetweenInterstitial
+    setTimeIntervalBetweenInter(RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(
+                PreferencesUtilLib.isOrganicAdjust()
+                    ? keyIntervalBetweenInterstitialOrganic ?? keyIntervalBetweenInterstitial
                     : keyIntervalBetweenInterstitial)
-                .name] *
+            .name] *
         1000);
-    setTimeIntervalInterFromStart(RemoteConfigLib.configs[
-            RemoteConfigKeyLib.getKeyByName(keyInterstitialFromStart).name] *
-        1000);
+    setTimeIntervalInterFromStart(
+        RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyInterstitialFromStart).name] *
+            1000);
 
     _logger.logInfo(
         'show_value_inter --- init: setTimeIntervalBetweenInter: ${RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(PreferencesUtilLib.isOrganicAdjust() ? keyIntervalBetweenInterstitialOrganic ?? keyIntervalBetweenInterstitial : keyIntervalBetweenInterstitial).name]}, setTimeIntervalInterFromStart: ${RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyInterstitialFromStart).name]}');
@@ -345,10 +261,10 @@ class AdmobAds {
         keyOpenSplash: keyOpenSplash,
         keyInterSplash: keyInterSplash,
         onNextAction: onNextAction,
-        nameAdsOpenSplash: nameAdsOpenSplash,
-        nameAdsInterSplash: nameAdsInterSplash,
+        idAdsOpen: idAdsOpen,
+        idAdsInter: idAdsInter,
         keyResumeConfig: keyResumeConfig,
-        listResumeId: NetworkRequest.instance.getListIDByName(nameAdsResume),
+        idAds: idAdsResume,
         isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds,
         navigatorKey: navigatorKey,
         onGoToWelcomeBack: onGotoWelComeBack);
@@ -359,11 +275,11 @@ class AdmobAds {
     required String keyRateAOA,
     required String keyOpenSplash,
     required String keyInterSplash,
-    required String nameAdsOpenSplash,
-    required String nameAdsInterSplash,
+    required String idAdsOpen,
+    required String idAdsInter,
     required Function() onNextAction,
     required String keyResumeConfig,
-    required List<String> listResumeId,
+    required String idAds,
     bool isShowWelComeScreenAfterAds = true,
     GlobalKey<NavigatorState>? navigatorKey,
     Function()? onGoToWelcomeBack,
@@ -378,14 +294,14 @@ class AdmobAds {
         keyOpenSplash: keyOpenSplash,
         keyInterSplash: keyInterSplash,
         onNextAction: onNextAction,
-        nameAdsOpenSplash: nameAdsOpenSplash,
-        nameAdsInterSplash: nameAdsInterSplash);
+        idAdsOpen: idAdsOpen,
+        idAdsInter: idAdsInter);
 
     initAdsOpenResume(
-        listResumeId: listResumeId,
+        idAds: idAds,
         navigatorKey: navigatorKey,
-        adResumeConfig: RemoteConfigLib
-            .configs[RemoteConfigKeyLib.getKeyByName(keyResumeConfig).name],
+        adResumeConfig:
+            RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyResumeConfig).name],
         nameConfig: keyResumeConfig,
         isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds,
         onGoToWelcomeBack: onGoToWelcomeBack);
@@ -415,20 +331,19 @@ class AdmobAds {
     if (debugUmp) {
       resetUmp();
     }
-    ConsentManager.ins.handleRequestUmp(
-        onPostExecute: () => onInitialized(ConsentManager.ins.canRequestAds));
+    ConsentManager.ins
+        .handleRequestUmp(onPostExecute: () => onInitialized(ConsentManager.ins.canRequestAds));
 
     this.admobConfiguration = admobConfiguration;
     if (navigatorKey?.currentContext != null) {
-      admobAdSize =
-          await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
-              MediaQuery.sizeOf(navigatorKey!.currentContext!).width.toInt());
+      admobAdSize = await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
+          MediaQuery.sizeOf(navigatorKey!.currentContext!).width.toInt());
     }
   }
 
   void initAdsOpenResume({
     GlobalKey<NavigatorState>? navigatorKey,
-    required List<String> listResumeId,
+    required String idAds,
     required bool adResumeConfig,
     required String nameConfig,
     bool isShowWelComeScreenAfterAds = true,
@@ -438,7 +353,7 @@ class AdmobAds {
     if (navigatorKey != null) {
       appLifecycleReactor = AppLifecycleReactor(
           navigatorKey: navigatorKey,
-          listId: listResumeId,
+          idAds: idAds,
           config: adResumeConfig,
           nameConfig: nameConfig,
           adNetwork: AdNetwork.admob,
@@ -453,28 +368,24 @@ class AdmobAds {
       {required String keyRateAOA,
       required String keyOpenSplash,
       required String keyInterSplash,
-      required String nameAdsOpenSplash,
-      required String nameAdsInterSplash,
+      required String idAdsOpen,
+      required String idAdsInter,
       required Function() onNextAction}) async {
-    final String rateAoa = RemoteConfigLib
-        .configs[RemoteConfigKeyLib.getKeyByName(keyRateAOA).name];
-    final bool isShowOpen = RemoteConfigLib
-        .configs[RemoteConfigKeyLib.getKeyByName(keyOpenSplash).name];
-    final bool isShowInter = RemoteConfigLib
-        .configs[RemoteConfigKeyLib.getKeyByName(keyInterSplash).name];
+    final String rateAoa =
+        RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyRateAOA).name];
+    final bool isShowOpen =
+        RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyOpenSplash).name];
+    final bool isShowInter =
+        RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyInterSplash).name];
 
     ///log Event
-    bool idAdsCheck =
-        NetworkRequest.instance.listAdsId.isNotEmpty ? true : false;
-
     EventLogLib.logEvent("inter_splash_tracking", parameters: {
       'splash_detail':
-          '${ConsentManager.ins.canRequestAds}_${CallOrganicAdjust.instance.isOrganic()}_${isHaveInternet}_${AdmobAds.instance.isShowAllAds}_${idAdsCheck}_$rateAoa',
+          '${ConsentManager.ins.canRequestAds}_${CallOrganicAdjust.instance.isOrganic()}_${isHaveInternet}_${AdmobAds.instance.isShowAllAds}_$rateAoa',
       'ump': '${ConsentManager.ins.canRequestAds}',
       'organic': '${CallOrganicAdjust.instance.isOrganic()}',
       'haveinternet': '${isHaveInternet}',
       'showallad': '${AdmobAds.instance.isShowAllAds}',
-      'idcheck': '$idAdsCheck',
       'interremote_openremote_aoavalue': '${isShowInter}_${isShowOpen}_$rateAoa'
     });
 
@@ -482,8 +393,8 @@ class AdmobAds {
 
     AdsSplash.instance.init(isShowInter, isShowOpen, rateAoa);
     AdsSplash.instance.showAdSplash(
-      listOpenId: NetworkRequest.instance.getListIDByName(nameAdsOpenSplash),
-      listInterId: NetworkRequest.instance.getListIDByName(nameAdsInterSplash),
+      idAdsOpen: idAdsOpen,
+      idAdsInter: idAdsInter,
       configAdsOpen: isShowOpen,
       configAdsInter: isShowInter,
       onAdShowed: (adNetwork, adUnitType, data) {
@@ -522,16 +433,14 @@ class AdmobAds {
       },
       onAdImpression: (adNetwork, adUnitType, data) {
         print('check_start_ads --- onAdImpression');
-        EventLogLib.logEvent(
-            "inter_splash_impression_${PreferencesUtilLib.getCountOpenApp()}");
+        EventLogLib.logEvent("inter_splash_impression_${PreferencesUtilLib.getCountOpenApp()}");
         EventLogLib.logEvent('inter_splash_showad_time',
             parameters: {'showad_time': 'true_$_second'});
         _timer?.cancel();
       },
       onAdClicked: (adNetwork, adUnitType, data) {
         print('check_start_ads --- onAdClicked');
-        EventLogLib.logEvent(
-            "inter_splash_click_${PreferencesUtilLib.getCountOpenApp()}");
+        EventLogLib.logEvent("inter_splash_click_${PreferencesUtilLib.getCountOpenApp()}");
       },
     );
   }
@@ -556,8 +465,7 @@ class AdmobAds {
     final initializationStatus = await MobileAds.instance.initialize();
 
     initializationStatus.adapterStatuses.forEach((key, value) {
-      _logger.logInfo(
-          'Adapter status for $key: ${value.description} | ${value.state}');
+      _logger.logInfo('Adapter status for $key: ${value.description} | ${value.state}');
     });
     _isAdmobInitialized = true;
     fireNetworkInitializedEvent(
@@ -584,7 +492,7 @@ class AdmobAds {
     bool enableLogger = true,
     bool debugUmp = false,
     GlobalKey<NavigatorState>? navigatorKey,
-    required List<String> listResumeId,
+    required String idAds,
     required String nameResumeConfig,
     AdNetwork adResumeNetwork = AdNetwork.admob,
     bool isShowWelComeScreenAfterAds = true,
@@ -614,15 +522,14 @@ class AdmobAds {
     if (debugUmp) {
       resetUmp();
     }
-    ConsentManager.ins.handleRequestUmp(
-        onPostExecute: () => onInitialized(ConsentManager.ins.canRequestAds));
+    ConsentManager.ins
+        .handleRequestUmp(onPostExecute: () => onInitialized(ConsentManager.ins.canRequestAds));
 
     // if (manager.admobAdIds?.appId != null) {
     this.admobConfiguration = admobConfiguration;
     if (navigatorKey?.currentContext != null) {
-      admobAdSize =
-          await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
-              MediaQuery.sizeOf(navigatorKey!.currentContext!).width.toInt());
+      admobAdSize = await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
+          MediaQuery.sizeOf(navigatorKey!.currentContext!).width.toInt());
     }
     // }
 
@@ -631,9 +538,8 @@ class AdmobAds {
       appLifecycleReactor = AppLifecycleReactor(
           nameConfig: nameResumeConfig,
           navigatorKey: navigatorKey,
-          listId: listResumeId,
-          config: RemoteConfigLib
-              .configs[RemoteConfigKeyLib.getKeyByName(nameResumeConfig).name],
+          idAds: idAds,
+          config: RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(nameResumeConfig).name],
           adNetwork: adResumeNetwork,
           isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds,
           onGoToWelComeBack: onGoToWelcomeBack);
@@ -647,7 +553,7 @@ class AdmobAds {
   /// [admobAdSize] is used to provide ad banner size
   AdsBase? createBanner({
     required AdNetwork adNetwork,
-    required List<String> listId,
+    required String idAds,
     required AdsBannerType type,
     required String visibilityDetectorKey,
     AdSize? adSize,
@@ -699,7 +605,7 @@ class AdmobAds {
       //     : adId;
 
       ad = AdmobBannerAd(
-          listId: listId,
+          idAds: idAds,
           adSize: adSize ?? getAdmobAdSize(type: type),
           adRequest: adRequest,
           onAdLoaded: onAdLoaded,
@@ -720,7 +626,7 @@ class AdmobAds {
   Future<AdsBase?> loadNativeAds({
     required AdNetwork adNetwork,
     required String factoryId,
-    required List<String> listId,
+    required String idAds,
     required bool config,
     required String visibilityDetectorKey,
     EasyAdCallback? onAdLoaded,
@@ -761,7 +667,7 @@ class AdmobAds {
         visibilityDetectorKey: visibilityDetectorKey,
         adNetwork: adNetwork,
         factoryId: factoryId,
-        listId: listId,
+        idAds: idAds,
         onAdLoaded: onAdLoaded,
         onAdShowed: onAdShowed,
         onAdClicked: onAdClicked,
@@ -780,7 +686,7 @@ class AdmobAds {
   AdsBase? createNative({
     required AdNetwork adNetwork,
     required String factoryId,
-    required List<String> listId,
+    required String idAds,
     required String visibilityDetectorKey,
     required bool isClickAdsNotShowResume,
     EasyAdCallback? onAdLoaded,
@@ -800,7 +706,7 @@ class AdmobAds {
         //     AdmobAds.instance.isDevMode ? TestAdsId.admobNativeId : adId;
         ad = AdmobNativeAd(
             visibilityDetectorKey: visibilityDetectorKey,
-            listId: listId,
+            idAds: idAds,
             factoryId: factoryId,
             adRequest: _adRequest,
             onAdLoaded: onAdLoaded,
@@ -859,7 +765,7 @@ class AdmobAds {
 
   AdsBase? createInterstitial({
     required AdNetwork adNetwork,
-    required List<String> listId,
+    required String idAds,
     required String? nameAds,
     bool isShowAdsSplash = false,
     EasyAdCallback? onAdLoaded,
@@ -879,7 +785,7 @@ class AdmobAds {
         //     AdmobAds.instance.isDevMode ? TestAdsId.admobInterstitialId : adId;
         ad = AdmobInterstitialAd(
           nameAds: nameAds,
-          listId: listId,
+          idAds: idAds,
           adRequest: _adRequest,
           isShowAdsSplash: isShowAdsSplash,
           onAdLoaded: onAdLoaded,
@@ -899,7 +805,7 @@ class AdmobAds {
 
   AdsBase? createReward({
     required AdNetwork adNetwork,
-    required List<String> listId,
+    required String idAds,
     required String? nameAds,
     EasyAdCallback? onAdLoaded,
     EasyAdCallback? onAdShowed,
@@ -917,7 +823,7 @@ class AdmobAds {
         //     AdmobAds.instance.isDevMode ? TestAdsId.admobRewardId : adId;
         ad = AdmobRewardedAd(
           nameAds: nameAds,
-          listId: listId,
+          idAds: idAds,
           adRequest: _adRequest,
           onAdLoaded: onAdLoaded,
           onAdShowed: onAdShowed,
@@ -936,7 +842,7 @@ class AdmobAds {
 
   AdsBase? createAppOpenAd(
       {required AdNetwork adNetwork,
-      required List<String> listId,
+      required String idAds,
       bool isShowAdsSplash = false,
       EasyAdCallback? onAdLoaded,
       EasyAdCallback? onAdShowed,
@@ -955,7 +861,7 @@ class AdmobAds {
         //     AdmobAds.instance.isDevMode ? TestAdsId.admobOpenResume : adId;
         ad = AdmobAppOpenAd(
           nameAds: nameAds,
-          listId: listId,
+          idAds: idAds,
           adRequest: _adRequest,
           isShowAdsSplash: isShowAdsSplash,
           onAdLoaded: onAdLoaded,
@@ -976,7 +882,7 @@ class AdmobAds {
 
   Future<void> showAppOpen({
     AdNetwork adNetwork = AdNetwork.admob,
-    required List<String> listId,
+    required String idAds,
     Function()? onDisabled,
     required bool config,
     EasyAdCallback? onAdLoaded,
@@ -1015,14 +921,13 @@ class AdmobAds {
     final appOpen = createAppOpenAd(
       nameAds: nameAds,
       adNetwork: adNetwork,
-      listId: listId,
+      idAds: idAds,
       isShowAdsSplash: isShowAdsSplash,
       onAdClicked: onAdClicked,
       onAdDismissed: (adNetwork, adUnitType, data) async {
         onAdDismissed?.call(adNetwork, adUnitType, data);
         AdmobAds.instance.setFullscreenAdShowing(false);
-        print(
-            'check_full_screen_ads_show: ondismiss_App_Open - $isFullscreenAdShowing');
+        print('check_full_screen_ads_show: ondismiss_App_Open - $isFullscreenAdShowing');
         if (Platform.isIOS) {
           if (onDismissCollapse != null) {
             await onDismissCollapse();
@@ -1037,8 +942,7 @@ class AdmobAds {
         LoadingChannel.closeAd();
         onAdFailedToLoad?.call(adNetwork, adUnitType, data, errorMessage);
         AdmobAds.instance.setFullscreenAdShowing(false);
-        print(
-            'check_full_screen_ads_show: onAdFailedToLoad_App_Open - $isFullscreenAdShowing');
+        print('check_full_screen_ads_show: onAdFailedToLoad_App_Open - $isFullscreenAdShowing');
       },
       onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) async {
         if (onDismissCollapse != null) {
@@ -1047,8 +951,7 @@ class AdmobAds {
         LoadingChannel.closeAd();
         onAdFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);
         AdmobAds.instance.setFullscreenAdShowing(false);
-        print(
-            'check_full_screen_ads_show: onAdFailedToShow_App_Open - $isFullscreenAdShowing');
+        print('check_full_screen_ads_show: onAdFailedToShow_App_Open - $isFullscreenAdShowing');
       },
       onAdLoaded: (adNetwork, adUnitType, data) {
         onAdLoaded?.call(adNetwork, adUnitType, data);
@@ -1083,7 +986,7 @@ class AdmobAds {
 
   Future<void> showInterstitialAd({
     AdNetwork adNetwork = AdNetwork.admob,
-    required List<String> listId,
+    required String idAds,
     Function()? onDisabled,
     required bool config,
     required String? nameAds,
@@ -1133,8 +1036,7 @@ class AdmobAds {
 
     ///check nếu là show ads màn Splash thì k cần check interval_interstitial_from_start
     if (isShowAdsSplash == false &&
-        DateTime.now().millisecondsSinceEpoch - _openAppTime <
-            _timeIntervalFromStart) {
+        DateTime.now().millisecondsSinceEpoch - _openAppTime < _timeIntervalFromStart) {
       _logger.logInfo(
           '5. isShowAdsSplash: $isShowAdsSplash, timeMinus: ${DateTime.now().millisecondsSinceEpoch - _openAppTime}, _timeIntervalFromStart: $_timeIntervalFromStart');
 
@@ -1142,15 +1044,13 @@ class AdmobAds {
       return;
     }
 
-    _logger.logInfo(
-        'show_value_inter --- time now = ${DateTime.now().millisecondsSinceEpoch}');
+    _logger.logInfo('show_value_inter --- time now = ${DateTime.now().millisecondsSinceEpoch}');
     _logger.logInfo(
         'show_value_inter --- time minute = ${DateTime.now().millisecondsSinceEpoch - _lastTimeDismissInter}');
 
     ///check timeinterval
     if (isShowAdsSplash == false &&
-        DateTime.now().millisecondsSinceEpoch - _lastTimeDismissInter <=
-            _timeInterval) {
+        DateTime.now().millisecondsSinceEpoch - _lastTimeDismissInter <= _timeInterval) {
       _logger.logInfo(
           '6. isShowAdsSplash: $isShowAdsSplash, timeMinus: ${DateTime.now().millisecondsSinceEpoch - _lastTimeDismissInter}, _timeInterval: $_timeInterval');
       onDisabled?.call();
@@ -1160,18 +1060,16 @@ class AdmobAds {
     final interstitialAd = createInterstitial(
       nameAds: nameAds,
       adNetwork: adNetwork,
-      listId: listId,
+      idAds: idAds,
       isShowAdsSplash: isShowAdsSplash,
       onAdClicked: onAdClicked,
       onAdDismissed: (adNetwork, adUnitType, data) {
-        if (isShowAdsSplash == false)
-          _lastTimeDismissInter = DateTime.now().millisecondsSinceEpoch;
+        if (isShowAdsSplash == false) _lastTimeDismissInter = DateTime.now().millisecondsSinceEpoch;
 
         onAdDismissed?.call(adNetwork, adUnitType, data);
 
         AdmobAds.instance.setFullscreenAdShowing(false);
-        print(
-            'check_full_screen_ads_show: onAdDismiss_Inter - $isFullscreenAdShowing');
+        print('check_full_screen_ads_show: onAdDismiss_Inter - $isFullscreenAdShowing');
         if (Platform.isIOS) {
           LoadingChannel.closeAd();
         }
@@ -1180,15 +1078,13 @@ class AdmobAds {
         LoadingChannel.closeAd();
         onAdFailedToLoad?.call(adNetwork, adUnitType, data, errorMessage);
         AdmobAds.instance.setFullscreenAdShowing(false);
-        print(
-            'check_full_screen_ads_show: onAdFailedToLoad_Inter - $isFullscreenAdShowing');
+        print('check_full_screen_ads_show: onAdFailedToLoad_Inter - $isFullscreenAdShowing');
       },
       onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
         LoadingChannel.closeAd();
         onAdFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);
         AdmobAds.instance.setFullscreenAdShowing(false);
-        print(
-            'check_full_screen_ads_show: onAdFailedToShow_Inter - $isFullscreenAdShowing');
+        print('check_full_screen_ads_show: onAdFailedToShow_Inter - $isFullscreenAdShowing');
       },
       onAdLoaded: (adNetwork, adUnitType, data) {
         onAdLoaded?.call(adNetwork, adUnitType, data);
@@ -1207,6 +1103,7 @@ class AdmobAds {
       onAdImpression: onAdImpression,
     );
     if (interstitialAd == null) {
+      onDisabled?.call();
       return;
     }
 
@@ -1228,7 +1125,7 @@ class AdmobAds {
 
   Future<void> showRewardAd({
     AdNetwork adNetwork = AdNetwork.admob,
-    required List<String> listId,
+    required String idAds,
     Function()? onDisabled,
     required bool config,
     required String? nameAds,
@@ -1260,13 +1157,12 @@ class AdmobAds {
     final rewardAd = createReward(
       nameAds: nameAds,
       adNetwork: adNetwork,
-      listId: listId,
+      idAds: idAds,
       onAdClicked: onAdClicked,
       onAdDismissed: (adNetwork, adUnitType, data) {
         onAdDismissed?.call(adNetwork, adUnitType, data);
         AdmobAds.instance.setFullscreenAdShowing(false);
-        print(
-            'check_full_screen_ads_show: onAdDismiss_Reward - $isFullscreenAdShowing');
+        print('check_full_screen_ads_show: onAdDismiss_Reward - $isFullscreenAdShowing');
         if (Platform.isIOS) {
           LoadingChannel.closeAd();
         }
@@ -1275,15 +1171,13 @@ class AdmobAds {
         LoadingChannel.closeAd();
         onAdFailedToLoad?.call(adNetwork, adUnitType, data, errorMessage);
         AdmobAds.instance.setFullscreenAdShowing(false);
-        print(
-            'check_full_screen_ads_show: onAdFailedToLoad_Reward - $isFullscreenAdShowing');
+        print('check_full_screen_ads_show: onAdFailedToLoad_Reward - $isFullscreenAdShowing');
       },
       onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
         LoadingChannel.closeAd();
         onAdFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);
         AdmobAds.instance.setFullscreenAdShowing(false);
-        print(
-            'check_full_screen_ads_show: onAdFailedToShow_Reward - $isFullscreenAdShowing');
+        print('check_full_screen_ads_show: onAdFailedToShow_Reward - $isFullscreenAdShowing');
       },
       onAdLoaded: (adNetwork, adUnitType, data) {
         onAdLoaded?.call(adNetwork, adUnitType, data);
@@ -1397,11 +1291,8 @@ class AdmobAds {
       if (navigatorKey?.currentContext != null) {
         Future(
           () async {
-            admobAdSize =
-                await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
-                    MediaQuery.sizeOf(navigatorKey!.currentContext!)
-                        .width
-                        .toInt());
+            admobAdSize = await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
+                MediaQuery.sizeOf(navigatorKey!.currentContext!).width.toInt());
           },
         );
       }
@@ -1448,8 +1339,7 @@ class AdmobAds {
 
     Connectivity().onConnectivityChanged.listen(
       (event) async {
-        _isHaveInternet =
-            await InternetConnectionChecker.instance.hasConnection;
+        _isHaveInternet = await InternetConnectionChecker.instance.hasConnection;
         print('check_have_internet --- onConnectivityChanged $_isHaveInternet');
       },
     );

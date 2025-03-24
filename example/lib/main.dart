@@ -9,8 +9,7 @@ import 'package:example/ads/app_ad_id_manager.dart';
 import 'package:example/dependecy_injection.dart' as dependecy_injection;
 import 'package:example/utils/preferences_util.dart';
 
-late AppAdIdManager adIdManager;
-
+AppAdIdManager adIdManager = AppAdIdManager();
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();

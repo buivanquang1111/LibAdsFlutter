@@ -4,7 +4,7 @@ import 'enums/ad_network.dart';
 import 'enums/ad_unit_type.dart';
 
 abstract class AdsBase {
-  final List<String> listId;
+  final String idAds;
   EasyAdCallback? onAdLoaded;
   EasyAdCallback? onAdShowed;
   EasyAdCallback? onAdClicked;
@@ -18,7 +18,7 @@ abstract class AdsBase {
 
   /// This will be called for initialization when we don't have to wait for the initialization
   AdsBase({
-    required this.listId,
+    required this.idAds,
     this.onAdLoaded,
     this.onAdShowed,
     this.onAdClicked,

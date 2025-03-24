@@ -14,7 +14,7 @@ class AdmobBannerAd extends AdsBase {
   final String visibilityDetectorKey;
 
   AdmobBannerAd({
-    required super.listId,
+    required super.idAds,
     required this.adRequest,
     required this.visibilityDetectorKey,
     this.adSize = AdSize.banner,
@@ -71,7 +71,7 @@ class AdmobBannerAd extends AdsBase {
 
     _bannerAd = BannerAd(
       size: adSize,
-      adUnitId: listId.isNotEmpty ? listId[0] : '',
+      adUnitId: idAds,
       listener: BannerAdListener(
         onAdLoaded: (Ad ad) {
           _bannerAd = ad as BannerAd?;
@@ -81,19 +81,13 @@ class AdmobBannerAd extends AdsBase {
           onAdLoaded?.call(adNetwork, adUnitType, ad);
         },
         onAdFailedToLoad: (Ad ad, LoadAdError error) {
-          if (listId.length > 1) {
-            listId.removeAt(0);
-            load();
-          } else {
-            _bannerAd = null;
-            _isAdLoaded = false;
-            _isAdLoading = false;
-            _isAdLoadedFailed = true;
-            AdmobAds.instance.onAdFailedToLoadMethod(
-                adNetwork, adUnitType, ad, error.toString());
-            onAdFailedToLoad?.call(adNetwork, adUnitType, ad, error.toString());
-            ad.dispose();
-          }
+          _bannerAd = null;
+          _isAdLoaded = false;
+          _isAdLoading = false;
+          _isAdLoadedFailed = true;
+          AdmobAds.instance.onAdFailedToLoadMethod(adNetwork, adUnitType, ad, error.toString());
+          onAdFailedToLoad?.call(adNetwork, adUnitType, ad, error.toString());
+          ad.dispose();
         },
         onAdClicked: (ad) {
           AdmobAds.instance.appLifecycleReactor?.setIsExcludeScreen(true);

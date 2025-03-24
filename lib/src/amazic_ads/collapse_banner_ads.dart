@@ -8,7 +8,7 @@ import '../../admob_ads_flutter.dart';
 class CollapseBannerAds extends StatefulWidget {
   final AdNetwork adNetwork;
 
-  final List<String> listId;
+  final String idAds;
   final AdsBannerType type;
 
   /// refresh_rate_sec
@@ -34,7 +34,7 @@ class CollapseBannerAds extends StatefulWidget {
 
   CollapseBannerAds({
     this.adNetwork = AdNetwork.admob,
-    required this.listId,
+    required this.idAds,
     required this.type,
     required this.refreshRateSec,
     required this.cbFetchIntervalSec,
@@ -170,7 +170,7 @@ class CollapseBannerAdsState extends State<CollapseBannerAds>
     _bannerAd = AdmobAds.instance.createBanner(
       visibilityDetectorKey: widget.visibilityDetectorKey,
       adNetwork: widget.adNetwork,
-      listId: widget.listId,
+      idAds: widget.idAds,
       type: type,
       onAdLoaded: (adNetwork, adUnitType, data) {
         if (!_isDestroy && !_isPaused) {

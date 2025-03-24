@@ -1,8 +1,9 @@
+
+
 import 'package:amazic_ads_flutter/admob_ads_flutter.dart';
 
-abstract class AppAdIdManager extends IAdIdManager {
-  AppAdIdManager();
-  String get admobAppId;
+class AppAdIdManager extends IAdIdManager {
+  String get admobAppId => "ca-app-pub-3940256099942544~3347511713e";
 
   @override
   AppAdIds? get admobAdIds => AppAdIds(
@@ -17,74 +18,75 @@ abstract class AppAdIdManager extends IAdIdManager {
   double get mediumNativeAdHeight => 176;
 
 
-  String get interSplash;
-  String get openSplash;
-  String get appOpenResume;
+  String get banner_splash => "ca-app-pub-3940256099942544/6300978111";
 
-  String get nativeLanguageFactory => 'native_language';
-  String get nativeLanguage;
+  String get open_splash => "ca-app-pub-3940256099942544/9257395921";
 
-  String get nativeIntro1;
-  String get nativeIntro2;
-  String get nativeIntro3;
-  String get nativeIntro4;
-  String get nativeIntroFactory => 'native_intro';
+  String get inter_splash => "ca-app-pub-3940256099942544/1033173712";
 
-  String get interIntro;
+  String get native_language => "ca-app-pub-3940256099942544/2247696110";
 
-  String get nativeLoading;
-  String get nativeLoadingFactory => 'native_loanding';
+  String get native_intro => "ca-app-pub-3940256099942544/2247696110";
 
-  String get bannerAll;
+  String get inter_intro => "ca-app-pub-3940256099942544/1033173712";
 
-  String get nativeHome;
-  String get nativeHomeFactory => 'native_home';
+  String get native_permission => "ca-app-pub-3940256099942544/2247696110";
 
-  String get collapseHome;
+  String get inter_permission => "ca-app-pub-3940256099942544/1033173712";
 
-  String get additionalToolNative;
-  String get additionalToolNativeFactory => 'native_additional_tools';
+  String get banner_all => "ca-app-pub-3940256099942544/6300978111";
 
-  String get compareListNative;
-  String get compareListNativeFactory => 'native_compare';
+  String get native_home => "ca-app-pub-3940256099942544/2247696110";
 
-  String get personalLoanNative;
-  String get personalLoanNativeFactory => 'native_personal';
+  String get appopen_resume => "ca-app-pub-3940256099942544/9257395921";
 
-  String get bussinessLoanNative;
-  String get bussinessLoanNativeFactory => 'native_business';
+  String get collapse_banner_home => "ca-app-pub-3940256099942544/2014213617";
 
-  String get autoLoanNative;
-  String get autoLoanNativeFactory => 'native_auto';
+  String get inter_explore => "ca-app-pub-3940256099942544/1033173712";
 
-  String get nativeSetting;
-  String get nativeSettingFactory => 'native_setting';
+  String get inter_identify => "ca-app-pub-3940256099942544/1033173712";
 
-  String get nativeFd;
-  String get nativeFdFactory => 'native_fd';
+  String get native_identify => "ca-app-pub-3940256099942544/2247696110";
 
-  String get nativeRd;
-  String get nativeRdFactory => 'native_rd';
+  String get collapse_banner_botanic => "ca-app-pub-3940256099942544/2014213617";
 
-  String get mainFunctionInter;
+  String get native_botanic => "ca-app-pub-3940256099942544/2247696110";
 
-  String get nativeResults;
-  String get nativeResultsFactory => 'native_results';
+  String get collapse_banner_health => "ca-app-pub-3940256099942544/2014213617";
 
-  String get nativeExchangeRate;
-  String get nativeExchangeRateFactory => 'native_exrate';
+  String get native_health => "ca-app-pub-3940256099942544/2247696110";
 
-  String get nativeLengthConvert;
-  String get nativeLengthConvertFactory => 'native_length';
+  String get inter_history => "ca-app-pub-3940256099942544/1033173712";
 
-  String get nativeMassConvert;
-  String get nativeMassConvertFactory => 'native_mass';
+  String get collapse_banner_history => "ca-app-pub-3940256099942544/2014213617";
 
-  String get nativeSpeedConvert;
-  String get nativeSpeedConvertFactory => 'native_speed';
+  String get native_history => "ca-app-pub-3940256099942544/2247696110";
 
-  String get nativeTemConvert;
-  String get nativeTemConvertFactory => 'native_tem';
+  String get inter_water => "ca-app-pub-3940256099942544/1033173712";
 
-  String get colapseWorldClock;
+  String get inter_water_set_add => "ca-app-pub-3940256099942544/1033173712";
+
+  String get native_water => "ca-app-pub-3940256099942544/2247696110";
+
+  String get collapse_banner_water => "ca-app-pub-3940256099942544/2014213617";
+
+  String get inter_water_edit => "ca-app-pub-3940256099942544/1033173712";
+
+  String get collapse_banner_set_reminder => "ca-app-pub-3940256099942544/2014213617";
+
+  String get native_plant_identifier => "ca-app-pub-3940256099942544/2247696110";
+
+  String get inter_more_infor => "ca-app-pub-3940256099942544/1033173712";
+
+  String get collapse_banner_plant_list => "ca-app-pub-3940256099942544/2014213617";
+
+  String get native_intro_full1 => "ca-app-pub-3940256099942544/2247696110";
+
+  String get native_intro_full2 => "ca-app-pub-3940256099942544/2247696110";
+
+  String get native_interest => "ca-app-pub-3940256099942544/2247696110";
+
+  String get native_popup => "ca-app-pub-3940256099942544/2247696110";
+
+  String get native_resume => "ca-app-pub-3940256099942544/2247696110";
 }

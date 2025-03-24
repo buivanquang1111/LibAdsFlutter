@@ -8,7 +8,7 @@ import '../../adjust_config/call_organic_adjust.dart';
 
 class BannerAds extends StatefulWidget {
   final AdNetwork adNetwork;
-  final List<String> listId;
+  final String idAds;
   final AdsBannerType type;
   final AdSize? adSize;
 
@@ -34,7 +34,7 @@ class BannerAds extends StatefulWidget {
 
   const BannerAds({
     this.adNetwork = AdNetwork.admob,
-    required this.listId,
+    required this.idAds,
     this.type = AdsBannerType.standard,
     this.onAdLoaded,
     this.onAdShowed,
@@ -260,7 +260,7 @@ class _BannerAdsState extends State<BannerAds> with WidgetsBindingObserver {
       visibilityDetectorKey: widget.visibilityDetectorKey,
       adSize: widget.adSize,
       adNetwork: widget.adNetwork,
-      listId: widget.listId,
+      idAds: widget.idAds,
       type: widget.type,
       onAdClicked: (adNetwork, adUnitType, data) {
         widget.onAdClicked?.call(adNetwork, adUnitType, data);

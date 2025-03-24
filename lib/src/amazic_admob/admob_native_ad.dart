@@ -16,7 +16,7 @@ class AdmobNativeAd extends AdsBase {
   final bool isClickAdsNotShowResume; //click ads default true - not show
 
   AdmobNativeAd({
-    required super.listId,
+    required super.idAds,
     required this.adRequest,
     required this.factoryId,
     required this.visibilityDetectorKey,
@@ -68,7 +68,7 @@ class AdmobNativeAd extends AdsBase {
           'ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.isHaveInternet}'
     });
     _nativeAd = NativeAd(
-      adUnitId: listId.isNotEmpty ? listId[0] : '',
+      adUnitId: idAds,
       factoryId: factoryId,
       request: adRequest,
       listener: NativeAdListener(
@@ -82,20 +82,14 @@ class AdmobNativeAd extends AdsBase {
           print('check_show_native: onAdLoaded');
         },
         onAdFailedToLoad: (Ad ad, LoadAdError error) {
-          if (listId.length > 1) {
-            listId.removeAt(0);
-            load();
-          } else {
-            _nativeAd = null;
-            _isAdLoaded = false;
-            _isAdLoading = false;
-            _isAdLoadedFailed = true;
-            AdmobAds.instance.onAdFailedToLoadMethod(
-                adNetwork, adUnitType, ad, error.toString());
-            onAdFailedToLoad?.call(adNetwork, adUnitType, ad, error.toString());
-            ad.dispose();
-            print('check_show_native: onAdFailedToLoad');
-          }
+          _nativeAd = null;
+          _isAdLoaded = false;
+          _isAdLoading = false;
+          _isAdLoadedFailed = true;
+          AdmobAds.instance.onAdFailedToLoadMethod(adNetwork, adUnitType, ad, error.toString());
+          onAdFailedToLoad?.call(adNetwork, adUnitType, ad, error.toString());
+          ad.dispose();
+          print('check_show_native: onAdFailedToLoad');
         },
         onAdClicked: (ad) {
           if (isClickAdsNotShowResume) {
@@ -158,8 +152,7 @@ class AdmobNativeAd extends AdsBase {
         width: 1,
       );
     }
-    print(
-        'check_show_native: 3. ad: $ads, isAdLoaded: $isAdLoaded , _isAdLoading: $_isAdLoading');
+    print('check_show_native: 3. ad: $ads, isAdLoaded: $isAdLoaded , _isAdLoading: $_isAdLoading');
     _logger.logInfo('ad: $ads, isAdLoaded: $isAdLoaded');
     return Container(
       decoration: BoxDecoration(
