@@ -37,8 +37,7 @@ class LanguageScreen extends StatefulWidget {
   State<StatefulWidget> createState() => LanguageScreenState();
 }
 
-class LanguageScreenState extends State<LanguageScreen>
-    with WidgetsBindingObserver {
+class LanguageScreenState extends State<LanguageScreen> with WidgetsBindingObserver {
   final controller = Get.find<LanguageController>();
   final key = GlobalKey<CollapseBannerAdsState>();
   final nativeKey = GlobalKey<NativeAdsReloadState>();
@@ -164,12 +163,10 @@ class LanguageScreenState extends State<LanguageScreen>
                       onDisabled: () {
                         controller.foSave();
                       },
-                      onAdFailedToLoad:
-                          (adNetwork, adUnitType, data, errorMessage) {
+                      onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
                         controller.foSave();
                       },
-                      onAdFailedToShow:
-                          (adNetwork, adUnitType, data, errorMessage) {
+                      onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
                         controller.foSave();
                       },
                       onAdDismissed: (adNetwork, adUnitType, data) {
@@ -235,8 +232,7 @@ class LanguageScreenState extends State<LanguageScreen>
                     Fluttertoast.showToast(msg: 'click');
                     if (listAds.length > 1) {
                       listAds.removeAt(0);
-                      nativeKey.currentState
-                          ?.reloadAdsNative(adBase: listAds[0]);
+                      nativeKey.currentState?.reloadAdsNative(adBase: listAds[0]);
                     }
                   },
                 );
@@ -249,8 +245,7 @@ class LanguageScreenState extends State<LanguageScreen>
           ),
           // NativeAds(
           //   factoryId: 'native_language',
-          //   listId: NetworkRequest.instance
-          //       .getListIDByName('native_language'),
+          //   idAds: 'ca-app-pub-3940256099942544/2247696110',
           //   height: adIdManager.largeNativeAdHeight,
           //   color: GlobalColors.lightGray,
           //   border: null,
@@ -261,8 +256,7 @@ class LanguageScreenState extends State<LanguageScreen>
           // ),
           NativeAdsReload(
             key: nativeKey,
-            adsBase: listAds.isNotEmpty ? listAds[0] : null,
-            idAds: adIdManager.native_language,
+            idAds: "ca-app-pub-3940256099942544/2247696110",
             refreshRateSec: 10,
             visibilityDetectorKey: 'native_language',
             factoryId: 'native_language',
@@ -271,16 +265,6 @@ class LanguageScreenState extends State<LanguageScreen>
             borderRadius: BorderRadius.zero,
             isCanReloadHideView: true,
           ),
-          // NativeAdsAdmob(
-          //     key: nativeKey,
-          //     nativeAd: nativeAd,
-          //     idAds: 'ca-app-pub-3940256099942544/2247696110',
-          //     refreshRateSec: 0,
-          //     visibilityDetectorKey: 'native_language',
-          //     factoryId: 'native_language',
-          //     config: true,
-          //     height: adIdManager.largeNativeAdHeight,
-          //     borderRadius: BorderRadius.zero),
         ],
       ),
     );
