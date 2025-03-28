@@ -18,7 +18,7 @@ import 'package:example/screen/language/language.dart';
 AdsBase? preloadAds;
 AdsBase? adsBase1;
 AdsBase? adsBase2;
-List<AdsBase?> listAds = [];
+List<AdsBase?> listLanguage = [];
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -121,7 +121,26 @@ class SplashState extends State<SplashScreen> {
       ],
       idAdsResume: adIdManager.appopen_resume,
       keyResumeConfig: 'open_resume',
-      onStartLoadBannerSplash: () {},
+      onStartLoadBannerSplash: () {
+        print('acbd');
+        for (int i = 0; i < 2; i++) {
+          AdmobAds.instance
+              .loadNativeAds(
+            adNetwork: AdNetwork.admob,
+            factoryId: "native_language",
+            idAds: "ca-app-pub-3940256099942544/2247696110",
+            config: true,
+            visibilityDetectorKey: 'native_language',
+            onAdShowed: (adNetwork, adUnitType, data) {},
+          )
+              .then(
+                (value) {
+              listLanguage.add(value);
+              print('acbd --- length = ${listLanguage.length}');
+            },
+          );
+        }
+      },
       onNextAction: () {
         handleNavigate();
       },

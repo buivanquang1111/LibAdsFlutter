@@ -230,9 +230,9 @@ class LanguageScreenState extends State<LanguageScreen> with WidgetsBindingObser
                   controller.listLanguage[index],
                   onTap: () {
                     Fluttertoast.showToast(msg: 'click');
-                    if (listAds.length > 1) {
-                      listAds.removeAt(0);
-                      nativeKey.currentState?.reloadAdsNative(adBase: listAds[0]);
+                    if (listLanguage.length > 1) {
+                      listLanguage.removeAt(0);
+                      nativeKey.currentState?.reloadAdsNative(adBase: listLanguage[0]);
                     }
                   },
                 );
@@ -256,6 +256,9 @@ class LanguageScreenState extends State<LanguageScreen> with WidgetsBindingObser
           // ),
           NativeAdsReload(
             key: nativeKey,
+            adsBase: listLanguage.isNotEmpty
+                ? listLanguage[0]
+                : null,
             idAds: "ca-app-pub-3940256099942544/2247696110",
             refreshRateSec: 10,
             visibilityDetectorKey: 'native_language',

@@ -280,18 +280,18 @@ class NativeAdsReloadState extends State<NativeAdsReload>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
 
-    _nativeAd = widget.adsBase;
-
     visibilityController = widget.visibilityController ?? ValueNotifier(true);
     visibilityController.addListener(_listener);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.adsBase != null) {
-        print('native_ads_reload ---1. adsBase have data');
+        _nativeAd = widget.adsBase;
+        print('native_ads_reload ---1. adsBase have data - ${visibilityController.value}');
         _startTimer();
         if (mounted) {
           setState(() {});
         }
+        visibilityController.value = true;
       } else {
         print('native_ads_reload ---2. not data');
         _prepareAd();
@@ -307,6 +307,7 @@ class NativeAdsReloadState extends State<NativeAdsReload>
       if (mounted) {
         setState(() {});
       }
+      visibilityController.value = true;
     }
   }
 
