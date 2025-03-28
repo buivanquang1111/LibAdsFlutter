@@ -77,6 +77,7 @@ class AdmobInterstitialAd extends AdsBase {
         () {
           EventLogLib.logEvent('inter_splash_id_timeout');
           _logger.logInfo('Ad Timeout: Timeout 20s ads Inter');
+          _interstitialAd?.dispose();
           onAdFailedToShow?.call(adNetwork, adUnitType, _interstitialAd, 'Ad timeout 20s');
         },
       );
