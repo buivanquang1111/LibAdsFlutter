@@ -8,7 +8,7 @@ import '../../adjust_config/call_organic_adjust.dart';
 import 'loading_ads.dart';
 
 class BannerSplashPlatform extends StatefulWidget {
-  final List<String> listIdAds;
+  final String idAds;
   final bool remoteConfig;
   final Function()? onNext;
   final AdSize? adSize;
@@ -22,7 +22,7 @@ class BannerSplashPlatform extends StatefulWidget {
 
   const BannerSplashPlatform({
     super.key,
-    required this.listIdAds,
+    required this.idAds,
     required this.remoteConfig,
     this.onNext,
     this.adSize,
@@ -40,8 +40,7 @@ class BannerSplashPlatform extends StatefulWidget {
 }
 
 class _BannerSplashPlatformState extends State<BannerSplashPlatform> {
-  static const MethodChannel _methodChannel =
-      MethodChannel('com.yourcompany.ads/banner');
+  static const MethodChannel _methodChannel = MethodChannel('com.yourcompany.ads/banner');
 
   bool isShowAd = false;
   bool isVisibility = true;
@@ -89,8 +88,7 @@ class _BannerSplashPlatformState extends State<BannerSplashPlatform> {
             widget.onAdClicked?.call();
             break;
           case 'onAdFailedToLoad':
-            print(
-                'banner_splash_platform --- Ad Failed to Load: ${event?['error']}');
+            print('banner_splash_platform --- Ad Failed to Load: ${event?['error']}');
             widget.onAdFailedToLoad?.call(event?['error']);
             break;
           case 'onAdClosed':
@@ -135,42 +133,33 @@ class _BannerSplashPlatformState extends State<BannerSplashPlatform> {
         child: Stack(
           children: [
             if (Platform.isAndroid)
-              if (widget.listIdAds.isNotEmpty)
-                AndroidView(
-                  viewType: 'com.yourcompany.ads/banner',
-                  creationParams: {
-                    'adUnitId': widget.listIdAds[0],
-                    'adSize': {
-                      'width': widget.adSize?.width ??
-                          AdmobAds.instance
-                              .getAdmobAdSize(type: widget.type)
-                              .width,
-                      'height': widget.adSize?.height ??
-                          AdmobAds.instance
-                              .getAdmobAdSize(type: widget.type)
-                              .height
-                    }
-                  },
-                  creationParamsCodec: const StandardMessageCodec(),
-                )
-              else if (Platform.isIOS)
-                UiKitView(
-                  viewType: 'com.yourcompany.ads/banner',
-                  creationParams: {
-                    'adUnitId': widget.listIdAds[0],
-                    'adSize': {
-                      'width': widget.adSize?.width ??
-                          AdmobAds.instance
-                              .getAdmobAdSize(type: widget.type)
-                              .width,
-                      'height': widget.adSize?.height ??
-                          AdmobAds.instance
-                              .getAdmobAdSize(type: widget.type)
-                              .height
-                    }
-                  },
-                  creationParamsCodec: const StandardMessageCodec(),
-                ),
+              AndroidView(
+                viewType: 'com.yourcompany.ads/banner',
+                creationParams: {
+                  'adUnitId': widget.idAds,
+                  'adSize': {
+                    'width': widget.adSize?.width ??
+                        AdmobAds.instance.getAdmobAdSize(type: widget.type).width,
+                    'height': widget.adSize?.height ??
+                        AdmobAds.instance.getAdmobAdSize(type: widget.type).height
+                  }
+                },
+                creationParamsCodec: const StandardMessageCodec(),
+              )
+            else if (Platform.isIOS)
+              UiKitView(
+                viewType: 'com.yourcompany.ads/banner',
+                creationParams: {
+                  'adUnitId': widget.idAds,
+                  'adSize': {
+                    'width': widget.adSize?.width ??
+                        AdmobAds.instance.getAdmobAdSize(type: widget.type).width,
+                    'height': widget.adSize?.height ??
+                        AdmobAds.instance.getAdmobAdSize(type: widget.type).height
+                  }
+                },
+                creationParamsCodec: const StandardMessageCodec(),
+              ),
             if (!isShowAd)
               LoadingAds(
                 height: widget.adSize?.height.toDouble() ?? 60,
