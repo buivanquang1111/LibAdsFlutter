@@ -4,7 +4,7 @@ import 'package:amazic_ads_flutter/adjust_config/call_organic_adjust.dart';
 import 'package:amazic_ads_flutter/admob_ads_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
-import 'package:path_provider/path_provider.dart';
+// import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
 
 import '../utils/detect_test_ad.dart';
@@ -41,55 +41,55 @@ class _BannerSplashState extends State<BannerSplash> {
   bool checkAdsShow = false;
   GlobalKey adWidgetKey = GlobalKey();
 
-  void detectTestAd(double pixelRatio) {
-    // if (!DetectTestAd.instance.isTestAd()) {
-    //   print('check_detect_test_ad --- 1');
-      screenshotController
-          .capture(
-              pixelRatio: pixelRatio, delay: const Duration(milliseconds: 10))
-          .then((capturedImage) async {
-        if (capturedImage != null) {
-          final directory = await getApplicationDocumentsDirectory();
-          String fileName =
-              'banner_ads_splash_${DateTime.now().microsecondsSinceEpoch}';
-          final imageFile =
-              await File('${directory.path}/$fileName.png').create();
-          await imageFile.writeAsBytes(capturedImage);
-          // print('check_detect_test_ad --- 1. $fileName');
-          DetectTestAd.instance.detectImageToText(
-            imageFile: imageFile,
-            onSuccess: () {
-              print('check_detect_test_ad --- true');
-              if (widget.onTestAdSuccess != null && widget.onNext != null) {
-                widget.onTestAdSuccess!();
-                widget.onNext!();
-              }
-            },
-            onError: (p0) {
-              print('check_detect_test_ad --- false $p0');
-              if (widget.onTestAdError != null && widget.onNext != null) {
-                widget.onTestAdError!(p0);
-                widget.onNext!();
-              }
-            },
-          );
-        }
-      }).catchError((e) {
-        print('check_detect_test_ad --- error $e');
-        if (widget.onTestAdError != null && widget.onNext != null) {
-          widget.onTestAdError!(e.toString());
-          widget.onNext!();
-        }
-      });
-    // } else {
-    //   print('check_detect_test_ad --- 2');
-    //   if (widget.onTestAdSuccess != null && widget.onNext != null) {
-    //     print('check_detect_test_ad --- 2.1');
-    //     widget.onTestAdSuccess!();
-    //     widget.onNext!();
-    //   }
-    // }
-  }
+  // void detectTestAd(double pixelRatio) {
+  //   // if (!DetectTestAd.instance.isTestAd()) {
+  //   //   print('check_detect_test_ad --- 1');
+  //     screenshotController
+  //         .capture(
+  //             pixelRatio: pixelRatio, delay: const Duration(milliseconds: 10))
+  //         .then((capturedImage) async {
+  //       if (capturedImage != null) {
+  //         final directory = await getApplicationDocumentsDirectory();
+  //         String fileName =
+  //             'banner_ads_splash_${DateTime.now().microsecondsSinceEpoch}';
+  //         final imageFile =
+  //             await File('${directory.path}/$fileName.png').create();
+  //         await imageFile.writeAsBytes(capturedImage);
+  //         // print('check_detect_test_ad --- 1. $fileName');
+  //         DetectTestAd.instance.detectImageToText(
+  //           imageFile: imageFile,
+  //           onSuccess: () {
+  //             print('check_detect_test_ad --- true');
+  //             if (widget.onTestAdSuccess != null && widget.onNext != null) {
+  //               widget.onTestAdSuccess!();
+  //               widget.onNext!();
+  //             }
+  //           },
+  //           onError: (p0) {
+  //             print('check_detect_test_ad --- false $p0');
+  //             if (widget.onTestAdError != null && widget.onNext != null) {
+  //               widget.onTestAdError!(p0);
+  //               widget.onNext!();
+  //             }
+  //           },
+  //         );
+  //       }
+  //     }).catchError((e) {
+  //       print('check_detect_test_ad --- error $e');
+  //       if (widget.onTestAdError != null && widget.onNext != null) {
+  //         widget.onTestAdError!(e.toString());
+  //         widget.onNext!();
+  //       }
+  //     });
+  //   // } else {
+  //   //   print('check_detect_test_ad --- 2');
+  //   //   if (widget.onTestAdSuccess != null && widget.onNext != null) {
+  //   //     print('check_detect_test_ad --- 2.1');
+  //   //     widget.onTestAdSuccess!();
+  //   //     widget.onNext!();
+  //   //   }
+  //   // }
+  // }
 
   // void callOrganicAdjust() {
   //   print('Banner_Splash: Use call Organic Adjust');
@@ -206,7 +206,7 @@ class _BannerSplashState extends State<BannerSplash> {
           // }
           print('check_detect_test_ad --- onAdShowed');
           if (widget.isDetectTestAd == true) {
-            detectTestAd(pixelRatio);
+            // detectTestAd(pixelRatio);
           }
         },
         onAdImpression: (adNetwork, adUnitType, data) {
