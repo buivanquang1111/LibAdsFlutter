@@ -225,7 +225,7 @@ public class AmazicPlugin
             case "isNetworkActive":
                 boolean isConnected = NetworkUtil.isNetworkActive(context);
                 result.success(isConnected);
-
+                break;
             default:
                 result.notImplemented();
                 break;
