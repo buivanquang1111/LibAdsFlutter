@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:ui' as ui;
 
+import 'package:amazic_ads_flutter/channel/internet_channel.dart';
 import 'package:amazic_ads_flutter/src/utils/preferences_util.dart';
 import 'package:amazic_ads_flutter/src/utils/remote_config.dart';
 import 'package:amazic_ads_flutter/src/utils/remote_config_key.dart';
@@ -134,8 +135,7 @@ class AdmobAds {
     bool isCallAdjust = false,
     Function()? onGotoWelComeBack,
   }) async {
-    await haveInternet();
-    if (await InternetConnectionChecker.instance.hasConnection) {
+    if (await isHaveInternet) {
       print('check_have_internet --- logEvent have internet');
       EventLogLib.logEvent('splash_have_internet');
     }
@@ -640,7 +640,7 @@ class AdmobAds {
     bool isClickAdsNotShowResume = true,
   }) async {
     if (!AdmobAds.instance.isShowAllAds ||
-        !isHaveInternet ||
+        ! await isHaveInternet ||
         !config ||
         !ConsentManager.ins.canRequestAds) {
       if (factoryId.toLowerCase().contains("intro_full")) {
@@ -900,7 +900,7 @@ class AdmobAds {
     if (!isShowAllAds ||
         !config ||
         _isFullscreenAdShowing ||
-        !isHaveInternet ||
+        ! await isHaveInternet ||
         !ConsentManager.ins.canRequestAds) {
       onDisabled?.call();
       return;
@@ -1003,7 +1003,7 @@ class AdmobAds {
     if (!isShowAllAds ||
         !config ||
         _isFullscreenAdShowing ||
-        !isHaveInternet ||
+        ! await isHaveInternet ||
         !ConsentManager.ins.canRequestAds) {
       _logger.logInfo(
           'config: $config, isShowAllAds: $isShowAllAds, isHaveInternet: ${isHaveInternet}, _isFullscreenAdShowing: $_isFullscreenAdShowing,canRequestAds: ${ConsentManager.ins.canRequestAds}');
@@ -1146,7 +1146,7 @@ class AdmobAds {
       onDisabled?.call();
       return;
     }
-    if (!isHaveInternet) {
+    if (! await isHaveInternet) {
       onDisabled?.call();
       return;
     }
@@ -1308,76 +1308,22 @@ class AdmobAds {
     }
   }
 
-  Future<bool> isOfflineDevice() async {
-    final connectivityResult = await Connectivity().checkConnectivity();
-    if (connectivityResult != ConnectivityResult.wifi &&
-        connectivityResult != ConnectivityResult.mobile &&
-        connectivityResult != ConnectivityResult.vpn) {
-      return true;
-    }
-    return false;
-  }
-
-  bool _isHaveInternet = true;
-
-  bool get isHaveInternet => _isHaveInternet;
-
-  Future<void> haveInternet() async {
-    // var connectivityResult = await Connectivity().checkConnectivity();
-    //
-    // for (var model in connectivityResult) {
-    //   print('check_have_internet -- ${model.name}');
-    // }
-    // if (connectivityResult.contains(ConnectivityResult.none)) {
-    //   print('check_have_internet --- 1.haveInternet false');
-    //   return false;
-    // }
-    //
-    // bool isHaveConnected =
-    //     await InternetConnectionChecker.instance.hasConnection;
-    // print('check_have_internet --- 2.haveInternet $isHaveConnected');
-
-    Connectivity().onConnectivityChanged.listen(
-      (event) async {
-        _isHaveInternet = await InternetConnectionChecker.instance.hasConnection;
-        print('check_have_internet --- onConnectivityChanged $_isHaveInternet');
-      },
-    );
-  }
-
-  //
-  // bool _isDeviceOffline = false;
-  //
-  // bool get isDeviceOffline =>
-  //     _isDeviceOffline; //true - k co intenet, false - co internet
-  // final connectivity = Connectivity();
-  // StreamSubscription<List<ConnectivityResult>>? connectivityStreamSub;
-  //
-  // Future<void> initConnectivity() async {
-  //   final connectivityResult = await connectivity.checkConnectivity();
-  //   _isDeviceOffline = !connectivityResult.any((element) =>
-  //       element == ConnectivityResult.wifi ||
-  //       element == ConnectivityResult.mobile);
-  //
-  //   cancelConnectivityOnBackground();
-  //   connectivityStreamSub = connectivity.onConnectivityChanged.listen(
-  //     (event) {
-  //       _isDeviceOffline = !event.any(
-  //         (element) =>
-  //             element == ConnectivityResult.wifi ||
-  //             element == ConnectivityResult.mobile ||
-  //             element == ConnectivityResult.vpn,
-  //       );
-  //     },
-  //   );
-  // }
-  //
-  // void cancelConnectivityOnBackground() {
-  //   connectivityStreamSub?.cancel();
-  //   connectivityStreamSub = null;
+  // Future<bool> isOfflineDevice() async {
+  //   final connectivityResult = await Connectivity().checkConnectivity();
+  //   if (connectivityResult != ConnectivityResult.wifi &&
+  //       connectivityResult != ConnectivityResult.mobile &&
+  //       connectivityResult != ConnectivityResult.vpn) {
+  //     return true;
+  //   }
+  //   return false;
   // }
 
-  //
+  Future<bool> get isHaveInternet async => await InternetChannel.isNetworkActive();
+
+  // Future<void> haveInternet() async {
+  //   bool isHave = await InternetChannel.isNetworkActive();
+  //   print('check_have_internet --- isHave $isHave');
+  // }
 
   Future<bool?> getConsentResult() async {
     return await AdPlatform.instance.getConsentResult();

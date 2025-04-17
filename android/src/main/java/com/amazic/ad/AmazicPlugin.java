@@ -32,6 +32,7 @@ import com.amazic.ad.iap.BillingCallback;
 import com.amazic.ad.iap.IAPManager;
 import com.amazic.ad.iap.ProductDetailCustom;
 import com.amazic.ad.iap.PurchaseCallback;
+import com.amazic.ad.utils.NetworkUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,6 +95,15 @@ public class AmazicPlugin
                         "com.yourcompany.ads/banner",
                         new AdsPlatformViewFactory(flutterPluginBinding.getApplicationContext(), methodChannel)
                 );
+
+        //check internet
+        MethodChannel internetChannel = new MethodChannel(
+                flutterPluginBinding.getBinaryMessenger(),
+                "internet_channel"
+        );
+
+        internetChannel.setMethodCallHandler(this);
+
     }
 
     @Override
@@ -211,6 +221,10 @@ public class AmazicPlugin
                 });
                 break;
             //end
+
+            case "isNetworkActive":
+                boolean isConnected = NetworkUtil.isNetworkActive(context);
+                result.success(isConnected);
 
             default:
                 result.notImplemented();

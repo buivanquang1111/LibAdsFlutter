@@ -52,10 +52,10 @@ class _BannerSplashPlatformState extends State<BannerSplashPlatform> {
   }
 
   @override
-  void didChangeDependencies() {
+  void didChangeDependencies() async{
     super.didChangeDependencies();
     if (!AdmobAds.instance.isShowAllAds ||
-        !AdmobAds.instance.isHaveInternet ||
+        !(await AdmobAds.instance.isHaveInternet) ||
         !widget.remoteConfig ||
         !ConsentManager.ins.canRequestAds) {
       EventLogLib.logEvent('banner_splash_false', parameters: {

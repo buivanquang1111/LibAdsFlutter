@@ -140,7 +140,7 @@ class NativeAdsState extends State<NativeAds> with WidgetsBindingObserver {
     //   return;
     // }
     if (!AdmobAds.instance.isShowAllAds ||
-        !AdmobAds.instance.isHaveInternet ||
+        ! (await AdmobAds.instance.isHaveInternet) ||
         !widget.config ||
         !ConsentManager.ins.canRequestAds) {
       if (_isLoading.value) {

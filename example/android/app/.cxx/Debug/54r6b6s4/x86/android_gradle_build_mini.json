@@ -1,0 +1,20 @@
+{
+  "buildFiles": [
+    "/Users/hyp04/Flutter/flutter/packages/flutter_tools/gradle/src/main/groovy/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/hyp04/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/hyp04/Desktop/lib_ads_flutter/LibAdsFlutter/example/android/app/.cxx/Debug/54r6b6s4/x86",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/hyp04/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/hyp04/Desktop/lib_ads_flutter/LibAdsFlutter/example/android/app/.cxx/Debug/54r6b6s4/x86",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {}
+}

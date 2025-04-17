@@ -142,7 +142,7 @@ class NativeAdsReloadState extends State<NativeAdsReload>
       widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.native, null);
       return;
     }
-    if (!AdmobAds.instance.isHaveInternet) {
+    if (!(await AdmobAds.instance.isHaveInternet)) {
       widget.onAdDisabled?.call(widget.adNetwork, AdUnitType.native, null);
       return;
     }

@@ -138,7 +138,7 @@ class AppLifecycleReactor {
         if (!AdmobAds.instance.isShowAllAds) {
           return;
         }
-        if (!AdmobAds.instance.isHaveInternet) {
+        if (!await AdmobAds.instance.isHaveInternet) {
           return;
         }
         if (!ConsentManager.ins.canRequestAds) {
