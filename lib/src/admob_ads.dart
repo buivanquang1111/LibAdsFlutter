@@ -133,6 +133,7 @@ class AdmobAds {
     String? keyTrickScreen,
     bool isCallIdServer = true,
     bool isCallAdjust = false,
+    int splashTimeout = 12,
     Function()? onGotoWelComeBack,
   }) async {
     if (await isHaveInternet) {
@@ -151,7 +152,7 @@ class AdmobAds {
 
     final Completer<bool> umpCompleter = Completer<bool>();
 
-    const timeoutDuration = Duration(seconds: 12);
+    final timeoutDuration = Duration(seconds: splashTimeout);
 
     final Completer<void> timeoutCompleter = Completer<void>();
 
