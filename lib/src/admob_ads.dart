@@ -198,6 +198,9 @@ class AdmobAds {
     tasks.add(initRemoteConfig);
     tasks.add(initUMP);
     tasks.add(umpCompleter.future);
+    tasks.add(Future.delayed(
+        const Duration(seconds: 15)
+    ));
     print('check_length_tasks --- ${tasks.length}');
 
     final tasksFuture = Future.wait(tasks).then(
