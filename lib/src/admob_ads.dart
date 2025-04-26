@@ -230,6 +230,14 @@ class AdmobAds {
       onNextAction();
     }
 
+    // Bây giờ: CHỜ tasksFuture hoàn tất hẳn (nếu chưa xong)
+    try {
+      await tasksFuture;
+    } catch (e) {
+      // ignore nếu task bị lỗi
+      print('tasksFuture error after timeout: $e');
+    }
+
     ///set k show all ads TH đã mua sub
     if (isIap) {
       IapMethodChannel.instance().setUpListener(
