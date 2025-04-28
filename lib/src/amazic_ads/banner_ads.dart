@@ -127,11 +127,11 @@ class _BannerAdsState extends State<BannerAds> with WidgetsBindingObserver {
       if (widget.onSplashScreen) {
         EventLogLib.logEvent("banner_splash_false", parameters: {
           "reason":
-              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.isHaveInternet}"
+              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.isHaveInternet}"
         });
       }else{
         EventLogLib.logEvent('${widget.visibilityDetectorKey}_false',parameters: {
-          'reason':'ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.isHaveInternet}'
+          'reason':'ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.isHaveInternet}'
         });
       }
       return;

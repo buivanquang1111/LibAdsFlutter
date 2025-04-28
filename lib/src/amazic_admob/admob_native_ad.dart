@@ -63,7 +63,7 @@ class AdmobNativeAd extends AdsBase {
     print('check_remote_trick_screen --- native_request');
     EventLogLib.logEvent('${visibilityDetectorKey}_true', parameters: {
       'reason':
-          'ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.isHaveInternet}'
+          'ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.isHaveInternet}'
     });
     _nativeAd = NativeAd(
       adUnitId: idAds,

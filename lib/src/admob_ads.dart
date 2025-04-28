@@ -396,10 +396,10 @@ class AdmobAds {
     ///log Event
     EventLogLib.logEvent("inter_splash_tracking", parameters: {
       'splash_detail':
-          '${ConsentManager.ins.canRequestAds}_${CallOrganicAdjust.instance.isOrganic()}_${isHaveInternet}_${AdmobAds.instance.isShowAllAds}_$rateAoa',
+          '${ConsentManager.ins.canRequestAds}_${CallOrganicAdjust.instance.isOrganic()}_${await isHaveInternet}_${AdmobAds.instance.isShowAllAds}_$rateAoa',
       'ump': '${ConsentManager.ins.canRequestAds}',
       'organic': '${CallOrganicAdjust.instance.isOrganic()}',
-      'haveinternet': '${isHaveInternet}',
+      'haveinternet': '${await isHaveInternet}',
       'showallad': '${AdmobAds.instance.isShowAllAds}',
       'interremote_openremote_aoavalue': '${isShowInter}_${isShowOpen}_$rateAoa'
     });
@@ -661,12 +661,12 @@ class AdmobAds {
       if (factoryId.toLowerCase().contains("intro_full")) {
         EventLogLib.logEvent("native_intro_full_false", parameters: {
           "reason":
-              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${isHaveInternet}"
+              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await isHaveInternet}"
         });
       } else {
         EventLogLib.logEvent("native_intro_false", parameters: {
           "reason":
-              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${isHaveInternet}"
+              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await isHaveInternet}"
         });
       }
       return null;
@@ -1021,11 +1021,11 @@ class AdmobAds {
         ! await isHaveInternet ||
         !ConsentManager.ins.canRequestAds) {
       _logger.logInfo(
-          'config: $config, isShowAllAds: $isShowAllAds, isHaveInternet: ${isHaveInternet}, _isFullscreenAdShowing: $_isFullscreenAdShowing,canRequestAds: ${ConsentManager.ins.canRequestAds}');
+          'config: $config, isShowAllAds: $isShowAllAds, isHaveInternet: ${await isHaveInternet}, _isFullscreenAdShowing: $_isFullscreenAdShowing,canRequestAds: ${ConsentManager.ins.canRequestAds}');
 
       EventLogLib.logEvent("inter_intro_false", parameters: {
         "reason":
-            "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${isHaveInternet}"
+            "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await isHaveInternet}"
       });
       onDisabled?.call();
       return;

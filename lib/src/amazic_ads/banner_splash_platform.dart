@@ -60,7 +60,7 @@ class _BannerSplashPlatformState extends State<BannerSplashPlatform> {
         !ConsentManager.ins.canRequestAds) {
       EventLogLib.logEvent('banner_splash_false', parameters: {
         "reason":
-            "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.isHaveInternet}"
+            "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.isHaveInternet}"
       });
       setState(() {
         isVisibility = false;
@@ -76,7 +76,7 @@ class _BannerSplashPlatformState extends State<BannerSplashPlatform> {
           case 'onRequestAds':
             EventLogLib.logEvent('banner_splash_true', parameters: {
               'reason':
-                  'ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${AdmobAds.instance.isHaveInternet}'
+                  'ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.isHaveInternet}'
             });
             break;
           case 'onAdLoaded':
