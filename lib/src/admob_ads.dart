@@ -85,8 +85,8 @@ class AdmobAds {
   Timer? _timer;
   int _second = 0;
 
-  /// _shouldShowInterOrAppOpenSplash = false khi đã qua màn language hoặc inter splash, app open splash đã được show ít nhất 1 lần
-  bool _shouldShowInterOrAppOpenSplash = true;
+  ///
+  bool _shouldShowInterOrAppOpenSplash = false;
   bool _isSplashTimeout = false;
 
   ///biến check có đang là testAd k
@@ -292,6 +292,7 @@ class AdmobAds {
     print(
         'check_call_remote --- name: ${RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyResumeConfig).name]}');
 
+    _shouldShowInterOrAppOpenSplash = true;
     if (!_isSplashTimeout) {
       ///showAds inter/open Splash
       showAdsSplash(
