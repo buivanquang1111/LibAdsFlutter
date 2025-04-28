@@ -145,13 +145,44 @@ class NativeAdsReloadState extends State<NativeAdsReload>
   }
 
   void _cleanListNativeAd() {
-    // chỉ giữ lại 2 item cuối cùng
-    int size = _listNativeAd.length;
-    while (size - 2 > 0) {
-      _listNativeAd[0]?.dispose();
-      _listNativeAd.removeAt(0);
-      size--;
+    // luôn giữ item cuối cùng, sau đó chỉ giữ lại 2 item cuối mà _isAdLoaded = true và _nativeAd != null
+    if (_listNativeAd.length <= 2) {
+      return;
     }
+
+    final List<AdmobNativeAd?> keepList = [];
+
+    // Luôn giữ item cuối cùng
+    if (_listNativeAd.isNotEmpty) {
+      keepList.add(_listNativeAd.last);
+    }
+
+    // Tìm 2 item gần cuối mà isAdLoaded = true && nativeAd != null
+    for (int i = _listNativeAd.length - 2; i >= 0; i--) {
+      final ad = _listNativeAd[i];
+      if (ad != null && ad.isAdLoaded && ad.nativeAd != null) {
+        keepList.insert(0, ad); // chèn vào đầu danh sách
+        if (keepList.length == 3) {
+          break;
+        }
+      }
+    }
+
+    // Nếu keepList = 1 -> thêm item gần cuối, mục tiêu giữ cho có ít nhất 2 phần tử
+    if (keepList.length == 1) {
+      keepList.add(_listNativeAd[_listNativeAd.length - 2]);
+    }
+
+    // Dispose các ad cũ không cần giữ
+    for (var ad in _listNativeAd) {
+      if (!keepList.contains(ad)) {
+        ad?.dispose();
+      }
+    }
+
+    _listNativeAd
+      ..clear()
+      ..addAll(keepList);
   }
 
   Future<void> _prepareAd() async {
