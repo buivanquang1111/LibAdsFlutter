@@ -291,6 +291,7 @@ class AdmobAds {
     print('check_call_remote --- name: $keyResumeConfig');
     print(
         'check_call_remote --- name: ${RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyResumeConfig).name]}');
+    print('check _isSplashTimeout: $_isSplashTimeout');
 
     _shouldShowInterOrAppOpenSplash = true;
     if (!_isSplashTimeout) {
