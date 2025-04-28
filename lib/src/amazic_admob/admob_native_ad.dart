@@ -176,9 +176,7 @@ class AdmobNativeAd extends AdsBase {
             children: [
               if (ads != null && isAdLoaded) AdWidget(ad: ads),
               if (_isAdLoading)
-                displayAdOnLoading != null
-                    ? AdWidget(ad: displayAdOnLoading)
-                    : LoadingAds(height: height ?? 0),
+                LoadingAds(height: height ?? 0)
             ],
           ),
         ),
