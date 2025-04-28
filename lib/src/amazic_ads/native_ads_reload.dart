@@ -181,6 +181,7 @@ class NativeAdsReloadState extends State<NativeAdsReload>
     //     ad?.dispose();
     //   }
     // }
+    /* Nếu không comment đoạn trên thì sẽ bị lỗi nháy đen khi reload native :)) */
 
     _listNativeAd
       ..clear()
