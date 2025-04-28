@@ -119,19 +119,6 @@ class NativeAdsReloadState extends State<NativeAdsReload>
             ),
             child: Stack(
               key: _adKey,
-              /*child: _listNativeAd.lastOrNull?.show(
-                    height: widget.height,
-                    borderRadius: widget.borderRadius,
-                    color: widget.color,
-                    border: widget.border,
-                    padding: widget.padding,
-                    margin: widget.margin,
-                    displayAdOnLoading: getPrevLast()
-                  ) ??
-                  SizedBox(
-                    height: 1,
-                    width: MediaQuery.sizeOf(context).width,
-                  ),*/
               children: [
                 for (var element in _listNativeAd) ...[
                   element?.show(
@@ -152,10 +139,19 @@ class NativeAdsReloadState extends State<NativeAdsReload>
     );
   }
 
-  AdmobNativeAd? getPrevLast() {
-    return _listNativeAd.length > 1
-        ? _listNativeAd[_listNativeAd.length - 2]
-        : null;
+  void _addAndCleanListNativeAd(AdmobNativeAd? admobNativeAd) {
+    _listNativeAd.add(admobNativeAd);
+    _cleanListNativeAd();
+  }
+
+  void _cleanListNativeAd() {
+    // chỉ giữ lại 2 item cuối cùng
+    int size = _listNativeAd.length;
+    while (size - 2 > 0) {
+      _listNativeAd[0]?.dispose();
+      _listNativeAd.removeAt(0);
+      size--;
+    }
   }
 
   Future<void> _prepareAd() async {
@@ -288,7 +284,7 @@ class NativeAdsReloadState extends State<NativeAdsReload>
       factoryId: widget.factoryId,
     );
     nativeAd?.load();
-    _listNativeAd.add(nativeAd);
+    _addAndCleanListNativeAd(nativeAd);
 
     if (mounted) {
       setState(() {});
@@ -308,7 +304,7 @@ class NativeAdsReloadState extends State<NativeAdsReload>
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.adsBase != null) {
-        _listNativeAd.add(widget.adsBase);
+        _addAndCleanListNativeAd(widget.adsBase);
         print(
             'native_ads_reload ---1. adsBase have data - ${visibilityController.value}');
         _startTimer();
@@ -325,7 +321,7 @@ class NativeAdsReloadState extends State<NativeAdsReload>
 
   reloadAdsNative({required AdmobNativeAd? adBase}) {
     if (adBase != null) {
-      _listNativeAd.add(adBase);
+      _addAndCleanListNativeAd(adBase);
       _startTimer();
       _adKey = UniqueKey();
       if (mounted) {
