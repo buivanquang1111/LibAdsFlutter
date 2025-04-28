@@ -106,6 +106,7 @@ class NativeAdsReloadState extends State<NativeAdsReload>
       child: ValueListenableBuilder<bool>(
         valueListenable: visibilityController,
         builder: (_, isVisible, __) {
+          print('native_ads_reload --- ${widget.visibilityDetectorKey} isVisible: $isVisible -- _listNativeAd.length: ${_listNativeAd.length}');
           return Visibility(
             visible: isVisible,
             maintainState: false,
