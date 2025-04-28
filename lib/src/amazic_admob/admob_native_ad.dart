@@ -29,6 +29,7 @@ class AdmobNativeAd extends AdsBase {
   });
 
   NativeAd? _nativeAd;
+  AdWidget? _adWidget;
   bool _isAdLoaded = false;
   bool _isAdLoading = false;
   bool _isAdLoadedFailed = false;
@@ -190,7 +191,13 @@ class AdmobNativeAd extends AdsBase {
           height: height,
           child: Stack(
             children: [
-              if (_nativeAd != null && isAdLoaded) adWidget!,
+              Builder(builder: (_) {
+                if (_nativeAd != null && isAdLoaded) {
+                  _adWidget = AdWidget(ad: _nativeAd!);
+                  return _adWidget!;
+                }
+                return const SizedBox();
+              }),
               showLoading(height, displayAdOnLoading),
             ],
           ),
@@ -199,7 +206,7 @@ class AdmobNativeAd extends AdsBase {
     );
   }
 
-  Widget? get adWidget => _nativeAd != null ? AdWidget(ad: _nativeAd!) : null;
+  Widget? get adWidget => _adWidget;
 
   @override
   bool get isAdLoading => _isAdLoading;
