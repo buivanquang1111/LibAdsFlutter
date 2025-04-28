@@ -129,6 +129,17 @@ class AdmobNativeAd extends AdsBase {
     print('check_show_native: xong');
   }
 
+  Widget showLoading(double? height, NativeAd? displayAdOnLoading) {
+    if (_isAdLoading) {
+      if (displayAdOnLoading != null) {
+        return AdWidget(ad: displayAdOnLoading);
+      } else {
+        return LoadingAds(height: height ?? 0);
+      }
+    }
+    return const SizedBox();
+  }
+
   @override
   dynamic show({
     double? height,
@@ -171,11 +182,7 @@ class AdmobNativeAd extends AdsBase {
           child: Stack(
             children: [
               if (ads != null && isAdLoaded) AdWidget(ad: ads),
-              _isAdLoading
-                  ? (displayAdOnLoading != null
-                      ? AdWidget(ad: displayAdOnLoading)
-                      : LoadingAds(height: height ?? 0))
-                  : const SizedBox(),
+              showLoading(height, displayAdOnLoading),
             ],
           ),
         ),
