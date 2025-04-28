@@ -35,7 +35,7 @@ class NativeAdsReload extends StatefulWidget {
   final ValueNotifier<bool>? visibilityController;
   final bool isClickAdsNotShowResume;
   final bool isCanReloadHideView;
-  final AdsBase? adsBase;
+  final AdmobNativeAd? adsBase;
 
   const NativeAdsReload({
     this.adNetwork = AdNetwork.admob,
@@ -72,7 +72,8 @@ class NativeAdsReload extends StatefulWidget {
 
 class NativeAdsReloadState extends State<NativeAdsReload>
     with WidgetsBindingObserver {
-  AdsBase? _nativeAd;
+  AdmobNativeAd? _currentNativeAd;
+  AdmobNativeAd? _nativeAd;
 
   Timer? _timer;
   bool _isPaused = false;
@@ -125,6 +126,10 @@ class NativeAdsReloadState extends State<NativeAdsReload>
                     border: widget.border,
                     padding: widget.padding,
                     margin: widget.margin,
+                    displayAdOnLoading:
+                      _currentNativeAd?.isAdLoaded == true
+                          ? _currentNativeAd?.nativeAd
+                          : null
                   ) ??
                   SizedBox(
                     height: 1,
@@ -170,6 +175,7 @@ class NativeAdsReloadState extends State<NativeAdsReload>
     _stopTimer();
 
     if (_nativeAd != null) {
+      _currentNativeAd = _nativeAd;
       _nativeAd!.dispose();
       _nativeAd = null;
       if (mounted) {
@@ -299,7 +305,7 @@ class NativeAdsReloadState extends State<NativeAdsReload>
     });
   }
 
-  reloadAdsNative({required AdsBase? adBase}) {
+  reloadAdsNative({required AdmobNativeAd? adBase}) {
     if(adBase != null){
       _nativeAd = adBase;
       _startTimer();
@@ -331,6 +337,7 @@ class NativeAdsReloadState extends State<NativeAdsReload>
 
     if (!visibilityController.value) {
       if (_nativeAd != null) {
+        _currentNativeAd = _nativeAd;
         _nativeAd!.dispose();
         _nativeAd = null;
         if (mounted) {
@@ -362,6 +369,7 @@ class NativeAdsReloadState extends State<NativeAdsReload>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _currentNativeAd?.dispose();
     _nativeAd?.dispose();
     onDestroyed();
 

@@ -18,7 +18,7 @@ import 'package:example/screen/language/language.dart';
 AdsBase? preloadAds;
 AdsBase? adsBase1;
 AdsBase? adsBase2;
-List<AdsBase?> listLanguage = [];
+List<AdmobNativeAd?> listLanguage = [];
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});

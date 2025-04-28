@@ -53,6 +53,8 @@ class AdmobNativeAd extends AdsBase {
     _nativeAd = null;
   }
 
+  NativeAd? get nativeAd => _nativeAd;
+
   @override
   bool get isAdLoaded => _isAdLoaded;
 
@@ -86,7 +88,8 @@ class AdmobNativeAd extends AdsBase {
           _isAdLoaded = false;
           _isAdLoading = false;
           _isAdLoadedFailed = true;
-          AdmobAds.instance.onAdFailedToLoadMethod(adNetwork, adUnitType, ad, error.toString());
+          AdmobAds.instance.onAdFailedToLoadMethod(
+              adNetwork, adUnitType, ad, error.toString());
           onAdFailedToLoad?.call(adNetwork, adUnitType, ad, error.toString());
           ad.dispose();
           print('check_show_native: onAdFailedToLoad');
@@ -138,6 +141,7 @@ class AdmobNativeAd extends AdsBase {
     BoxBorder? border,
     EdgeInsetsGeometry? padding,
     EdgeInsetsGeometry? margin,
+    NativeAd? displayAdOnLoading,
   }) {
     if (!AdmobAds.instance.isShowAllAds) {
       return const SizedBox(
@@ -152,7 +156,8 @@ class AdmobNativeAd extends AdsBase {
         width: 1,
       );
     }
-    print('check_show_native: 3. ad: $ads, isAdLoaded: $isAdLoaded , _isAdLoading: $_isAdLoading');
+    print(
+        'check_show_native: 3. ad: $ads, isAdLoaded: $isAdLoaded , _isAdLoading: $_isAdLoading');
     _logger.logInfo('ad: $ads, isAdLoaded: $isAdLoaded');
     return Container(
       decoration: BoxDecoration(
@@ -170,7 +175,10 @@ class AdmobNativeAd extends AdsBase {
           child: Stack(
             children: [
               if (ads != null && isAdLoaded) AdWidget(ad: ads),
-              // if (_isAdLoading) LoadingAds(height: height ?? 0),
+              if (_isAdLoading)
+                displayAdOnLoading != null
+                    ? AdWidget(ad: displayAdOnLoading)
+                    : LoadingAds(height: height ?? 0),
             ],
           ),
         ),

@@ -638,7 +638,7 @@ class AdmobAds {
   }
 
   //load ads native trước
-  Future<AdsBase?> loadNativeAds({
+  Future<AdmobNativeAd?> loadNativeAds({
     required AdNetwork adNetwork,
     required String factoryId,
     required String idAds,
@@ -678,7 +678,7 @@ class AdmobAds {
       EventLogLib.logEvent("native_intro_true");
     }
 
-    AdsBase? ad = AdmobAds.instance.createNative(
+    AdmobNativeAd? ad = AdmobAds.instance.createNative(
         visibilityDetectorKey: visibilityDetectorKey,
         adNetwork: adNetwork,
         factoryId: factoryId,
@@ -698,7 +698,7 @@ class AdmobAds {
 
   //end
 
-  AdsBase? createNative({
+  AdmobNativeAd? createNative({
     required AdNetwork adNetwork,
     required String factoryId,
     required String idAds,
@@ -714,7 +714,7 @@ class AdmobAds {
     EasyAdEarnedReward? onEarnedReward,
     EasyAdOnPaidEvent? onPaidEvent,
   }) {
-    AdsBase? ad;
+    AdmobNativeAd? ad;
     switch (adNetwork) {
       default:
         // final String id =
