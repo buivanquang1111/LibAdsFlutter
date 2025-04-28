@@ -399,10 +399,6 @@ class NativeAdsReloadState extends State<NativeAdsReload>
     for (var element in _listNativeAd) {
       element?.dispose();
     }
-    _listNativeAd.clear();
-    if (mounted) {
-      setState(() {});
-    }
   }
 
   @override
