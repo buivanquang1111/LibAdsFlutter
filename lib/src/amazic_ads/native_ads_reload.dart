@@ -126,10 +126,7 @@ class NativeAdsReloadState extends State<NativeAdsReload>
                     border: widget.border,
                     padding: widget.padding,
                     margin: widget.margin,
-                    displayAdOnLoading:
-                          getPrevLast()?.isAdLoaded == true
-                          ? getPrevLast()?.nativeAd
-                          : null
+                    displayAdOnLoading: getPrevLast()
                   ) ??
                   SizedBox(
                     height: 1,

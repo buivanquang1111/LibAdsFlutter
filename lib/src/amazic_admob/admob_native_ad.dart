@@ -129,13 +129,13 @@ class AdmobNativeAd extends AdsBase {
     print('check_show_native: xong');
   }
 
-  Widget showLoading(double? height, NativeAd? displayAdOnLoading) {
+  Widget showLoading(double? height, AdmobNativeAd? displayAdOnLoading) {
     if (_isAdLoading) {
       print('check_show_native: showLoading $height} --- $displayAdOnLoading');
       if (displayAdOnLoading != null) {
         return Stack(
           children: [
-            AdWidget(ad: displayAdOnLoading),
+            displayAdOnLoading.adWidget ?? const SizedBox(),
             Container(
               width:  double.infinity,
               height: height ?? 0,
@@ -158,7 +158,7 @@ class AdmobNativeAd extends AdsBase {
     BoxBorder? border,
     EdgeInsetsGeometry? padding,
     EdgeInsetsGeometry? margin,
-    NativeAd? displayAdOnLoading,
+    AdmobNativeAd? displayAdOnLoading,
   }) {
     if (!AdmobAds.instance.isShowAllAds) {
       return const SizedBox(
@@ -166,16 +166,15 @@ class AdmobNativeAd extends AdsBase {
         width: 1,
       );
     }
-    NativeAd? ads = _nativeAd;
-    if (ads == null && !_isAdLoaded) {
+    if (_nativeAd == null && !_isAdLoaded) {
       return const SizedBox(
         height: 1,
         width: 1,
       );
     }
     print(
-        'check_show_native: 3. ad: $ads, isAdLoaded: $isAdLoaded , _isAdLoading: $_isAdLoading');
-    _logger.logInfo('ad: $ads, isAdLoaded: $isAdLoaded');
+        'check_show_native: 3. ad: $_nativeAd, isAdLoaded: $isAdLoaded , _isAdLoading: $_isAdLoading');
+    _logger.logInfo('ad: $_nativeAd, isAdLoaded: $isAdLoaded');
     return Container(
       decoration: BoxDecoration(
         borderRadius: borderRadius ?? BorderRadius.zero,
@@ -191,7 +190,7 @@ class AdmobNativeAd extends AdsBase {
           height: height,
           child: Stack(
             children: [
-              if (ads != null && isAdLoaded) AdWidget(ad: ads),
+              if (_nativeAd != null && isAdLoaded) adWidget!,
               showLoading(height, displayAdOnLoading),
             ],
           ),
@@ -199,6 +198,8 @@ class AdmobNativeAd extends AdsBase {
       ),
     );
   }
+
+  Widget? get adWidget => _nativeAd != null ? AdWidget(ad: _nativeAd!) : null;
 
   @override
   bool get isAdLoading => _isAdLoading;
