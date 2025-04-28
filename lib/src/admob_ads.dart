@@ -300,7 +300,7 @@ class AdmobAds {
           keyRateAOA: keyRateAOA,
           keyOpenSplash: keyOpenSplash,
           keyInterSplash: keyInterSplash,
-          onNextAction: onNextAction(),
+          onNextAction: onNextAction,
           idAdsOpen: idAdsOpen,
           idAdsInter: idAdsInter);
     }
