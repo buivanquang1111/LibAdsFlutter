@@ -72,8 +72,8 @@ class NativeAdsReload extends StatefulWidget {
 
 class NativeAdsReloadState extends State<NativeAdsReload>
     with WidgetsBindingObserver {
-  AdmobNativeAd? _oldAd;
-  AdmobNativeAd? _nativeAd;
+  // AdmobNativeAd? _nativeAd;
+  final List<AdmobNativeAd?> _listNativeAd = [];
 
   Timer? _timer;
   bool _isPaused = false;
@@ -119,7 +119,7 @@ class NativeAdsReloadState extends State<NativeAdsReload>
             ),
             child: Container(
               key: _adKey,
-              child: _nativeAd?.show(
+              child: _listNativeAd.lastOrNull?.show(
                     height: widget.height,
                     borderRadius: widget.borderRadius,
                     color: widget.color,
@@ -127,8 +127,8 @@ class NativeAdsReloadState extends State<NativeAdsReload>
                     padding: widget.padding,
                     margin: widget.margin,
                     displayAdOnLoading:
-                        _oldAd?.isAdLoaded == true
-                          ? _oldAd?.nativeAd
+                          getPrevLast()?.isAdLoaded == true
+                          ? getPrevLast()?.nativeAd
                           : null
                   ) ??
                   SizedBox(
@@ -140,6 +140,10 @@ class NativeAdsReloadState extends State<NativeAdsReload>
         },
       ),
     );
+  }
+
+  AdmobNativeAd? getPrevLast() {
+    return _listNativeAd.length > 1 ? _listNativeAd[_listNativeAd.length - 2] : null;
   }
 
   Future<void> _prepareAd() async {
@@ -175,23 +179,19 @@ class NativeAdsReloadState extends State<NativeAdsReload>
     _stopTimer();
 
     // if (_nativeAd != null) {
-    //   _currentNativeAd = _nativeAd;
     //   _nativeAd!.dispose();
     //   _nativeAd = null;
     //   if (mounted) {
     //     setState(() {});
     //   }
     // }
-    _oldAd = _nativeAd;
 
-    _nativeAd = AdmobAds.instance.createNative(
+    final nativeAd = AdmobAds.instance.createNative(
       visibilityDetectorKey: widget.visibilityDetectorKey,
       adNetwork: widget.adNetwork,
       idAds: widget.idAds,
       isClickAdsNotShowResume: widget.isClickAdsNotShowResume,
       onAdLoaded: (adNetwork, adUnitType, data) {
-        // Chỉ dispose quảng cáo cũ SAU khi quảng cáo mới đã sẵn sàng
-        _oldAd?.dispose();
         print(
             'native_ads_reload --- ${widget.visibilityDetectorKey} onAdLoaded');
         if (!_isDestroy && !_isPaused) {
@@ -275,7 +275,9 @@ class NativeAdsReloadState extends State<NativeAdsReload>
       },
       factoryId: widget.factoryId,
     );
-    _nativeAd?.load();
+    nativeAd?.load();
+    _listNativeAd.add(nativeAd);
+
     if (mounted) {
       setState(() {});
     }
@@ -294,7 +296,7 @@ class NativeAdsReloadState extends State<NativeAdsReload>
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.adsBase != null) {
-        _nativeAd = widget.adsBase;
+        _listNativeAd.add(widget.adsBase);
         print('native_ads_reload ---1. adsBase have data - ${visibilityController.value}');
         _startTimer();
         if (mounted) {
@@ -310,7 +312,7 @@ class NativeAdsReloadState extends State<NativeAdsReload>
 
   reloadAdsNative({required AdmobNativeAd? adBase}) {
     if(adBase != null){
-      _nativeAd = adBase;
+      _listNativeAd.add(adBase);
       _startTimer();
       _adKey = UniqueKey();
       if (mounted) {
@@ -331,7 +333,7 @@ class NativeAdsReloadState extends State<NativeAdsReload>
       return;
     }
 
-    if (_nativeAd?.isAdLoading != true && visibilityController.value) {
+    if (_listNativeAd.lastOrNull?.isAdLoading != true && visibilityController.value) {
       print(
           'native_ads_reload --- ${widget.visibilityDetectorKey} start _listener');
       _prepareAd();
@@ -339,16 +341,24 @@ class NativeAdsReloadState extends State<NativeAdsReload>
     }
 
     if (!visibilityController.value) {
-      if (_nativeAd != null) {
-        _oldAd = _nativeAd;
-        _nativeAd!.dispose();
-        _nativeAd = null;
+      if (_listNativeAd.lastOrNull != null) {
+        disposeAll();
         if (mounted) {
           setState(() {});
         }
       }
 
       _stopTimer();
+    }
+  }
+
+  void disposeAll() {
+    for (var element in _listNativeAd) {
+      element?.dispose();
+    }
+    _listNativeAd.clear();
+    if (mounted) {
+      setState(() {});
     }
   }
 
@@ -372,8 +382,7 @@ class NativeAdsReloadState extends State<NativeAdsReload>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    _oldAd?.dispose();
-    _nativeAd?.dispose();
+    disposeAll();
     onDestroyed();
 
     super.dispose();
