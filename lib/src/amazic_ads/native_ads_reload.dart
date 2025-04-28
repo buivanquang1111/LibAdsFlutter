@@ -374,8 +374,7 @@ class NativeAdsReloadState extends State<NativeAdsReload>
       return;
     }
 
-    if (_listNativeAd.lastOrNull?.isAdLoading != true &&
-        visibilityController.value) {
+    if (visibilityController.value) {
       print(
           'native_ads_reload --- ${widget.visibilityDetectorKey} start _listener');
       _prepareAd();
@@ -399,6 +398,7 @@ class NativeAdsReloadState extends State<NativeAdsReload>
     for (var element in _listNativeAd) {
       element?.dispose();
     }
+    _listNativeAd.clear();
   }
 
   @override
