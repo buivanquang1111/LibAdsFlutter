@@ -1,12 +1,8 @@
-import 'package:amazic_ads_flutter/src/enums/ad_network.dart';
-import 'package:amazic_ads_flutter/src/enums/ad_unit_type.dart';
+import 'package:amazic_ads_flutter/src/amazic_ads/loading_ads.dart';
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import '../../adjust_config/call_organic_adjust.dart';
 import '../../admob_ads_flutter.dart';
-import '../amazic_ads/loading_ads.dart';
-import '../admob_ads.dart';
 import '../utils/amazic_logger.dart';
 
 class AdmobNativeAd extends AdsBase {
@@ -175,8 +171,15 @@ class AdmobNativeAd extends AdsBase {
           child: Stack(
             children: [
               if (ads != null && isAdLoaded) AdWidget(ad: ads),
-              if (_isAdLoading)
-                LoadingAds(height: height ?? 0)
+              Builder(builder: (context) {
+                if (_isAdLoading) {
+                  if (displayAdOnLoading != null) {
+                    return AdWidget(ad: displayAdOnLoading);
+                  }
+                  return LoadingAds(height: height ?? 0);
+                }
+                return const SizedBox();
+              }),
             ],
           ),
         ),
