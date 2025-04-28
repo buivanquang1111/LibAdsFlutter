@@ -117,9 +117,9 @@ class NativeAdsReloadState extends State<NativeAdsReload>
               height: ConsentManager.ins.canRequestAds ? widget.height : 1,
               width: MediaQuery.sizeOf(context).width,
             ),
-            child: Container(
+            child: Stack(
               key: _adKey,
-              child: _listNativeAd.lastOrNull?.show(
+              /*child: _listNativeAd.lastOrNull?.show(
                     height: widget.height,
                     borderRadius: widget.borderRadius,
                     color: widget.color,
@@ -131,7 +131,20 @@ class NativeAdsReloadState extends State<NativeAdsReload>
                   SizedBox(
                     height: 1,
                     width: MediaQuery.sizeOf(context).width,
-                  ),
+                  ),*/
+              children: [
+                for (var element in _listNativeAd) ...[
+                  element?.show(
+                    height: widget.height,
+                    borderRadius: widget.borderRadius,
+                    color: widget.color,
+                    border: widget.border,
+                    padding: widget.padding,
+                    margin: widget.margin,
+                    showShimmer: _listNativeAd.length == 1,
+                  )
+                ]
+              ],
             ),
           );
         },
@@ -140,7 +153,9 @@ class NativeAdsReloadState extends State<NativeAdsReload>
   }
 
   AdmobNativeAd? getPrevLast() {
-    return _listNativeAd.length > 1 ? _listNativeAd[_listNativeAd.length - 2] : null;
+    return _listNativeAd.length > 1
+        ? _listNativeAd[_listNativeAd.length - 2]
+        : null;
   }
 
   Future<void> _prepareAd() async {
@@ -294,7 +309,8 @@ class NativeAdsReloadState extends State<NativeAdsReload>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.adsBase != null) {
         _listNativeAd.add(widget.adsBase);
-        print('native_ads_reload ---1. adsBase have data - ${visibilityController.value}');
+        print(
+            'native_ads_reload ---1. adsBase have data - ${visibilityController.value}');
         _startTimer();
         if (mounted) {
           setState(() {});
@@ -308,7 +324,7 @@ class NativeAdsReloadState extends State<NativeAdsReload>
   }
 
   reloadAdsNative({required AdmobNativeAd? adBase}) {
-    if(adBase != null){
+    if (adBase != null) {
       _listNativeAd.add(adBase);
       _startTimer();
       _adKey = UniqueKey();
@@ -319,7 +335,7 @@ class NativeAdsReloadState extends State<NativeAdsReload>
     }
   }
 
-  reloadAdsNow(){
+  reloadAdsNow() {
     _prepareAd();
   }
 
@@ -330,7 +346,8 @@ class NativeAdsReloadState extends State<NativeAdsReload>
       return;
     }
 
-    if (_listNativeAd.lastOrNull?.isAdLoading != true && visibilityController.value) {
+    if (_listNativeAd.lastOrNull?.isAdLoading != true &&
+        visibilityController.value) {
       print(
           'native_ads_reload --- ${widget.visibilityDetectorKey} start _listener');
       _prepareAd();
