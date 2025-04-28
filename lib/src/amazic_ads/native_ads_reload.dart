@@ -174,12 +174,12 @@ class NativeAdsReloadState extends State<NativeAdsReload>
       keepList.add(_listNativeAd[_listNativeAd.length - 2]);
     }
 
-    // // Dispose các ad cũ không cần giữ
-    // for (var ad in _listNativeAd) {
-    //   if (!keepList.contains(ad)) {
-    //     ad?.dispose();
-    //   }
-    // }
+    // Dispose các ad cũ không cần giữ
+    for (var ad in _listNativeAd) {
+      if (!keepList.contains(ad)) {
+        ad?.dispose();
+      }
+    }
 
     _listNativeAd
       ..clear()
