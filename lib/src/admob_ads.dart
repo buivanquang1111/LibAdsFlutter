@@ -99,6 +99,9 @@ class AdmobAds {
   Timer? _timer;
   int _second = 0;
 
+  ///
+  bool _isSplashTimeout = false;
+
   ///biến check có đang là testAd k
   bool _isTestAd = false;
 
@@ -199,7 +202,7 @@ class AdmobAds {
     tasks.add(initUMP);
     tasks.add(umpCompleter.future);
     tasks.add(Future.delayed(
-        const Duration(seconds: 15)
+        const Duration(seconds: 10)
     ));
     print('check_length_tasks --- ${tasks.length}');
 
@@ -219,6 +222,7 @@ class AdmobAds {
       await Future.any([tasksFuture, timeoutCompleter.future]);
       print('time_out_call: All tasks completed successfully.');
     } on TimeoutException catch (e) {
+      _isSplashTimeout = true;
       print('time_out_call: Timeout ${e.message}');
       EventLogLib.logEvent("timeout_splash_12s");
       countOpenApp();
@@ -300,14 +304,16 @@ class AdmobAds {
     print(
         'check_call_remote --- name: ${RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyResumeConfig).name]}');
 
-    ///showAds inter/open Splash
-    showAdsSplash(
-        keyRateAOA: keyRateAOA,
-        keyOpenSplash: keyOpenSplash,
-        keyInterSplash: keyInterSplash,
-        onNextAction: onNextAction,
-        idAdsOpen: idAdsOpen,
-        idAdsInter: idAdsInter);
+    if (!_isSplashTimeout) {
+      ///showAds inter/open Splash
+      showAdsSplash(
+          keyRateAOA: keyRateAOA,
+          keyOpenSplash: keyOpenSplash,
+          keyInterSplash: keyInterSplash,
+          onNextAction: onNextAction(),
+          idAdsOpen: idAdsOpen,
+          idAdsInter: idAdsInter);
+    }
 
     initAdsOpenResume(
         idAds: idAds,
