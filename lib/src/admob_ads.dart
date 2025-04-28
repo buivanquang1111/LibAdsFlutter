@@ -5,29 +5,15 @@ import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:amazic_ads_flutter/channel/internet_channel.dart';
-import 'package:amazic_ads_flutter/src/utils/preferences_util.dart';
-import 'package:amazic_ads_flutter/src/utils/remote_config.dart';
-import 'package:amazic_ads_flutter/src/utils/remote_config_key.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:amazic_ads_flutter/src/utils/amazic_logger.dart';
-
 import 'package:flutter/material.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
-
 import 'package:visibility_detector/visibility_detector.dart';
-
 import '../adjust_config/call_organic_adjust.dart';
 import '../admob_ads_flutter.dart';
 import '../channel/ad_platform_interface.dart';
 import '../channel/loading_channel.dart';
-import 'ads_base.dart';
-import 'amazic_admob/admob_app_open_ad.dart';
-import 'amazic_admob/admob_banner_ad.dart';
 import 'amazic_admob/admob_interstitial_ad.dart';
-import 'amazic_admob/admob_native_ad.dart';
 import 'amazic_admob/admob_rewarded_ad.dart';
-import 'amazic_ads/splash_ad_with_interstitial_and_app_open.dart';
-import 'package:http/http.dart' as http;
 
 part 'utils/ads_extension.dart';
 
@@ -99,7 +85,8 @@ class AdmobAds {
   Timer? _timer;
   int _second = 0;
 
-  ///
+  /// _shouldShowInterOrAppOpenSplash = false khi đã qua màn language hoặc inter splash, app open splash đã được show ít nhất 1 lần
+  bool _shouldShowInterOrAppOpenSplash = true;
   bool _isSplashTimeout = false;
 
   ///biến check có đang là testAd k
@@ -137,6 +124,7 @@ class AdmobAds {
     bool isCallIdServer = true,
     bool isCallAdjust = false,
     int splashTimeout = 12,
+    int addDelayForTesting = 0,
     Function()? onGotoWelComeBack,
   }) async {
     if (await isHaveInternet) {
@@ -202,7 +190,7 @@ class AdmobAds {
     tasks.add(initUMP);
     tasks.add(umpCompleter.future);
     tasks.add(Future.delayed(
-        const Duration(seconds: 10)
+        Duration(seconds: addDelayForTesting)
     ));
     print('check_length_tasks --- ${tasks.length}');
 
@@ -389,6 +377,13 @@ class AdmobAds {
       required String idAdsOpen,
       required String idAdsInter,
       required Function() onNextAction}) async {
+
+    if (!_shouldShowInterOrAppOpenSplash) {
+      onNextAction();
+      return;
+    }
+    _shouldShowInterOrAppOpenSplash = false;
+
     final String rateAoa =
         RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyRateAOA).name];
     final bool isShowOpen =
