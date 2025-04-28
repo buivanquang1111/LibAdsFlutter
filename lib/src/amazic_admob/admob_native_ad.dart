@@ -140,6 +140,7 @@ class AdmobNativeAd extends AdsBase {
     bool? showShimmer,
   }) {
     if (!AdmobAds.instance.isShowAllAds) {
+      print('check_show_native: 0. ads null');
       return const SizedBox(
         height: 1,
         width: 1,
@@ -147,6 +148,7 @@ class AdmobNativeAd extends AdsBase {
     }
     NativeAd? ads = _nativeAd;
     if (ads == null && !_isAdLoaded) {
+      print('check_show_native: 1. ads null');
       return const SizedBox(
         height: 1,
         width: 1,
