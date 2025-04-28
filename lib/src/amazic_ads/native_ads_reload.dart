@@ -395,6 +395,7 @@ class NativeAdsReloadState extends State<NativeAdsReload>
   }
 
   void disposeAll() {
+    print("native-ads_reload --- disposeAll - ${widget.visibilityDetectorKey}");
     for (var element in _listNativeAd) {
       element?.dispose();
     }
@@ -470,6 +471,7 @@ class NativeAdsReloadState extends State<NativeAdsReload>
   void onDestroyed() {
     _isDestroy = true;
     _stopTimer();
+    print('native_ads_reload --- ${widget.visibilityDetectorKey} start onDestroyed');
   }
 
   void _stopTimer() {
