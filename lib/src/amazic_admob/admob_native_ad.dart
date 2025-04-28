@@ -148,7 +148,7 @@ class AdmobNativeAd extends AdsBase {
     }
     NativeAd? ads = _nativeAd;
     if (ads == null && !_isAdLoaded) {
-      print('check_show_native: 1. ads null');
+      print('check_show_native: 1. ads null: ${ads == null} --- isAdLoaded: $_isAdLoaded');
       return const SizedBox(
         height: 1,
         width: 1,
