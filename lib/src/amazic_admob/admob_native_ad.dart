@@ -131,9 +131,18 @@ class AdmobNativeAd extends AdsBase {
 
   Widget showLoading(double? height, NativeAd? displayAdOnLoading) {
     if (_isAdLoading) {
-      print('check_show_native: showLoading $height} --- ${displayAdOnLoading}');
+      print('check_show_native: showLoading $height} --- $displayAdOnLoading');
       if (displayAdOnLoading != null) {
-        return AdWidget(ad: displayAdOnLoading);
+        return Stack(
+          children: [
+            AdWidget(ad: displayAdOnLoading),
+            Container(
+              width:  double.infinity,
+              height: height ?? 0,
+              color: Colors.blue.withOpacity(0.3),
+            )
+          ],
+        );
       } else {
         return LoadingAds(height: height ?? 0);
       }
@@ -183,7 +192,7 @@ class AdmobNativeAd extends AdsBase {
           child: Stack(
             children: [
               if (ads != null && isAdLoaded) AdWidget(ad: ads),
-              // showLoading(height, displayAdOnLoading),
+              showLoading(height, displayAdOnLoading),
             ],
           ),
         ),
