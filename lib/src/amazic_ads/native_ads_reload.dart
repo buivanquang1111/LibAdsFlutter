@@ -316,7 +316,7 @@ class NativeAdsReloadState extends State<NativeAdsReload>
       },
       factoryId: widget.factoryId,
     );
-    nativeAd?.load();
+    await nativeAd?.load();
     _addAndCleanListNativeAd(nativeAd);
 
     if (mounted) {

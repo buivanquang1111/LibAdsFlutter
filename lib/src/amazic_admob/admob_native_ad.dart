@@ -124,7 +124,7 @@ class AdmobNativeAd extends AdsBase {
         },
       ),
     );
-    _nativeAd?.load();
+    await _nativeAd?.load();
     _isAdLoading = true;
     print('check_show_native: xong');
   }
