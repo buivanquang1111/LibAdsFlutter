@@ -142,6 +142,7 @@ class NativeAdsReloadState extends State<NativeAdsReload>
   void _addAndCleanListNativeAd(AdmobNativeAd? admobNativeAd) {
     _listNativeAd.add(admobNativeAd);
     _cleanListNativeAd();
+    print("native_ads_reload - ${_listNativeAd.firstOrNull?.factoryId} --- size of _listNativeAd: ${_listNativeAd.length}");
   }
 
   void _cleanListNativeAd() {
