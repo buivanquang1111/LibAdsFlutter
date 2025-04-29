@@ -79,8 +79,6 @@ class NativeAdsReloadState extends State<NativeAdsReload>
   bool _isPaused = false;
   bool _isDestroy = false;
 
-  Key _adKey = UniqueKey();
-
   @override
   Widget build(BuildContext context) {
     return VisibilityDetector(
@@ -119,7 +117,6 @@ class NativeAdsReloadState extends State<NativeAdsReload>
               width: MediaQuery.sizeOf(context).width,
             ),
             child: Stack(
-              key: _adKey,
               children: [
                 for (var element in _listNativeAd) ...[
                   element?.show(
@@ -357,7 +354,6 @@ class NativeAdsReloadState extends State<NativeAdsReload>
     if (adBase != null) {
       _addAndCleanListNativeAd(adBase);
       _startTimer();
-      _adKey = UniqueKey();
       if (mounted) {
         setState(() {});
       }
