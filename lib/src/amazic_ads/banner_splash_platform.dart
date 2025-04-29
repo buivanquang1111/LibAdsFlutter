@@ -56,8 +56,7 @@ class _BannerSplashPlatformState extends State<BannerSplashPlatform> {
     super.didChangeDependencies();
     if (!AdmobAds.instance.isShowAllAds ||
         !(await AdmobAds.instance.isHaveInternet) ||
-        !widget.remoteConfig ||
-        !ConsentManager.ins.canRequestAds) {
+        !widget.remoteConfig) {
       EventLogLib.logEvent('banner_splash_false', parameters: {
         "reason":
             "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.isHaveInternet}"
