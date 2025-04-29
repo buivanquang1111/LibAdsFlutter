@@ -106,6 +106,7 @@ class AdmobAds {
     required String idAdsResume,
     required String keyResumeConfig,
     required Function() onStartLoadBannerSplash,
+    Function(bool canRequestAds)? onUMPInitialized,
     required Function() onNextAction,
     required String keyRateAOA,
     required String keyOpenSplash,
@@ -175,10 +176,16 @@ class AdmobAds {
         if (canRequestAds) {
           if (!umpCompleter.isCompleted) {
             umpCompleter.complete(true);
+            if (onUMPInitialized != null) {
+              onUMPInitialized(true);
+            }
           }
         } else {
           if (!umpCompleter.isCompleted) {
             umpCompleter.complete(false);
+            if (onUMPInitialized != null) {
+              onUMPInitialized(false);
+            }
           }
         }
       },
