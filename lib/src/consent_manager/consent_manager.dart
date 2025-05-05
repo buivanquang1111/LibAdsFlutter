@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/foundation.dart';
 
 import '../../admob_ads_flutter.dart';
@@ -24,6 +23,13 @@ class ConsentManager {
 
   Future<dynamic> Function(bool)? initMediation;
 
+  ValueNotifier<bool> canRequestAdsNotifier = ValueNotifier<bool>(_canRequestAds);
+
+  static void setCanRequestAds(bool value) {
+    _canRequestAds = value;
+    ins.canRequestAdsNotifier.value = value;
+  }
+
   Future<void> handleRequestUmp({VoidCallback? onPostExecute}) async {
     if (_canRequestAds) {
       onPostExecute?.call();
@@ -36,7 +42,7 @@ class ConsentManager {
     bool? consentResult = await AdmobAds.instance.getConsentResult();
 
     if (consentResult != null) {
-      _canRequestAds = consentResult;
+      ConsentManager.setCanRequestAds(consentResult);
 
       if (_canRequestAds) {
         if (!_isMediationInitialized) {
@@ -57,7 +63,7 @@ class ConsentManager {
           ///form available, try to show it
           _loadAndShowUmpForm(onPostExecute);
         } else {
-          _canRequestAds = true;
+          ConsentManager.setCanRequestAds(true);
           if (!_isMediationInitialized) {
             await initMediation?.call(_canRequestAds);
             _isMediationInitialized = true;
@@ -68,7 +74,7 @@ class ConsentManager {
         }
       },
       (FormError error) async {
-        _canRequestAds = true;
+        ConsentManager.setCanRequestAds(true);
         if (!_isMediationInitialized) {
           await initMediation?.call(_canRequestAds);
           _isMediationInitialized = true;
@@ -86,7 +92,7 @@ class ConsentManager {
         //show the form
         var consentResult = await AdmobAds.instance.getConsentResult();
         if (consentResult != null) {
-          _canRequestAds = consentResult;
+          ConsentManager.setCanRequestAds(consentResult);
           if (!_isMediationInitialized) {
             await initMediation?.call(_canRequestAds);
             _isMediationInitialized = true;
@@ -98,7 +104,7 @@ class ConsentManager {
           onPostExecute?.call();
         } else {
           consentForm.show((formError) async {
-            _canRequestAds = await AdmobAds.instance.getConsentResult() ?? true;
+            ConsentManager.setCanRequestAds(await AdmobAds.instance.getConsentResult() ?? true);
             if (!_isMediationInitialized) {
               await initMediation?.call(_canRequestAds);
               _isMediationInitialized = true;
@@ -112,7 +118,7 @@ class ConsentManager {
         }
       },
       (FormError formError) async {
-        _canRequestAds = await AdmobAds.instance.getConsentResult() ?? true;
+        ConsentManager.setCanRequestAds(await AdmobAds.instance.getConsentResult() ?? true);
         if (!_isMediationInitialized) {
           await initMediation?.call(_canRequestAds);
           _isMediationInitialized = true;

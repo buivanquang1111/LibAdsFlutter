@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:amazic_ads_flutter/admob_ads_flutter.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -56,10 +55,11 @@ class _BannerSplashPlatformState extends State<BannerSplashPlatform> {
     super.didChangeDependencies();
     if (!AdmobAds.instance.isShowAllAds ||
         !(await AdmobAds.instance.isHaveInternet) ||
-        !widget.remoteConfig) {
+        !widget.remoteConfig ||
+        !ConsentManager.ins.canRequestAds) {
       EventLogLib.logEvent('banner_splash_false', parameters: {
         "reason":
-            "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.isHaveInternet}"
+        "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.isHaveInternet}"
       });
       setState(() {
         isVisibility = false;
@@ -75,7 +75,7 @@ class _BannerSplashPlatformState extends State<BannerSplashPlatform> {
           case 'onRequestAds':
             EventLogLib.logEvent('banner_splash_true', parameters: {
               'reason':
-                  'ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.isHaveInternet}'
+              'ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.isHaveInternet}'
             });
             break;
           case 'onAdLoaded':
