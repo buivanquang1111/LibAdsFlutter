@@ -21,6 +21,7 @@ public class AmazicPlugin: NSObject, FlutterPlugin {
         if internetChannel == nil {
             print("InternetChannel", "init internetChannel")
             internetChannel = FlutterMethodChannel(name: "internet_channel", binaryMessenger: registrar.messenger())
+            registrar.addMethodCallDelegate(instance, channel: internetChannel)
         }
 
 //         registrar.register(
