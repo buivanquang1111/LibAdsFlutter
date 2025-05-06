@@ -1,5 +1,6 @@
 import Flutter
 import UIKit
+import SystemConfiguration
 
 public class AmazicPlugin: NSObject, FlutterPlugin {
 
