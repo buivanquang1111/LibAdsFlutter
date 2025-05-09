@@ -1,5 +1,6 @@
 import Flutter
 import UIKit
+import SystemConfiguration
 
 public class AmazicPlugin: NSObject, FlutterPlugin {
 
@@ -15,6 +16,10 @@ public class AmazicPlugin: NSObject, FlutterPlugin {
             print("FullscreenLoadingDialog", "init loadingChannel")
             loadingChannel = FlutterMethodChannel(name: "loadingChannel", binaryMessenger: registrar.messenger())
         }
+
+        let internetChannel = FlutterMethodChannel(name: "internet_channel", binaryMessenger: registrar.messenger())
+        registrar.addMethodCallDelegate(instance, channel: internetChannel)
+
 
 //         registrar.register(
 //                     AdsPlatformViewFactory(messenger: registrar.messenger()),
