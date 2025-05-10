@@ -180,6 +180,19 @@ class AdmobAds {
               onUMPInitialized(true);
             }
           }
+
+          initAdsSplashAndAppOpen(
+              keyRateAOA: keyRateAOA,
+              keyOpenSplash: keyOpenSplash,
+              keyInterSplash: keyInterSplash,
+              onNextAction: onNextAction,
+              idAdsOpen: idAdsOpen,
+              idAdsInter: idAdsInter,
+              keyResumeConfig: keyResumeConfig,
+              idAds: idAdsResume,
+              isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds,
+              navigatorKey: navigatorKey,
+              onGoToWelcomeBack: onGotoWelComeBack);
         } else {
           if (!umpCompleter.isCompleted) {
             umpCompleter.complete(false);
@@ -215,15 +228,15 @@ class AdmobAds {
 
     try {
       await Future.any([tasksFuture, timeoutCompleter.future]);
-      print('time_out_call: All tasks completed successfully.');
+      print('admob_check --- time_out_call: All tasks completed successfully.');
     } on TimeoutException catch (e) {
       _isSplashTimeout = true;
-      print('time_out_call: Timeout ${e.message}');
+      print('admob_check --- time_out_call: Timeout ${e.message}');
       EventLogLib.logEvent("timeout_splash_12s");
       countOpenApp();
       onNextAction();
     } catch (e) {
-      print('time_out_call: Error $e');
+      print('admob_check --- time_out_call: Error $e');
       EventLogLib.logEvent("inter_splash_error");
       countOpenApp();
       onNextAction();
@@ -234,7 +247,7 @@ class AdmobAds {
       await tasksFuture;
     } catch (e) {
       // ignore nếu task bị lỗi
-      print('tasksFuture error after timeout: $e');
+      print('admob_check --- tasksFuture error after timeout: $e');
     }
 
     ///set k show all ads TH đã mua sub
@@ -267,18 +280,18 @@ class AdmobAds {
     _logger.logInfo(
         'show_value_inter --- init: setTimeIntervalBetweenInter: ${RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(PreferencesUtilLib.isOrganicAdjust() ? keyIntervalBetweenInterstitialOrganic ?? keyIntervalBetweenInterstitial : keyIntervalBetweenInterstitial).name]}, setTimeIntervalInterFromStart: ${RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyInterstitialFromStart).name]}');
 
-    initAdsSplashAndAppOpen(
-        keyRateAOA: keyRateAOA,
-        keyOpenSplash: keyOpenSplash,
-        keyInterSplash: keyInterSplash,
-        onNextAction: onNextAction,
-        idAdsOpen: idAdsOpen,
-        idAdsInter: idAdsInter,
-        keyResumeConfig: keyResumeConfig,
-        idAds: idAdsResume,
-        isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds,
-        navigatorKey: navigatorKey,
-        onGoToWelcomeBack: onGotoWelComeBack);
+    // initAdsSplashAndAppOpen(
+    //     keyRateAOA: keyRateAOA,
+    //     keyOpenSplash: keyOpenSplash,
+    //     keyInterSplash: keyInterSplash,
+    //     onNextAction: onNextAction,
+    //     idAdsOpen: idAdsOpen,
+    //     idAdsInter: idAdsInter,
+    //     keyResumeConfig: keyResumeConfig,
+    //     idAds: idAdsResume,
+    //     isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds,
+    //     navigatorKey: navigatorKey,
+    //     onGoToWelcomeBack: onGotoWelComeBack);
   }
 
   //init ads resume and ads splash
@@ -295,9 +308,9 @@ class AdmobAds {
     GlobalKey<NavigatorState>? navigatorKey,
     Function()? onGoToWelcomeBack,
   }) async {
-    print('check_call_remote --- name: $keyResumeConfig');
+    print('admob_check --- check_call_remote: name: $keyResumeConfig');
     print(
-        'check_call_remote --- name: ${RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyResumeConfig).name]}');
+        'admob_check --- check_call_remote: name: ${RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyResumeConfig).name]}');
     print('check _isSplashTimeout: $_isSplashTimeout');
 
     _shouldShowInterOrAppOpenSplash = true;
@@ -420,28 +433,28 @@ class AdmobAds {
       configAdsOpen: isShowOpen,
       configAdsInter: isShowInter,
       onAdShowed: (adNetwork, adUnitType, data) {
-        print('check_start_ads --- onAdShowed');
+        print('admob_check --- showAdsSplash: onAdShowed');
       },
       onAdDismissed: (adNetwork, adUnitType, data) {
-        print('check_start_ads --- onAdDismissed');
+        print('admob_check --- showAdsSplash: onAdDismissed');
         AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
         countOpenApp();
         onNextAction();
       },
       onDisabled: () {
-        print('check_start_ads --- onDisabled');
+        print('admob_check --- showAdsSplash: onDisabled');
         AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
         countOpenApp();
         onNextAction();
       },
       onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
-        print('check_start_ads --- onAdFailedToLoad');
+        print('admob_check --- showAdsSplash: onAdFailedToLoad');
         AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
         countOpenApp();
         onNextAction();
       },
       onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
-        print('check_start_ads --- onAdFailedToShow');
+        print('admob_check --- showAdsSplash: onAdFailedToShow');
         EventLogLib.logEvent("inter_splash_showad_time",
             parameters: {'showad_time': 'false_$_second'});
         _timer?.cancel();
@@ -450,18 +463,18 @@ class AdmobAds {
         onNextAction();
       },
       onAdLoaded: (adNetwork, adUnitType, data) {
-        print('check_start_ads --- onAdLoaded');
+        print('admob_check --- showAdsSplash: onAdLoaded');
         // EventLogLib.logEvent("inter_splash_true");
       },
       onAdImpression: (adNetwork, adUnitType, data) {
-        print('check_start_ads --- onAdImpression');
+        print('admob_check --- showAdsSplash: onAdImpression');
         EventLogLib.logEvent("inter_splash_impression_${PreferencesUtilLib.getCountOpenApp()}");
         EventLogLib.logEvent('inter_splash_showad_time',
             parameters: {'showad_time': 'true_$_second'});
         _timer?.cancel();
       },
       onAdClicked: (adNetwork, adUnitType, data) {
-        print('check_start_ads --- onAdClicked');
+        print('admob_check --- showAdsSplash: onAdClicked');
         EventLogLib.logEvent("inter_splash_click_${PreferencesUtilLib.getCountOpenApp()}");
       },
     );
