@@ -1,0 +1,83 @@
+import 'package:amazic_ads_flutter/update_app/dialog_update_app.dart';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:in_app_update/in_app_update.dart';
+
+class UpdateAppManager {
+  UpdateAppManager._instance();
+
+  static final UpdateAppManager instance = UpdateAppManager._instance();
+
+  checkForFlexibleUpdate(
+      {required BuildContext context,
+      String? title,
+      String? content,
+      required Function() onNext}) async {
+    try {
+      AppUpdateInfo updateInfo = await InAppUpdate.checkForUpdate();
+
+      if (updateInfo.updateAvailability == UpdateAvailability.updateAvailable) {
+        try {
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) {
+              return WillPopScope(
+                onWillPop: () async => false,
+                child: DialogUpdateApp(
+                  title: title,
+                  content: content,
+                  onUpdateNow: () async {
+                    Navigator.of(context).pop();
+                    try {
+                      onNext();
+                      await InAppUpdate.startFlexibleUpdate();
+                      await InAppUpdate.completeFlexibleUpdate();
+                      Fluttertoast.showToast(msg: 'Updated and ready – welcome back!');
+                    } catch (e) {
+                      print('error update failed: $e');
+                      onNext();
+                    }
+                  },
+                ),
+              );
+            },
+          );
+        } catch (e) {
+          print('error update failed: $e');
+        }
+      } else {
+        onNext();
+      }
+    } catch (e) {
+      print('error checking for update: $e');
+    }
+  }
+
+// checkForImmediateUpdate({required BuildContext context, required String title, required String content}) async {
+//   try {
+//     AppUpdateInfo updateInfo = await InAppUpdate.checkForUpdate();
+//
+//     if (updateInfo.updateAvailability == UpdateAvailability.updateAvailable) {
+//       try {
+//         showDialog(
+//           context: context,
+//           builder: (context) {
+//             return DialogUpdateApp(
+//               title: title,
+//               content: content,
+//               onUpdateNow: () async{
+//                 await InAppUpdate.performImmediateUpdate();
+//               },
+//             );
+//           },
+//         );
+//       } catch (e) {
+//         print('error update failed: $e');
+//       }
+//     }
+//   } catch (e) {
+//     print('error checking for update: $e');
+//   }
+// }
+}

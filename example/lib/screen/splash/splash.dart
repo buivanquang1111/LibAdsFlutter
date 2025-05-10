@@ -32,126 +32,59 @@ class SplashState extends State<SplashScreen> {
   void initState() {
     super.initState();
     adIdManager = DevAdIdManager();
-    // AdmobAds.instance.initAllDataSplash(
-    //     turnOnOrganic: true,
-    //     remoteConfigKeys: [
-    //       RemoteConfigKeyLib(
-    //           name: 'show_ads', defaultValue: true, valueType: bool),
-    //       RemoteConfigKeyLib(
-    //           name: 'open_splash', defaultValue: true, valueType: bool),
-    //       RemoteConfigKeyLib(
-    //           name: 'inter_splash', defaultValue: true, valueType: bool),
-    //       RemoteConfigKeyLib(
-    //           name: 'open_resume', defaultValue: true, valueType: bool),
-    //       RemoteConfigKeyLib(
-    //           name: 'banner_splash', defaultValue: true, valueType: bool),
-    //       RemoteConfigKeyLib(
-    //           name: 'rate_aoa_inter_splash',
-    //           defaultValue: '0_100',
-    //           valueType: String),
-    //       RemoteConfigKeyLib(
-    //           name: 'interstitial_from_start',
-    //           defaultValue: 15,
-    //           valueType: int),
-    //       RemoteConfigKeyLib(
-    //           name: 'interval_between_interstitial',
-    //           defaultValue: 20,
-    //           valueType: int),
-    //     ],
-    //     adjustToken: '',
-    //     onSetRemoteConfigOrganic: () {},
-    //     onStartLoadBannerSplash: () {
-    //       // AdmobAds.instance
-    //       //     .loadNativeAds(
-    //       //         adNetwork: AdNetwork.admob,
-    //       //         factoryId: 'native_language',
-    //       //         listId: NetworkRequest.instance
-    //       //             .getListIDByName('native_language'),
-    //       //         config: true,
-    //       //         visibilityDetectorKey: 'native_language')
-    //       //     .then(
-    //       //   (value) {
-    //       //     listAds.add(value);
-    //       //   },
-    //       // );
-    //       // AdmobAds.instance
-    //       //     .loadNativeAds(
-    //       //         adNetwork: AdNetwork.admob,
-    //       //         factoryId: 'native_language',
-    //       //         listId: NetworkRequest.instance
-    //       //             .getListIDByName('native_language'),
-    //       //         config: true,
-    //       //         visibilityDetectorKey: 'native_language')
-    //       //     .then(
-    //       //   (value) {
-    //       //     listAds.add(value);
-    //       //   },
-    //       // );
-    //       setState(() {
-    //         NetworkRequest.instance.listAdsId.putIfAbsent(
-    //           'banner_splash',
-    //           () => ['ca-app-pub-3940256099942544/6300978111'],
-    //         );
-    //       });
-    //     },
-    //     onNextAction: () {
-    //       handleNavigate();
-    //     },
-    //     navigatorKey: Get.key,
-    //     keyRateAOA: 'rate_aoa_inter_splash',
-    //     keyOpenSplash: 'open_splash',
-    //     keyInterSplash: 'inter_splash',
-    //     keyIntervalBetweenInterstitial: 'interval_between_interstitial',
-    //     keyInterstitialFromStart: 'interstitial_from_start',
-    //     nameAdsInterSplash: 'inter_splash',
-    //     nameAdsOpenSplash: 'open_splash',
-    //     nameAdsResume: 'open_resume',
-    //     keyResumeConfig: 'open_resume');
-
-    AdmobAds.instance.initAllDataSplash(
-      remoteConfigKeys: [
-        RemoteConfigKeyLib(name: 'show_ads', defaultValue: true, valueType: bool),
-        RemoteConfigKeyLib(name: 'open_splash', defaultValue: true, valueType: bool),
-        RemoteConfigKeyLib(name: 'inter_splash', defaultValue: true, valueType: bool),
-        RemoteConfigKeyLib(name: 'open_resume', defaultValue: true, valueType: bool),
-        RemoteConfigKeyLib(name: 'banner_splash', defaultValue: true, valueType: bool),
-        RemoteConfigKeyLib(name: 'rate_aoa_inter_splash', defaultValue: '0_100', valueType: String),
-        RemoteConfigKeyLib(name: 'interstitial_from_start', defaultValue: 15, valueType: int),
-        RemoteConfigKeyLib(name: 'interval_between_interstitial', defaultValue: 20, valueType: int),
-      ],
-      idAdsResume: adIdManager.appopen_resume,
-      keyResumeConfig: 'open_resume',
-      onStartLoadBannerSplash: () {
-        print('acbd');
-        for (int i = 0; i < 2; i++) {
-          AdmobAds.instance
-              .loadNativeAds(
-            adNetwork: AdNetwork.admob,
-            factoryId: "native_language",
-            idAds: "ca-app-pub-3940256099942544/2247696110",
-            config: true,
-            visibilityDetectorKey: 'native_language',
-            onAdShowed: (adNetwork, adUnitType, data) {},
-          )
-              .then(
+    UpdateAppManager.instance.checkForFlexibleUpdate(
+      context: context,
+      title: null,
+      content: null,
+      onNext: () {
+        AdmobAds.instance.initAllDataSplash(
+          remoteConfigKeys: [
+            RemoteConfigKeyLib(name: 'show_ads', defaultValue: true, valueType: bool),
+            RemoteConfigKeyLib(name: 'open_splash', defaultValue: true, valueType: bool),
+            RemoteConfigKeyLib(name: 'inter_splash', defaultValue: true, valueType: bool),
+            RemoteConfigKeyLib(name: 'open_resume', defaultValue: true, valueType: bool),
+            RemoteConfigKeyLib(name: 'banner_splash', defaultValue: true, valueType: bool),
+            RemoteConfigKeyLib(
+                name: 'rate_aoa_inter_splash', defaultValue: '0_100', valueType: String),
+            RemoteConfigKeyLib(name: 'interstitial_from_start', defaultValue: 15, valueType: int),
+            RemoteConfigKeyLib(
+                name: 'interval_between_interstitial', defaultValue: 20, valueType: int),
+          ],
+          idAdsResume: adIdManager.appopen_resume,
+          keyResumeConfig: 'open_resume',
+          onStartLoadBannerSplash: () {
+            print('acbd');
+            for (int i = 0; i < 2; i++) {
+              AdmobAds.instance
+                  .loadNativeAds(
+                adNetwork: AdNetwork.admob,
+                factoryId: "native_language",
+                idAds: "ca-app-pub-3940256099942544/2247696110",
+                config: true,
+                visibilityDetectorKey: 'native_language',
+                onAdShowed: (adNetwork, adUnitType, data) {},
+              )
+                  .then(
                 (value) {
-              listLanguage.add(value);
-              print('acbd --- length = ${listLanguage.length}');
-            },
-          );
-        }
+                  listLanguage.add(value);
+                  print('acbd --- length = ${listLanguage.length}');
+                },
+              );
+            }
+          },
+          onNextAction: () {
+            handleNavigate();
+          },
+          navigatorKey: Get.key,
+          keyRateAOA: 'rate_aoa_inter_splash',
+          keyOpenSplash: 'open_splash',
+          keyInterSplash: 'inter_splash',
+          keyIntervalBetweenInterstitial: 'interval_between_interstitial',
+          keyInterstitialFromStart: 'interstitial_from_start',
+          idAdsOpen: adIdManager.open_splash,
+          idAdsInter: adIdManager.inter_splash,
+        );
       },
-      onNextAction: () {
-        handleNavigate();
-      },
-      navigatorKey: Get.key,
-      keyRateAOA: 'rate_aoa_inter_splash',
-      keyOpenSplash: 'open_splash',
-      keyInterSplash: 'inter_splash',
-      keyIntervalBetweenInterstitial: 'interval_between_interstitial',
-      keyInterstitialFromStart: 'interstitial_from_start',
-      idAdsOpen: adIdManager.open_splash,
-      idAdsInter: adIdManager.inter_splash,
     );
   }
 
@@ -208,30 +141,6 @@ class SplashState extends State<SplashScreen> {
             SizedBox(
               width: double.infinity,
               height: 60,
-              // child: ConsentManager.ins.canRequestAds == true
-              //     ? BannerSplash(
-              //         listIdAds: NetworkRequest.instance
-              //             .getListIDByName('banner_splash'),
-              //         remoteConfig: RemoteConfigLib.configs[
-              //             RemoteConfigKeyLib.getKeyByName('banner_splash').name],
-              //         visibilityDetectorKey: 'banner_splash',
-              //         isDetectTestAd: true,
-              //         onTestAdSuccess: () {
-              //           print('check_detect_test_ad --- ok');
-              //         },
-              //         onTestAdError: (p0) {
-              //           print('check_detect_test_ad --- false');
-              //         },
-              //         onNext: () {},
-              //       )
-              //     : Container(),
-              // child: ConsentManager.ins.canRequestAds == true
-              //     ? BannerSplashPlatform(
-              //         listIdAds: NetworkRequest.instance.getListIDByName('banner_splash'),
-              //         remoteConfig: RemoteConfigLib
-              //             .configs[RemoteConfigKeyLib.getKeyByName('banner_splash').name],
-              //       )
-              //     : Container(),
             ),
           ],
         ),

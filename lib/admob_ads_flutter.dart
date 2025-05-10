@@ -35,3 +35,4 @@ export 'package:amazic_ads_flutter/src/utils/event_log.dart';
 export 'package:amazic_ads_flutter/src/utils/remote_config.dart';
 export 'package:amazic_ads_flutter/src/utils/remote_config_key.dart';
 export 'package:amazic_ads_flutter/channel/iap_method_channel.dart';
+export 'package:amazic_ads_flutter/update_app/update_app_manager.dart';
