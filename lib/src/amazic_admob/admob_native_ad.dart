@@ -65,12 +65,14 @@ class AdmobNativeAd extends AdsBase {
       'reason':
           'ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.isHaveInternet}'
     });
+    print('admob_ads --- native_ad request');
     _nativeAd = NativeAd(
       adUnitId: idAds,
       factoryId: factoryId,
       request: adRequest,
       listener: NativeAdListener(
         onAdLoaded: (Ad ad) {
+          print('admob_ads --- native_ad onAdLoaded');
           _nativeAd = ad as NativeAd?;
           _isAdLoaded = true;
           _isAdLoading = false;
@@ -80,17 +82,30 @@ class AdmobNativeAd extends AdsBase {
           print('check_show_native: onAdLoaded');
         },
         onAdFailedToLoad: (Ad ad, LoadAdError error) {
+          print('admob_ads --- native_ad onAdFailedToLoad: ${error.message}');
           _nativeAd = null;
           _isAdLoaded = false;
           _isAdLoading = false;
           _isAdLoadedFailed = true;
-          AdmobAds.instance.onAdFailedToLoadMethod(
-              adNetwork, adUnitType, ad, error.toString());
+          AdmobAds.instance.onAdFailedToLoadMethod(adNetwork, adUnitType, ad, error.toString());
           onAdFailedToLoad?.call(adNetwork, adUnitType, ad, error.toString());
           ad.dispose();
           print('check_show_native: onAdFailedToLoad');
+          if (error.responseInfo != null &&
+              error.responseInfo?.loadedAdapterResponseInfo != null &&
+              error.message.toLowerCase().contains("no fill")) {
+            EventLogLib.logEvent("${visibilityDetectorKey}_failed", parameters: {
+              "failed_message": error.message,
+              "no_fill_source": "${error.responseInfo?.loadedAdapterResponseInfo?.adSourceName}"
+            });
+          } else {
+            EventLogLib.logEvent("${visibilityDetectorKey}_failed", parameters: {
+              "failed_message": error.message,
+            });
+          }
         },
         onAdClicked: (ad) {
+          print('admob_ads --- native_ad onAdClicked');
           if (isClickAdsNotShowResume) {
             AdmobAds.instance.appLifecycleReactor?.setIsExcludeScreen(true);
           }
@@ -98,15 +113,18 @@ class AdmobNativeAd extends AdsBase {
           onAdClicked?.call(adNetwork, adUnitType, ad);
         },
         onAdClosed: (Ad ad) {
+          print('admob_ads --- native_ad onAdClosed');
           AdmobAds.instance.onAdDismissedMethod(adNetwork, adUnitType, ad);
           onAdDismissed?.call(adNetwork, adUnitType, ad);
         },
         onAdImpression: (Ad ad) {
+          print('admob_ads --- native_ad onAdImpression');
           AdmobAds.instance.onAdShowedMethod(adNetwork, adUnitType, ad);
           onAdShowed?.call(adNetwork, adUnitType, ad);
           onAdImpression?.call(adNetwork, adUnitType, ad);
         },
         onPaidEvent: (ad, revenue, type, currencyCode) {
+          print('admob_ads --- native_ad onPaidEvent');
           AdmobAds.instance.onPaidEventMethod(
             adNetwork: adNetwork,
             adUnitType: adUnitType,
@@ -154,8 +172,7 @@ class AdmobNativeAd extends AdsBase {
         width: 1,
       );
     }
-    print(
-        'check_show_native: 3. ad: $ads, isAdLoaded: $isAdLoaded , _isAdLoading: $_isAdLoading');
+    print('check_show_native: 3. ad: $ads, isAdLoaded: $isAdLoaded , _isAdLoading: $_isAdLoading');
     _logger.logInfo('ad: $ads, isAdLoaded: $isAdLoaded');
     return Container(
       decoration: BoxDecoration(

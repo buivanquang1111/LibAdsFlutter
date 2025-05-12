@@ -84,6 +84,7 @@ class AdmobAds {
   ///Count time load ads
   Timer? _timer;
   int _second = 0;
+  int get second => _second;
 
   ///
   bool _shouldShowInterOrAppOpenSplash = false;
@@ -153,8 +154,13 @@ class AdmobAds {
 
     ///call remote config
     Future<void> initRemoteConfig = RemoteConfigLib.init(remoteConfigKeys: remoteConfigKeys).then(
-      (value) {
+      (value) async {
         print('admob_check --- RemoteConfig successfully. $_second');
+        EventLogLib.logEvent("time_splash_check", parameters: {
+          'time_splash_check': '$_second',
+          'ump': '${ConsentManager.ins.canRequestAds}',
+          'haveinternet': '${await isHaveInternet}'
+        });
         for (var key in RemoteConfigKeyLib.listRemoteConfigKey) {
           print('CHECK_REMOTE --- ${key.name}: ${key.defaultValue}');
         }
@@ -207,9 +213,9 @@ class AdmobAds {
     tasks.add(initUMP);
     tasks.add(initRemoteConfig);
     tasks.add(umpCompleter.future);
-    tasks.add(Future.delayed(
-        Duration(seconds: addDelayForTesting)
-    ));
+    tasks.add(Future.delayed(Duration(seconds: addDelayForTesting)).then((value) {
+      print('admob_check --- addDelayForTesting success');
+    },));
     print('check_length_tasks --- ${tasks.length}');
 
     final tasksFuture = Future.wait(tasks).then(
@@ -230,6 +236,9 @@ class AdmobAds {
     } on TimeoutException catch (e) {
       _isSplashTimeout = true;
       print('admob_check --- time_out_call: Timeout ${e.message}');
+      EventLogLib.logEvent('time_splash_loading_ad_notshow', parameters: {
+        'time_splash_loading_notshow': '12'
+      });
       EventLogLib.logEvent("timeout_splash_12s");
       countOpenApp();
       onNextAction();
@@ -311,6 +320,7 @@ class AdmobAds {
         'admob_check --- check_call_remote: name: ${RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyResumeConfig).name]}');
     print('check _isSplashTimeout: $_isSplashTimeout');
 
+    print('admob_check --- addDelayForTesting: start show ads');
     _shouldShowInterOrAppOpenSplash = true;
     if (!_isSplashTimeout) {
       ///showAds inter/open Splash
@@ -397,7 +407,7 @@ class AdmobAds {
       required String idAdsOpen,
       required String idAdsInter,
       required Function() onNextAction}) async {
-
+    print('admob_check --- addDelayForTesting show');
     if (!_shouldShowInterOrAppOpenSplash) {
       onNextAction();
       return;
@@ -447,6 +457,7 @@ class AdmobAds {
       },
       onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
         print('admob_check --- showAdsSplash: onAdFailedToLoad');
+        _timer?.cancel();
         AdmobAds.instance.appLifecycleReactor?.setOnSplashScreen(false);
         countOpenApp();
         onNextAction();
@@ -469,6 +480,8 @@ class AdmobAds {
         EventLogLib.logEvent("inter_splash_impression_${PreferencesUtilLib.getCountOpenApp()}");
         EventLogLib.logEvent('inter_splash_showad_time',
             parameters: {'showad_time': 'true_$_second'});
+        EventLogLib.logEvent('time_splash_loading_ad_show',
+            parameters: {'time_splash_loading_show': '$_second'});
         _timer?.cancel();
       },
       onAdClicked: (adNetwork, adUnitType, data) {
@@ -673,7 +686,7 @@ class AdmobAds {
     bool isClickAdsNotShowResume = true,
   }) async {
     if (!AdmobAds.instance.isShowAllAds ||
-        ! await isHaveInternet ||
+        !await isHaveInternet ||
         !config ||
         !ConsentManager.ins.canRequestAds) {
       if (factoryId.toLowerCase().contains("intro_full")) {
@@ -933,7 +946,7 @@ class AdmobAds {
     if (!isShowAllAds ||
         !config ||
         _isFullscreenAdShowing ||
-        ! await isHaveInternet ||
+        !await isHaveInternet ||
         !ConsentManager.ins.canRequestAds) {
       onDisabled?.call();
       return;
@@ -1036,7 +1049,7 @@ class AdmobAds {
     if (!isShowAllAds ||
         !config ||
         _isFullscreenAdShowing ||
-        ! await isHaveInternet ||
+        !await isHaveInternet ||
         !ConsentManager.ins.canRequestAds) {
       _logger.logInfo(
           'config: $config, isShowAllAds: $isShowAllAds, isHaveInternet: ${await isHaveInternet}, _isFullscreenAdShowing: $_isFullscreenAdShowing,canRequestAds: ${ConsentManager.ins.canRequestAds}');
@@ -1179,7 +1192,7 @@ class AdmobAds {
       onDisabled?.call();
       return;
     }
-    if (! await isHaveInternet) {
+    if (!await isHaveInternet) {
       onDisabled?.call();
       return;
     }

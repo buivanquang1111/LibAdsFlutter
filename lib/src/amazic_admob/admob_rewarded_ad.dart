@@ -64,11 +64,13 @@ class AdmobRewardedAd extends AdsBase {
             'ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.isHaveInternet}'
       });
     }
+    print('admob_ads --- reward_ad request');
     await RewardedAd.load(
       adUnitId: idAds,
       request: adRequest,
       rewardedAdLoadCallback: RewardedAdLoadCallback(
         onAdLoaded: (RewardedAd ad) {
+          print('admob_ads --- reward_ad onAdLoaded');
           _rewardedAd = ad;
           _rewardedAd?.onPaidEvent = (ad, revenue, type, currencyCode) {
             AdmobAds.instance.onPaidEventMethod(
@@ -93,6 +95,7 @@ class AdmobRewardedAd extends AdsBase {
           onAdLoaded?.call(adNetwork, adUnitType, ad);
         },
         onAdFailedToLoad: (LoadAdError error) {
+          print('admob_ads --- reward_ad onAdFailedToLoad: ${error.message}');
           _rewardedAd = null;
           _isAdLoaded = false;
           _isAdLoadedFailed = true;
@@ -118,22 +121,26 @@ class AdmobRewardedAd extends AdsBase {
 
     ad.fullScreenContentCallback = FullScreenContentCallback(
       onAdShowedFullScreenContent: (RewardedAd ad) {
+        print('admob_ads --- reward_ad onAdShowedFullScreenContent');
         AdmobAds.instance.onAdShowedMethod(adNetwork, adUnitType, ad);
         onAdShowed?.call(adNetwork, adUnitType, ad);
       },
       onAdDismissedFullScreenContent: (RewardedAd ad) {
+        print('admob_ads --- reward_ad onAdDismissedFullScreenContent');
         AdmobAds.instance.onAdDismissedMethod(adNetwork, adUnitType, ad);
         onAdDismissed?.call(adNetwork, adUnitType, ad);
 
         ad.dispose();
       },
       onAdFailedToShowFullScreenContent: (RewardedAd ad, AdError error) {
+        print('admob_ads --- reward_ad onAdFailedToShowFullScreenContent');
         AdmobAds.instance.onAdFailedToShowMethod(adNetwork, adUnitType, ad, error.toString());
         onAdFailedToShow?.call(adNetwork, adUnitType, ad, error.toString());
 
         ad.dispose();
       },
       onAdClicked: (ad) {
+        print('admob_ads --- reward_ad onAdClicked');
         AdmobAds.instance.onAdClickedMethod(adNetwork, adUnitType, ad);
         onAdClicked?.call(adNetwork, adUnitType, ad);
       },
@@ -142,6 +149,7 @@ class AdmobRewardedAd extends AdsBase {
     ad.setImmersiveMode(true);
     ad.show(
       onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
+        print('admob_ads --- reward_ad onUserEarnedReward');
         AdmobAds.instance.onEarnedRewardMethod(adNetwork, adUnitType, reward.type, reward.amount);
         onEarnedReward?.call(adNetwork, adUnitType, reward.type, reward.amount);
       },

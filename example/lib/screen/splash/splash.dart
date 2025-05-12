@@ -83,6 +83,7 @@ class SplashState extends State<SplashScreen> {
           keyInterstitialFromStart: 'interstitial_from_start',
           idAdsOpen: adIdManager.open_splash,
           idAdsInter: adIdManager.inter_splash,
+          addDelayForTesting: 15
         );
       },
     );

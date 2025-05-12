@@ -68,12 +68,13 @@ class AdmobBannerAd extends AdsBase {
       'reason':
           'ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await AdmobAds.instance.isHaveInternet}'
     });
-
+    print('admob_ads --- banner_ad request');
     _bannerAd = BannerAd(
       size: adSize,
       adUnitId: idAds,
       listener: BannerAdListener(
         onAdLoaded: (Ad ad) {
+          print('admob_ads --- banner_ad onAdLoaded');
           _bannerAd = ad as BannerAd?;
           _isAdLoaded = true;
           _isAdLoadedFailed = false;
@@ -81,6 +82,7 @@ class AdmobBannerAd extends AdsBase {
           onAdLoaded?.call(adNetwork, adUnitType, ad);
         },
         onAdFailedToLoad: (Ad ad, LoadAdError error) {
+          print('admob_ads --- banner_ad onAdFailedToLoad: ${error.message}');
           _bannerAd = null;
           _isAdLoaded = false;
           _isAdLoading = false;
@@ -90,15 +92,18 @@ class AdmobBannerAd extends AdsBase {
           ad.dispose();
         },
         onAdClicked: (ad) {
+          print('admob_ads --- banner_ad onAdClicked');
           AdmobAds.instance.appLifecycleReactor?.setIsExcludeScreen(true);
           AdmobAds.instance.onAdClickedMethod(adNetwork, adUnitType, ad);
           onAdClicked?.call(adNetwork, adUnitType, ad);
         },
         onAdClosed: (Ad ad) {
+          print('admob_ads --- banner_ad onAdClosed');
           AdmobAds.instance.onAdDismissedMethod(adNetwork, adUnitType, ad);
           onAdDismissed?.call(adNetwork, adUnitType, ad);
         },
         onAdImpression: (Ad ad) {
+          print('admob_ads --- banner_ad onAdImpression');
           Future.delayed(
             const Duration(milliseconds: 500),
             () {
@@ -111,6 +116,7 @@ class AdmobBannerAd extends AdsBase {
           // logAdContentInWidget(adWidgetKey);
         },
         onPaidEvent: (ad, revenue, type, currencyCode) {
+          print('admob_ads --- banner_ad onPaidEvent');
           AdmobAds.instance.onPaidEventMethod(
             adNetwork: adNetwork,
             adUnitType: adUnitType,

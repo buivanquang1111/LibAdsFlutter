@@ -70,10 +70,14 @@ class AdmobAppOpenAd extends AdsBase {
       EventLogLib.logEvent("open_splash_true");
       _adShowTimeoutTimer?.cancel();
       _adShowTimeoutTimer = Timer(
-        const Duration(seconds: 20),
+        const Duration(seconds: 12),
         () {
+          print('admob_ads --- app_open open splash timeout');
           EventLogLib.logEvent('open_splash_id_timeout');
-          _logger.logInfo('Ad Timeout: Timeout 20s ads Open');
+          EventLogLib.logEvent('time_splash_loading_ad_notshow', parameters: {
+            'time_splash_loading_notshow': '${AdmobAds.instance.second}'
+          });
+          _logger.logInfo('Ad Timeout: Timeout 12s ads Open');
           onAdFailedToShow?.call(adNetwork, adUnitType, _appOpenAd, 'Ad timeout 20s');
         },
       );
@@ -85,11 +89,13 @@ class AdmobAppOpenAd extends AdsBase {
         });
       }
     }
+    print('admob_ads --- app_open request');
     return AppOpenAd.load(
       adUnitId: idAds,
       request: adRequest,
       adLoadCallback: AppOpenAdLoadCallback(
         onAdLoaded: (AppOpenAd ad) {
+          print('admob_ads --- app_open onAdLoaded');
           _appOpenAd = ad;
           _appOpenAd?.onPaidEvent = (ad, revenue, type, currencyCode) {
             final info = ad.responseInfo?.loadedAdapterResponseInfo;
@@ -115,6 +121,7 @@ class AdmobAppOpenAd extends AdsBase {
           onAdLoaded?.call(adNetwork, adUnitType, ad);
         },
         onAdFailedToLoad: (LoadAdError error) {
+          print('admob_ads --- app_open onAdFailedToLoad: ${error.message}');
           _adShowTimeoutTimer?.cancel();
           _appOpenAd = null;
           _isAdLoading = false;
@@ -151,6 +158,7 @@ class AdmobAppOpenAd extends AdsBase {
 
     _appOpenAd!.fullScreenContentCallback = FullScreenContentCallback(
       onAdShowedFullScreenContent: (AppOpenAd ad) {
+        print('admob_ads --- app_open onAdShowedFullScreenContent');
         _adShowTimeoutTimer?.cancel();
         _isShowingAd = true;
 
@@ -158,6 +166,7 @@ class AdmobAppOpenAd extends AdsBase {
         onAdShowed?.call(adNetwork, adUnitType, ad);
       },
       onAdDismissedFullScreenContent: (AppOpenAd ad) {
+        print('admob_ads --- app_open onAdDismissedFullScreenContent');
         _isShowingAd = false;
 
         AdmobAds.instance.onAdDismissedMethod(adNetwork, adUnitType, ad);
@@ -166,6 +175,7 @@ class AdmobAppOpenAd extends AdsBase {
         _appOpenAd = null;
       },
       onAdFailedToShowFullScreenContent: (AppOpenAd ad, AdError error) {
+        print('admob_ads --- app_open onAdFailedToShowFullScreenContent: ${error.message}');
         _adShowTimeoutTimer?.cancel();
         _isShowingAd = false;
 
@@ -176,10 +186,12 @@ class AdmobAppOpenAd extends AdsBase {
         _appOpenAd = null;
       },
       onAdClicked: (ad) {
+        print('admob_ads --- app_open onAdClicked');
         AdmobAds.instance.onAdClickedMethod(adNetwork, adUnitType, ad);
         onAdClicked?.call(adNetwork, adUnitType, ad);
       },
       onAdImpression: (ad) {
+        print('admob_ads --- app_open onAdImpression');
         _adShowTimeoutTimer?.cancel();
         onAdImpression?.call(adNetwork, adUnitType, ad);
       },
