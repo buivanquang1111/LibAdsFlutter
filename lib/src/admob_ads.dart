@@ -116,14 +116,9 @@ class AdmobAds {
     required String keyInterstitialFromStart,
     required String idAdsOpen,
     required String idAdsInter,
-    String? linkServer,
-    String? appId,
-    String? packageName,
     bool isIap = false,
-    GlobalKey<NavigatorState>? navigatorKey,
+    required GlobalKey<NavigatorState> navigatorKey,
     String? keyTrickScreen,
-    bool isCallIdServer = true,
-    bool isCallAdjust = false,
     int splashTimeout = 12,
     int addDelayForTesting = 0,
     Function()? onGotoWelComeBack,
@@ -159,6 +154,7 @@ class AdmobAds {
     ///call remote config
     Future<void> initRemoteConfig = RemoteConfigLib.init(remoteConfigKeys: remoteConfigKeys).then(
       (value) {
+        print('admob_check --- RemoteConfig successfully. $_second');
         for (var key in RemoteConfigKeyLib.listRemoteConfigKey) {
           print('CHECK_REMOTE --- ${key.name}: ${key.defaultValue}');
         }
@@ -174,6 +170,7 @@ class AdmobAds {
       enableLogger: enableLogger,
       onInitialized: (canRequestAds) {
         if (canRequestAds) {
+          print('admob_check --- InitUMP successfully. $_second');
           if (!umpCompleter.isCompleted) {
             umpCompleter.complete(true);
             if (onUMPInitialized != null) {
@@ -194,6 +191,7 @@ class AdmobAds {
               navigatorKey: navigatorKey,
               onGoToWelcomeBack: onGotoWelComeBack);
         } else {
+          print('admob_check --- InitUMP false.');
           if (!umpCompleter.isCompleted) {
             umpCompleter.complete(false);
             if (onUMPInitialized != null) {
@@ -206,8 +204,8 @@ class AdmobAds {
     );
 
     final List<Future<dynamic>> tasks = [];
-    tasks.add(initRemoteConfig);
     tasks.add(initUMP);
+    tasks.add(initRemoteConfig);
     tasks.add(umpCompleter.future);
     tasks.add(Future.delayed(
         Duration(seconds: addDelayForTesting)
@@ -278,7 +276,7 @@ class AdmobAds {
             1000);
 
     _logger.logInfo(
-        'show_value_inter --- init: setTimeIntervalBetweenInter: ${RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(PreferencesUtilLib.isOrganicAdjust() ? keyIntervalBetweenInterstitialOrganic ?? keyIntervalBetweenInterstitial : keyIntervalBetweenInterstitial).name]}, setTimeIntervalInterFromStart: ${RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyInterstitialFromStart).name]}');
+        'admob_check --- show_value_inter init: setTimeIntervalBetweenInter: ${RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(PreferencesUtilLib.isOrganicAdjust() ? keyIntervalBetweenInterstitialOrganic ?? keyIntervalBetweenInterstitial : keyIntervalBetweenInterstitial).name]}, setTimeIntervalInterFromStart: ${RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyInterstitialFromStart).name]}');
 
     // initAdsSplashAndAppOpen(
     //     keyRateAOA: keyRateAOA,
