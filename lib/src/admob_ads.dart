@@ -84,6 +84,7 @@ class AdmobAds {
   ///Count time load ads
   Timer? _timer;
   int _second = 0;
+
   int get second => _second;
 
   ///
@@ -119,15 +120,17 @@ class AdmobAds {
     required String idAdsInter,
     bool isIap = false,
     required GlobalKey<NavigatorState> navigatorKey,
-    String? keyTrickScreen,
     int splashTimeout = 12,
     int addDelayForTesting = 0,
     Function()? onGotoWelComeBack,
+    required String assetsJsonLoading,
   }) async {
     if (await isHaveInternet) {
       print('check_have_internet --- logEvent have internet');
       EventLogLib.logEvent('splash_have_internet');
     }
+
+      LoadingChannel.setAnimationLoading(jsonAnimation: assetsJsonLoading);
     //init remote key
     RemoteConfigKeyLib.initializeKeys(remoteConfigKeys);
 
@@ -213,9 +216,11 @@ class AdmobAds {
     tasks.add(initUMP);
     tasks.add(initRemoteConfig);
     tasks.add(umpCompleter.future);
-    tasks.add(Future.delayed(Duration(seconds: addDelayForTesting)).then((value) {
-      print('admob_check --- addDelayForTesting success');
-    },));
+    tasks.add(Future.delayed(Duration(seconds: addDelayForTesting)).then(
+      (value) {
+        print('admob_check --- addDelayForTesting success');
+      },
+    ));
     print('check_length_tasks --- ${tasks.length}');
 
     final tasksFuture = Future.wait(tasks).then(
@@ -236,9 +241,8 @@ class AdmobAds {
     } on TimeoutException catch (e) {
       _isSplashTimeout = true;
       print('admob_check --- time_out_call: Timeout ${e.message}');
-      EventLogLib.logEvent('time_splash_loading_ad_notshow', parameters: {
-        'time_splash_loading_notshow': '12'
-      });
+      EventLogLib.logEvent('time_splash_loading_ad_notshow',
+          parameters: {'time_splash_loading_notshow': '12'});
       EventLogLib.logEvent("timeout_splash_12s");
       countOpenApp();
       onNextAction();
@@ -681,7 +685,6 @@ class AdmobAds {
     EasyAdFailedCallback? onAdFailedToLoad,
     EasyAdFailedCallback? onAdFailedToShow,
     EasyAdCallback? onAdDismissed,
-    EasyAdEarnedReward? onEarnedReward,
     EasyAdOnPaidEvent? onPaidEvent,
     bool isClickAdsNotShowResume = true,
   }) async {
@@ -720,7 +723,6 @@ class AdmobAds {
         onAdFailedToLoad: onAdFailedToLoad,
         onAdFailedToShow: onAdFailedToShow,
         onAdDismissed: onAdDismissed,
-        onEarnedReward: onEarnedReward,
         onPaidEvent: onPaidEvent,
         isClickAdsNotShowResume: isClickAdsNotShowResume);
     await ad?.load();
@@ -742,7 +744,6 @@ class AdmobAds {
     EasyAdFailedCallback? onAdFailedToLoad,
     EasyAdFailedCallback? onAdFailedToShow,
     EasyAdCallback? onAdDismissed,
-    EasyAdEarnedReward? onEarnedReward,
     EasyAdOnPaidEvent? onPaidEvent,
   }) {
     AdmobNativeAd? ad;
@@ -761,7 +762,6 @@ class AdmobAds {
             onAdFailedToLoad: onAdFailedToLoad,
             onAdFailedToShow: onAdFailedToShow,
             onAdDismissed: onAdDismissed,
-            onEarnedReward: onEarnedReward,
             onPaidEvent: onPaidEvent,
             onAdImpression: onAdImpression,
             isClickAdsNotShowResume: isClickAdsNotShowResume);
@@ -1134,7 +1134,15 @@ class AdmobAds {
       },
       onAdLoaded: (adNetwork, adUnitType, data) {
         onAdLoaded?.call(adNetwork, adUnitType, data);
-        LoadingChannel.handleShowAd();
+        print('admob_ads --- interstitial_ad 11. call show - $_second');
+        //ads xong truowcs 5s thif delay ddeens giaay thuws 5 moiws show
+        Future.delayed(
+          Duration(seconds: _second < 5 ? (5 - _second) : 0),
+          () {
+            print('admob_ads --- interstitial_ad 2. call show');
+            LoadingChannel.handleShowAd();
+          },
+        );
       },
       onAdShowed: (adNetwork, adUnitType, data) {
         if (Platform.isAndroid) {

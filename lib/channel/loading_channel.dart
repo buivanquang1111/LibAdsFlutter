@@ -24,4 +24,13 @@ class LoadingChannel {
   static void handleShowAd() {
     loadingChannel.invokeMethod('handleShowAd');
   }
+
+  static void setAnimationLoading({required String jsonAnimation}) async{
+    try {
+      String jsonString = await rootBundle.loadString(jsonAnimation);
+      await loadingChannel.invokeMethod('setAnimation', jsonString);
+    }catch (e){
+      print('error change json animation');
+    }
+  }
 }

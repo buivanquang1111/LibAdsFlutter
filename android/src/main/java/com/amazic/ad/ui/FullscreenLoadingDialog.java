@@ -15,6 +15,8 @@ import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
+import com.airbnb.lottie.LottieAnimationView;
+
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.amazic.ad.AmazicPlugin;
 import com.amazic.ad.R;
@@ -47,6 +49,17 @@ public class FullscreenLoadingDialog extends Dialog implements LifecycleObserver
         cpi.setIndicatorColor(color);
     }
 
+    private void setupAnimation(String json) {
+        LottieAnimationView lottieView = findViewById(R.id.lottie_animation);
+        CircularProgressIndicator cpi = findViewById(R.id.progressBar);
+        if (lottieView != null) {
+            cpi.setVisibility(View.GONE);
+            lottieView.setVisibility(View.VISIBLE);
+            lottieView.setAnimationFromJson(json);
+            lottieView.playAnimation();
+        }
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -60,6 +73,13 @@ public class FullscreenLoadingDialog extends Dialog implements LifecycleObserver
                     break;
                 case "closeAd":
                     closeAd();
+                    result.success(null);
+                    break;
+                case "setAnimation":
+                    String json = (String) call.arguments;
+                    if (json != null) {
+                        setupAnimation(json); // Call function to update UI
+                    }
                     result.success(null);
                     break;
                 default:
