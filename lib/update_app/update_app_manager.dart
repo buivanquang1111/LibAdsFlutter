@@ -35,7 +35,7 @@ class UpdateAppManager {
                       await InAppUpdate.completeFlexibleUpdate();
                       Fluttertoast.showToast(msg: 'Updated and ready – welcome back!');
                     } catch (e) {
-                      print('error update failed: $e');
+                      print('update_app --- error update failed: $e');
                       onNext();
                     }
                   },
@@ -44,13 +44,15 @@ class UpdateAppManager {
             },
           );
         } catch (e) {
-          print('error update failed: $e');
+          print('update_app --- error update failed: $e');
+          onNext();
         }
       } else {
         onNext();
       }
     } catch (e) {
-      print('error checking for update: $e');
+      print('update_app --- error checking for update: $e');
+      onNext();
     }
   }
 
