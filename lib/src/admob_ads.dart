@@ -159,10 +159,11 @@ class AdmobAds {
     Future<void> initRemoteConfig = RemoteConfigLib.init(remoteConfigKeys: remoteConfigKeys).then(
       (value) async {
         print('admob_check --- RemoteConfig successfully. $_second');
+        bool hasInternet = await isHaveInternet;
         EventLogLib.logEvent("time_splash_check", parameters: {
           'time_splash_check': '$_second',
           'ump': '${ConsentManager.ins.canRequestAds}',
-          'haveinternet': '${await isHaveInternet}'
+          'haveinternet': '$hasInternet'
         });
         for (var key in RemoteConfigKeyLib.listRemoteConfigKey) {
           print('CHECK_REMOTE --- ${key.name}: ${key.defaultValue}');
@@ -426,12 +427,13 @@ class AdmobAds {
         RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyInterSplash).name];
 
     ///log Event
+    bool hasInternet = await isHaveInternet;
     EventLogLib.logEvent("inter_splash_tracking", parameters: {
       'splash_detail':
-          '${ConsentManager.ins.canRequestAds}_${CallOrganicAdjust.instance.isOrganic()}_${await isHaveInternet}_${AdmobAds.instance.isShowAllAds}_$rateAoa',
+          '${ConsentManager.ins.canRequestAds}_${CallOrganicAdjust.instance.isOrganic()}_${hasInternet}_${AdmobAds.instance.isShowAllAds}_$rateAoa',
       'ump': '${ConsentManager.ins.canRequestAds}',
       'organic': '${CallOrganicAdjust.instance.isOrganic()}',
-      'haveinternet': '${await isHaveInternet}',
+      'haveinternet': '$hasInternet',
       'showallad': '${AdmobAds.instance.isShowAllAds}',
       'interremote_openremote_aoavalue': '${isShowInter}_${isShowOpen}_$rateAoa'
     });
@@ -692,15 +694,16 @@ class AdmobAds {
         !await isHaveInternet ||
         !config ||
         !ConsentManager.ins.canRequestAds) {
+      bool hasInternet = await isHaveInternet;
       if (factoryId.toLowerCase().contains("intro_full")) {
         EventLogLib.logEvent("native_intro_full_false", parameters: {
           "reason":
-              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await isHaveInternet}"
+              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_$hasInternet"
         });
       } else {
         EventLogLib.logEvent("native_intro_false", parameters: {
           "reason":
-              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await isHaveInternet}"
+              "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_$hasInternet"
         });
       }
       return null;
@@ -1051,12 +1054,13 @@ class AdmobAds {
         _isFullscreenAdShowing ||
         !await isHaveInternet ||
         !ConsentManager.ins.canRequestAds) {
+      bool hasInternet = await isHaveInternet;
       _logger.logInfo(
-          'config: $config, isShowAllAds: $isShowAllAds, isHaveInternet: ${await isHaveInternet}, _isFullscreenAdShowing: $_isFullscreenAdShowing,canRequestAds: ${ConsentManager.ins.canRequestAds}');
+          'config: $config, isShowAllAds: $isShowAllAds, isHaveInternet: $hasInternet, _isFullscreenAdShowing: $_isFullscreenAdShowing,canRequestAds: ${ConsentManager.ins.canRequestAds}');
 
       EventLogLib.logEvent("inter_intro_false", parameters: {
         "reason":
-            "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_${await isHaveInternet}"
+            "ump_${ConsentManager.ins.canRequestAds}_org_${CallOrganicAdjust.instance.isOrganic()}_internet_$hasInternet"
       });
       onDisabled?.call();
       return;

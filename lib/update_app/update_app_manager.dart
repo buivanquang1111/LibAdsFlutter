@@ -60,6 +60,7 @@ class UpdateAppManager {
     } finally {
       if (context.mounted) {
         Future.delayed(const Duration(milliseconds: 200), () {
+          print('update_app --- finally for update');
           onNext();
         });
       }
