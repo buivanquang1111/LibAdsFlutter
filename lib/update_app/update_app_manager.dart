@@ -52,19 +52,21 @@ class UpdateAppManager {
           if (context.mounted) onNext();
         }
       } else {
+        print('update_app --- new update');
         if (context.mounted) onNext();
       }
     } catch (e) {
       print('update_app --- error checking for update: $e');
       if (context.mounted) onNext();
-    } finally {
-      if (context.mounted) {
-        Future.delayed(const Duration(milliseconds: 200), () {
-          print('update_app --- finally for update');
-          onNext();
-        });
-      }
     }
+    // finally {
+    //   if (context.mounted) {
+    //     Future.delayed(const Duration(milliseconds: 200), () {
+    //       print('update_app --- finally for update');
+    //       onNext();
+    //     });
+    //   }
+    // }
   }
 
 
