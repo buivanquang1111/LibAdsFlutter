@@ -130,7 +130,7 @@ class AdmobAds {
       EventLogLib.logEvent('splash_have_internet');
     }
 
-      LoadingChannel.setAnimationLoading(jsonAnimation: assetsJsonLoading);
+    LoadingChannel.setAnimationLoading(jsonAnimation: assetsJsonLoading);
     //init remote key
     RemoteConfigKeyLib.initializeKeys(remoteConfigKeys);
 
@@ -338,11 +338,12 @@ class AdmobAds {
           idAdsInter: idAdsInter);
     }
 
+    //TH RemoteConfigLib chua khoi tao kip gia tri tra ve null => default true
     initAdsOpenResume(
         idAds: idAds,
         navigatorKey: navigatorKey,
         adResumeConfig:
-            RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyResumeConfig).name],
+            RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyResumeConfig).name] ?? true,
         nameConfig: keyResumeConfig,
         isShowWelComeScreenAfterAds: isShowWelComeScreenAfterAds,
         onGoToWelcomeBack: onGoToWelcomeBack);
@@ -420,11 +421,11 @@ class AdmobAds {
     _shouldShowInterOrAppOpenSplash = false;
 
     final String rateAoa =
-        RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyRateAOA).name];
+        RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyRateAOA).name] ?? '01_99';
     final bool isShowOpen =
-        RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyOpenSplash).name];
+        RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyOpenSplash).name] ?? true;
     final bool isShowInter =
-        RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyInterSplash).name];
+        RemoteConfigLib.configs[RemoteConfigKeyLib.getKeyByName(keyInterSplash).name] ?? true;
 
     ///log Event
     bool hasInternet = await isHaveInternet;
