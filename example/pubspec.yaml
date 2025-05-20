@@ -41,7 +41,7 @@ dependencies:
   get: ^4.6.6
   flutter_screenutil: ^5.9.0
   shared_preferences: ^2.2.1
-  adjust_sdk: ^4.37.1
+
   device_info_plus: ^10.0.1
   smooth_page_indicator: ^1.1.0
   fluttertoast: ^8.2.6
