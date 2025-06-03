@@ -6,6 +6,8 @@ import 'package:visibility_detector/visibility_detector.dart';
 import '../../admob_ads_flutter.dart';
 
 class NativeAdsReload extends StatefulWidget {
+  final nativeTimeout = 10; // seconds
+
   /// refresh_rate_sec
   final int refreshRateSec;
 
@@ -64,7 +66,7 @@ class NativeAdsReload extends StatefulWidget {
     this.margin,
     this.reloadOnClick = false,
     this.isClickAdsNotShowResume = true,
-    this.isCanReloadHideView = true,
+    this.isCanReloadHideView = false,
     this.adsBase,
   }) : super(key: key);
 
@@ -72,11 +74,15 @@ class NativeAdsReload extends StatefulWidget {
   State<NativeAdsReload> createState() => NativeAdsReloadState();
 }
 
-class NativeAdsReloadState extends State<NativeAdsReload> with WidgetsBindingObserver {
+class NativeAdsReloadState extends State<NativeAdsReload>
+    with WidgetsBindingObserver {
   // AdmobNativeAd? _nativeAd;
   final List<AdmobNativeAd?> _listNativeAd = [];
 
-  Timer? _timer;
+  Timer? _nativeReloadTimer;
+  Timer? _nativeTimeoutTimer;
+  String? topNativeDetectorKey;
+
   bool _isPaused = false;
   bool _isDestroy = false;
 
@@ -142,6 +148,9 @@ class NativeAdsReloadState extends State<NativeAdsReload> with WidgetsBindingObs
   }
 
   void _addAndCleanListNativeAd(AdmobNativeAd? admobNativeAd) {
+    if (admobNativeAd == null) {
+      return;
+    }
     _listNativeAd.add(admobNativeAd);
     _cleanListNativeAd();
     print(
@@ -220,43 +229,39 @@ class NativeAdsReloadState extends State<NativeAdsReload> with WidgetsBindingObs
   }
 
   Future<void> _initAd() async {
-    _stopTimer();
+    _cancelNativeReloadTimer();
 
-    // if (_nativeAd != null) {
-    //   _nativeAd!.dispose();
-    //   _nativeAd = null;
-    //   if (mounted) {
-    //     setState(() {});
-    //   }
-    // }
+    final detectorKey = "${widget.visibilityDetectorKey}_${DateTime.now().millisecondsSinceEpoch}";
+    topNativeDetectorKey = detectorKey;
 
     final nativeAd = AdmobAds.instance.createNative(
-      visibilityDetectorKey: widget.visibilityDetectorKey,
+      visibilityDetectorKey: detectorKey,
       adNetwork: widget.adNetwork,
       idAds: widget.idAds,
       isClickAdsNotShowResume: widget.isClickAdsNotShowResume,
       onAdLoaded: (adNetwork, adUnitType, data) {
-        print('native_ads_reload --- ${widget.visibilityDetectorKey} onAdLoaded');
-        if (!_isDestroy && !_isPaused) {
-          _startTimer();
-        }
+        print(
+            'native_ads_reload --- ${widget.visibilityDetectorKey} onAdLoaded');
         widget.onAdLoaded?.call(adNetwork, adUnitType, data);
         if (mounted) {
           setState(() {});
         }
       },
       onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
-        print('native_ads_reload --- ${widget.visibilityDetectorKey} onAdFailedToLoad');
-        if (!_isDestroy && !_isPaused) {
-          _startTimer();
+        print(
+            'native_ads_reload --- ${widget.visibilityDetectorKey} onAdFailedToLoad');
+        if (!_isDestroy && !_isPaused && topNativeDetectorKey == detectorKey) {
+          _restartNativeReloadTimer();
         }
-        widget.onAdFailedToLoad?.call(adNetwork, adUnitType, data, errorMessage);
+        widget.onAdFailedToLoad
+            ?.call(adNetwork, adUnitType, data, errorMessage);
         if (mounted) {
           setState(() {});
         }
       },
       onAdClicked: (adNetwork, adUnitType, data) {
-        print('native_ads_reload --- ${widget.visibilityDetectorKey} onAdClicked');
+        print(
+            'native_ads_reload --- ${widget.visibilityDetectorKey} onAdClicked');
         widget.onAdClicked?.call(adNetwork, adUnitType, data);
         isClicked = true;
         if (mounted) {
@@ -264,21 +269,31 @@ class NativeAdsReloadState extends State<NativeAdsReload> with WidgetsBindingObs
         }
       },
       onAdDismissed: (adNetwork, adUnitType, data) {
-        print('native_ads_reload --- ${widget.visibilityDetectorKey} onAdDismissed');
+        print(
+            'native_ads_reload --- ${widget.visibilityDetectorKey} onAdDismissed');
         widget.onAdDismissed?.call(adNetwork, adUnitType, data);
         if (mounted) {
           setState(() {});
         }
       },
       onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
-        print('native_ads_reload --- ${widget.visibilityDetectorKey} onAdFailedToShow');
-        widget.onAdFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);
+        print(
+            'native_ads_reload --- ${widget.visibilityDetectorKey} onAdFailedToShow');
+        if (!_isDestroy && !_isPaused && topNativeDetectorKey == detectorKey) {
+          _restartNativeReloadTimer();
+        }
+        widget.onAdFailedToShow
+            ?.call(adNetwork, adUnitType, data, errorMessage);
         if (mounted) {
           setState(() {});
         }
       },
       onAdShowed: (adNetwork, adUnitType, data) {
-        print('native_ads_reload --- ${widget.visibilityDetectorKey} onAdShowed');
+        print(
+            'native_ads_reload --- ${widget.visibilityDetectorKey} onAdShowed');
+        if (!_isDestroy && !_isPaused && topNativeDetectorKey == detectorKey) {
+          _restartNativeReloadTimer();
+        }
         widget.onAdShowed?.call(adNetwork, adUnitType, data);
         if (mounted) {
           setState(() {});
@@ -294,7 +309,8 @@ class NativeAdsReloadState extends State<NativeAdsReload> with WidgetsBindingObs
         String? unit,
         String? placement,
       }) {
-        print('native_ads_reload --- ${widget.visibilityDetectorKey} onPaidEvent');
+        print(
+            'native_ads_reload --- ${widget.visibilityDetectorKey} onPaidEvent');
         widget.onPaidEvent?.call(
           adNetwork: adNetwork,
           adUnitType: adUnitType,
@@ -332,8 +348,9 @@ class NativeAdsReloadState extends State<NativeAdsReload> with WidgetsBindingObs
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.adsBase != null) {
         _addAndCleanListNativeAd(widget.adsBase);
-        print('native_ads_reload ---1. adsBase have data - ${visibilityController.value}');
-        _startTimer();
+        print(
+            'native_ads_reload ---1. adsBase have data - ${visibilityController.value}');
+        _restartNativeReloadTimer();
         if (mounted) {
           setState(() {});
         }
@@ -348,7 +365,7 @@ class NativeAdsReloadState extends State<NativeAdsReload> with WidgetsBindingObs
   reloadAdsNative({required AdmobNativeAd? adBase}) {
     if (adBase != null) {
       _addAndCleanListNativeAd(adBase);
-      _startTimer();
+      _restartNativeReloadTimer();
       if (mounted) {
         setState(() {});
       }
@@ -367,8 +384,10 @@ class NativeAdsReloadState extends State<NativeAdsReload> with WidgetsBindingObs
       return;
     }
 
-    if (_listNativeAd.lastOrNull?.isAdLoading != true && visibilityController.value) {
-      print('native_ads_reload --- ${widget.visibilityDetectorKey} start _listener');
+    if (_listNativeAd.lastOrNull?.isAdLoading != true &&
+        visibilityController.value) {
+      print(
+          'native_ads_reload --- ${widget.visibilityDetectorKey} start _listener');
       _prepareAd();
       return;
     }
@@ -381,7 +400,7 @@ class NativeAdsReloadState extends State<NativeAdsReload> with WidgetsBindingObs
         }
       }
 
-      _stopTimer();
+      _cancelNativeReloadTimer();
     }
   }
 
@@ -430,7 +449,8 @@ class NativeAdsReloadState extends State<NativeAdsReload> with WidgetsBindingObs
       } else {
         onResume();
       }
-    } else if (state == AppLifecycleState.inactive || state == AppLifecycleState.paused) {
+    } else if (state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.paused) {
       onPause();
     }
     super.didChangeAppLifecycleState(state);
@@ -439,47 +459,76 @@ class NativeAdsReloadState extends State<NativeAdsReload> with WidgetsBindingObs
   void onResume() {
     _isPaused = false;
     if (!_isDestroy) {
-      _startTimer();
+      _restartNativeReloadTimer();
     }
   }
 
   void onPause() {
     _isPaused = true;
-    _stopTimer();
+    _cancelNativeReloadTimer();
   }
 
   void onVisible() {
     _isDestroy = false;
     if (!_isPaused) {
-      _startTimer();
+      _restartNativeReloadTimer();
     }
   }
 
   void onDestroyed() {
     _isDestroy = true;
-    _stopTimer();
-    print('native_ads_reload --- ${widget.visibilityDetectorKey} start onDestroyed');
+    _cancelNativeReloadTimer();
+    print(
+        'native_ads_reload --- ${widget.visibilityDetectorKey} start onDestroyed');
   }
 
-  void _stopTimer() {
-    _timer?.cancel();
-    _timer = null;
+  void _cancelNativeReloadTimer() {
+    _nativeReloadTimer?.cancel();
   }
 
-  void _startTimer() {
+  void _restartNativeReloadTimer() {
+    _cancelNativeTimeoutTimer();
+    _cancelNativeReloadTimer();
     if (widget.refreshRateSec == 0) {
       return;
     }
-    _stopTimer();
-    _timer = Timer.periodic(
+
+    print('native_ads_reload_new --- $topNativeDetectorKey call _restartTimer');
+
+    _nativeReloadTimer = Timer(
       Duration(seconds: widget.refreshRateSec),
-      (timer) {
-        print('native_ads_reload --- ${widget.visibilityDetectorKey} start _startTimer');
-        if(widget.idAdsBackup != null) {
+      () {
+        print(
+            'native_ads_reload_new --- $topNativeDetectorKey start _restartTimer');
+        if (widget.idAdsBackup != null) {
           _loadDualAds();
-        }else {
+        } else {
           _prepareAd();
         }
+
+        // handle native timeout
+        _restartNativeTimeoutTimer();
+      },
+    );
+  }
+
+  void _cancelNativeTimeoutTimer() {
+    _nativeTimeoutTimer?.cancel();
+  }
+
+  void _restartNativeTimeoutTimer() {
+    _cancelNativeTimeoutTimer();
+
+    print('native_ads_reload_new --- ${widget.visibilityDetectorKey} call _restartNativeTimeoutTimer');
+
+    _nativeTimeoutTimer = Timer(
+      Duration(seconds: widget.nativeTimeout),
+      () {
+        print(
+            'native_ads_reload_new --- ${widget.visibilityDetectorKey} start _restartNativeTimeoutTimer');
+        // set topNativeDetectorKey = null để không gọi _restartTimer khi quảng cáo được show hoặc failed
+        topNativeDetectorKey = null;
+        _restartNativeReloadTimer();
       },
     );
   }
@@ -488,9 +537,11 @@ class NativeAdsReloadState extends State<NativeAdsReload> with WidgetsBindingObs
 
   void _loadDualAds() async {
     bool isMainAdLoaded = false;
-    bool isBackupLoaded = false;
 
-    _stopTimer();
+    _cancelNativeReloadTimer();
+
+    final detectorKey = '${widget.visibilityDetectorKey}_main_id_${DateTime.now().millisecondsSinceEpoch}';
+    topNativeDetectorKey = detectorKey;
 
     AdmobAds.instance
         .loadNativeAds(
@@ -498,7 +549,7 @@ class NativeAdsReloadState extends State<NativeAdsReload> with WidgetsBindingObs
       factoryId: widget.factoryId,
       idAds: widget.idAds,
       config: widget.config,
-      visibilityDetectorKey: '${widget.visibilityDetectorKey}_main_id',
+      visibilityDetectorKey: detectorKey,
       onAdLoaded: (adNetwork, adUnitType, data) {
         widget.onAdLoaded?.call(adNetwork, adUnitType, data);
         if (mounted) {
@@ -506,13 +557,15 @@ class NativeAdsReloadState extends State<NativeAdsReload> with WidgetsBindingObs
         }
       },
       onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
-        widget.onAdFailedToLoad?.call(adNetwork, adUnitType, data, errorMessage);
+        widget.onAdFailedToLoad
+            ?.call(adNetwork, adUnitType, data, errorMessage);
         if (mounted) {
           setState(() {});
         }
       },
       onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
-        widget.onAdFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);
+        widget.onAdFailedToShow
+            ?.call(adNetwork, adUnitType, data, errorMessage);
         if (mounted) {
           setState(() {});
         }
@@ -561,12 +614,11 @@ class NativeAdsReloadState extends State<NativeAdsReload> with WidgetsBindingObs
         .then(
       (value) {
         isMainAdLoaded = true;
-        print('native_reload --- show ads main done');
-        if (isBackupLoaded) {
-          _stopTimer();
-        }
+        print('native_ads_reload_new --- show ads main done');
         //update native ads
-        _startTimer();
+        if (topNativeDetectorKey == detectorKey) {
+          _restartNativeReloadTimer();
+        }
         _addAndCleanListNativeAd(value as AdmobNativeAd);
         if (mounted) {
           setState(() {});
@@ -589,13 +641,15 @@ class NativeAdsReloadState extends State<NativeAdsReload> with WidgetsBindingObs
         }
       },
       onAdFailedToLoad: (adNetwork, adUnitType, data, errorMessage) {
-        widget.onAdFailedToLoad?.call(adNetwork, adUnitType, data, errorMessage);
+        widget.onAdFailedToLoad
+            ?.call(adNetwork, adUnitType, data, errorMessage);
         if (mounted) {
           setState(() {});
         }
       },
       onAdFailedToShow: (adNetwork, adUnitType, data, errorMessage) {
-        widget.onAdFailedToShow?.call(adNetwork, adUnitType, data, errorMessage);
+        widget.onAdFailedToShow
+            ?.call(adNetwork, adUnitType, data, errorMessage);
         if (mounted) {
           setState(() {});
         }
@@ -643,10 +697,8 @@ class NativeAdsReloadState extends State<NativeAdsReload> with WidgetsBindingObs
     )
         .then(
       (value) {
-        isBackupLoaded = true;
         print('native_reload --- ads backup load done');
         if (!isMainAdLoaded) {
-          _startTimer();
           print('native_reload --- show ads backup');
           _addAndCleanListNativeAd(value as AdmobNativeAd);
           if (mounted) {
