@@ -21,6 +21,14 @@ rootProject.allprojects {
 
 apply plugin: 'com.android.library'
 
+afterEvaluate {
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+        kotlinOptions {
+            jvmTarget = "1.8"
+        }
+    }
+}
+
 android {
     namespace 'com.amazic.ad'
     if (project.android.hasProperty("namespace")) {
@@ -30,9 +38,6 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8
     }
 
     defaultConfig {
