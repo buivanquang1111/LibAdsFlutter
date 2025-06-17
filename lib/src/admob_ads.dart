@@ -207,6 +207,8 @@ class AdmobAds {
             if (onUMPInitialized != null) {
               onUMPInitialized(false);
             }
+            countOpenApp();
+            onNextAction();
           }
         }
       },
