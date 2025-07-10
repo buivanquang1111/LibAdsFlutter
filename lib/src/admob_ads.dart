@@ -1118,7 +1118,7 @@ class AdmobAds {
       isShowAdsSplash: isShowAdsSplash,
       onAdClicked: onAdClicked,
       onAdDismissed: (adNetwork, adUnitType, data) {
-        if (isShowAdsSplash == false) _lastTimeDismissInter = DateTime.now().millisecondsSinceEpoch;
+        if (isShowAdsSplash == false && shouldCheckInterval) _lastTimeDismissInter = DateTime.now().millisecondsSinceEpoch;
 
         onAdDismissed?.call(adNetwork, adUnitType, data);
 
