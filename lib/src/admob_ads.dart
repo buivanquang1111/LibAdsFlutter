@@ -1043,6 +1043,7 @@ class AdmobAds {
     required bool config,
     required String? nameAds,
     bool isShowAdsSplash = false,
+    bool shouldCheckInterval = true,
     EasyAdCallback? onAdLoaded,
     EasyAdCallback? onAdShowed,
     EasyAdCallback? onAdImpression,
@@ -1102,7 +1103,7 @@ class AdmobAds {
         'show_value_inter --- time minute = ${DateTime.now().millisecondsSinceEpoch - _lastTimeDismissInter}');
 
     ///check timeinterval
-    if (isShowAdsSplash == false &&
+    if (shouldCheckInterval && isShowAdsSplash == false &&
         DateTime.now().millisecondsSinceEpoch - _lastTimeDismissInter <= _timeInterval) {
       _logger.logInfo(
           '6. isShowAdsSplash: $isShowAdsSplash, timeMinus: ${DateTime.now().millisecondsSinceEpoch - _lastTimeDismissInter}, _timeInterval: $_timeInterval');
