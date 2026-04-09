@@ -153,7 +153,7 @@ class AdjustConfigFlutter {
 
     //
     config.defaultTracker = adjustToken;
-    Adjust.start(config);
+    Adjust.initSdk(config);
     print('[Adjust]: start ');
   }
 
@@ -170,14 +170,14 @@ class AdjustConfigFlutter {
       AdjustAdRevenue adRevenue;
       switch (event.adNetwork) {
         default:
-          adRevenue = AdjustAdRevenue(AdjustConfig.AdRevenueSourceAdMob);
+          adRevenue = AdjustAdRevenue('admob_sdk');
           break;
       }
       adRevenue.setRevenue(revenue, currencyCode);
       adRevenue.adRevenueNetwork = network;
       adRevenue.adRevenueUnit = unit;
       adRevenue.adRevenuePlacement = placement;
-      Adjust.trackAdRevenueNew(adRevenue);
+      Adjust.trackAdRevenue(adRevenue);
 
       if(eventTracking != null) {
         final adjustEvent = AdjustEvent(eventTracking);
